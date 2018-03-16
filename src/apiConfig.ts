@@ -6,23 +6,32 @@
 
 const PATH_PARAMETER: string = 'PATH_PARAMETER';
 
-export const apiConfig: object = {
+export const apiConfig = {
   resources: {
+
+    /**
+     * OCAPI : Data API
+     * Resource : SystemObjectDefinitions
+     */
     systemObjectDefinitions: {
-      getAll: {
-        headers: {
-          contentType: 'application/json'
+      availableCalls: {
+        // Gets the requested system object definition(s) based upon included
+        // query parameters.
+        get: {
+          headers: {
+            contentType: 'application/json'
+          },
+
+          // Defines any required parameters to be validated against in the
+          // callSetup() method of an OCAPIService class instance.
+          params: [
+            {
+              id: 'objectType',
+              type: 'string',
+              use: PATH_PARAMETER
+            }
+          ]
         }
-      },
-      getObjectDefinition: {
-        headers: {
-          contentType: 'application/json'
-        },
-        params: [{
-          id: 'objectType',
-          type: 'string',
-          use: PATH_PARAMETER
-        }]
       }
     }
   }

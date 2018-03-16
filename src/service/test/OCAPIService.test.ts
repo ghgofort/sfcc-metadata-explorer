@@ -4,9 +4,8 @@
  */
 import * as assert from 'assert';
 
-import { CallSetup } from '../CallSetup';
+import { ICallSetup } from '../ICallSetup';
 import { OCAPIService } from '../OCAPIService';
-
 
 // OCAPIService Test Suite
 suite('OCAPIService Tests', () => {
@@ -17,7 +16,7 @@ suite('OCAPIService Tests', () => {
   });
 
   test('Setup GET call for all SystemObjectDefinitions', () => {
-    const callSetup: CallSetup = ocapiService.getCallSetup('system_object_definitions');
+    const callSetup: ICallSetup = ocapiService.getCallSetup('system_object_definitions', 'get');
     const expectedSetup: CallSetup = new CallSetup();
     assert.deepEqual(callSetup, expectedSetup);
   });
