@@ -1,7 +1,7 @@
 # Change Log
+
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
 ## [Unreleased]
-- Initial release
+
+- Updates to the extension's README.md file to define the direction of the development process going forward.

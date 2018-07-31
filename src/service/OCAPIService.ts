@@ -11,7 +11,7 @@ import { HTTP_VERB, ICallSetup } from './ICallSetup';
  * @class OCAPIService
  * Proivdes REST request methods for making calls to the SFCC Open Commerce API.
  */
-export class OCAPIService {
+export default class OCAPIService {
   /**
    * Returns an object literal that conforms to the ICallSetup interface so that
    * it can be passed directly to the makeCall() method of this class.
