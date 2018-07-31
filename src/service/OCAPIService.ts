@@ -1,5 +1,6 @@
 import { apiConfig } from '../apiConfig';
 import { HTTP_VERB, ICallSetup } from './ICallSetup';
+import OAuth2Token from '../authorization/OAuth2Token';
 
 /**
  * @file OCAPIService
@@ -12,6 +13,10 @@ import { HTTP_VERB, ICallSetup } from './ICallSetup';
  * Proivdes REST request methods for making calls to the SFCC Open Commerce API.
  */
 export default class OCAPIService {
+  authToken: OAuth2Token = null;
+
+
+
   /**
    * Returns an object literal that conforms to the ICallSetup interface so that
    * it can be passed directly to the makeCall() method of this class.
@@ -57,5 +62,9 @@ export default class OCAPIService {
     }
 
     return setupResult;
+  }
+
+  getOAuth2Token(tokenType: string) {
+    /** @todo: imlement getOAuth2Token() method in OCAPIService class */
   }
 }
