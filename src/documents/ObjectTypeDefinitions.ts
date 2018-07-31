@@ -1,10 +1,10 @@
-import ObjectTypeDefinition from "./ObjectTypeDefinition";
-
 /**
  * @file ObjectTypeDefinition.ts
  * @fileoverview - Provides a class for standardized handling of the OCAPI
  * object_type_definitions document type.
  */
+
+import ObjectTypeDefinition from "./ObjectTypeDefinition";
 
 export class ObjectTypeDefinitions {
   count: number = 0;
