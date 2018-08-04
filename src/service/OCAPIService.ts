@@ -1,6 +1,6 @@
 import { apiConfig } from '../apiConfig';
+import { OAuth2Token } from '../authorization/OAuth2Token';
 import { HTTP_VERB, ICallSetup } from './ICallSetup';
-import OAuth2Token from '../authorization/OAuth2Token';
 
 /**
  * @file OCAPIService
@@ -13,9 +13,7 @@ import OAuth2Token from '../authorization/OAuth2Token';
  * Proivdes REST request methods for making calls to the SFCC Open Commerce API.
  */
 export default class OCAPIService {
-  authToken: OAuth2Token = null;
-
-
+  public authToken: OAuth2Token = null;
 
   /**
    * Returns an object literal that conforms to the ICallSetup interface so that
@@ -31,7 +29,11 @@ export default class OCAPIService {
    *    for making the call to the API endpoint, or an appropriate error
    *    message.
    */
-  public getCallSetup(resourceName: string, callName: string, callData: object): ICallSetup {
+  public getCallSetup(
+    resourceName: string,
+    callName: string,
+    callData: object
+  ): ICallSetup {
     // Setup default values where appropriate.
     const setupResult: ICallSetup = {
       body: {},
@@ -52,7 +54,10 @@ export default class OCAPIService {
       resConfig = apiConfig.resources[resourceName];
       setupResult.endpoint += '/' + resourceName;
 
-      if (resConfig.availableCalls && resConfig.availableCalls.hasOwnProperty(callName)) {
+      if (
+        resConfig.availableCalls &&
+        resConfig.availableCalls.hasOwnProperty(callName)
+      ) {
         callConfig = resConfig.availableCalls[callName];
       }
     } else {
@@ -64,7 +69,7 @@ export default class OCAPIService {
     return setupResult;
   }
 
-  getOAuth2Token(tokenType: string) {
+  private getOAuth2Token(tokenType: string) {
     /** @todo: imlement getOAuth2Token() method in OCAPIService class */
   }
 }

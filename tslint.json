@@ -12,7 +12,9 @@
         true,
         "single"
       ],
-      "trailing-comma": false
+      "trailing-comma": false,
+      "semicolon": true,
+      "no-console": false
     },
     "rulesDirectory": []
 }
