@@ -8,6 +8,7 @@ export class OAuth2Token {
   public expiresIn: number = 0;
   public tokenType: string = '';
   public accessToken: string = '';
+  public timeCreated: number = 0;
 
   constructor(args) {
     // Assign any instance values passed in at instantiation.
@@ -20,5 +21,15 @@ export class OAuth2Token {
     if (args.access_token) {
       this.accessToken = args.access_token;
     }
+
+    this.timeCreated = Date.now();
+  }
+
+  public isValid(): boolean {
+    const timeNow = Date.now();
+    if (timeNow - this.timeCreated > this.expiresIn) {
+      return false;
+    }
+    return true;
   }
 }
