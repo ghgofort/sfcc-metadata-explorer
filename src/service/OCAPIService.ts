@@ -22,11 +22,12 @@ import { IDWConfig } from './IDWConfig';
  * @class OCAPIService
  * Proivdes REST request methods for making calls to the SFCC Open Commerce API.
  */
-export default class OCAPIService {
+export class OCAPIService {
   public authToken: OAuth2Token = null;
   private isGettingToken: boolean = false;
   private dwConfig: IDWConfig = {
     endpoint: '',
+    ok: false,
     password: '',
     username: ''
   };
@@ -34,7 +35,7 @@ export default class OCAPIService {
   /**
    * Returns an object literal that conforms to the ICallSetup interface so that
    * it can be passed directly to the makeCall() method of this class.
-   *
+   * @public
    * @param callName - The name of the SFCC OCAPI call to make. The name is
    *    in the format that is used in the URI to identify which asset we are
    *    requesting form the server.
@@ -45,11 +46,11 @@ export default class OCAPIService {
    *    for making the call to the API endpoint, or an appropriate error
    *    message.
    */
-  public getCallSetup(
+  public async getCallSetup(
     resourceName: string,
     callName: string,
     callData: object
-  ): ICallSetup {
+  ): Promise<ICallSetup> {
     // Setup default values where appropriate.
     const setupResult: ICallSetup = {
       body: {},
@@ -76,30 +77,77 @@ export default class OCAPIService {
         setupResult.endpoint += '/dw/' + resConfig.api + '/';
 
         // Check if the call name is configured for the specified resource.
-        if (resConfig.availableCalls &&
+        if (
+          resConfig.availableCalls &&
           resConfig.availableCalls.hasOwnProperty(callName)
         ) {
           callConfig = resConfig.availableCalls[callName];
+
+          // Add the path to the endpoint.
+          if (callConfig.path) {
+            setupResult.endpoint += callConfig.path;
+          } else {
+            setupResult.setupError = true;
+            setupResult.setupErrMsg += '\nMissing call path in the apiConfig.';
+            setupResult.setupErrMsg += '\n- OCAPI resource: ' + resourceName;
+            setupResult.setupErrMsg += '\n- Call type: ' + callName;
+          }
+
+          // Check that any required parameters are included in the callData.
+          if (callConfig.params && callConfig.params.length) {
+            callConfig.forEach(param => {
+              const replaceMe = '{' + param.id + '}';
+              if (
+                callData[param.id] &&
+                typeof callData[param.id] === param.type
+              ) {
+                // Determine where the parameter needs to be included in the
+                // call and add it to the call setup object.
+                if (
+                  param.use === 'PATH_PARAMETER' &&
+                  setupResult.endpoint.indexOf(replaceMe) > -1
+                ) {
+                  setupResult.endpoint.replace(replaceMe, callData[param.id]);
+                } else if (param.use === 'QUERY_PARAMETER') {
+                  // Check if this is the first query string parameter, or an
+                  // additional parameter being added to the list.
+                  setupResult.endpoint +=
+                    setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
+                  // Append to the URL as a query string type parameter.
+                  setupResult.endpoint += encodeURIComponent(param.id) + '=' +
+                  encodeURIComponent(callData[param.id]);
+                }
+              } else {
+                setupResult.setupError = true;
+                setupResult.setupErrMsg += '\nMissing call parameter: ' + param;
+                setupResult.setupErrMsg += '\n- Resource: ' + resourceName;
+                setupResult.setupErrMsg += '\n- Call type: ' + callName;
+              }
+            });
+          }
         }
       } else {
         setupResult.setupError = true;
-        setupResult.setupErrMsg =
-          'No API version was specified in the apiConfig object';
+        setupResult.setupErrMsg +=
+          '\nNo API version was specified in the apiConfig object';
       }
     } else {
       setupResult.setupError = true;
-      setupResult.setupErrMsg =
-        'No setup was found in the apiConfig object for the specified resource';
+      setupResult.setupErrMsg +=
+        '\nNo setup was found in apiConfig for the specified resource';
     }
 
-    if (callConfig) {
-      // Get the sandbox configuration as a promise, and use the callbacks to
-      // make the call to the OCAPI endpoint.
-      this.getDWConfig().then(config => {
-        setupResult.endpoint = config.endpoint + '/dw/' +
-      }).catch(err => {
-        /** @todo */
-      });
+    // If the call setup was complete, then get the sandbox configuration.
+    if (!setupResult.setupError) {
+      // Get the sandbox configuration.
+      this.dwConfig = await this.getDWConfig();
+      if (!this.dwConfig.ok) {
+        setupResult.setupError = true;
+      } else {
+        // Concatenate the sandbox URL with the call endpoint to get the
+        // complete endpoint URI.
+        setupResult.endpoint = this.dwConfig.endpoint + setupResult.endpoint;
+      }
     }
 
     return setupResult;
@@ -117,26 +165,42 @@ export default class OCAPIService {
         /** @todo */
       }
     } else {
-
+      /** @todo */
     }
-
   }
 
   /**
+   * Gets the sandbox connection configuration from a dw.json configuration file
+   * in one of the workspace folders.
+   *
    * @private
+   * @return {IDWConfig} - Returns a Promise that resolves to a an
+   *    object literal that conforms to the IDWConfig interface definition.
    * @author github: sqrtt
-   * This is a helper function that was borrowed from the Prophet debugger
-   * extension for debugging and development of SFCC code.
+   *    This is a helper function that was borrowed from the Prophet debugger
+   *    extension for debugging and development of SFCC code.
    */
-  private getDWConfig(): Promise<IDWConfig | string> {
+  private async getDWConfig(): Promise<IDWConfig> {
     // Check if the configuration has already been loaded.
-    if (this.dwConfig.endpoint !== '') {
-      return Promise.resolve(this.dwConfig);
+    if (this.dwConfig.endpoint &&
+      this.dwConfig.username &&
+      this.dwConfig.password &&
+      this.dwConfig.ok
+    ) {
+      return await Promise.resolve(this.dwConfig);
     } else {
+      // Setup the default response.
+      let result: IDWConfig = {
+        endpoint: '',
+        ok: false,
+        password: '',
+        username: ''
+      };
+
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
       const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders;
-      const dwConfigFiles = Promise.all(
+      const dwConfigFiles = await Promise.all(
         workspaceFolders.map(wf =>
           workspace.findFiles(
             new RelativePattern(wf, '**/dw.json'),
@@ -149,37 +213,27 @@ export default class OCAPIService {
       );
 
       let configFiles: Uri[] = [];
-      return dwConfigFiles
-        .then(uriArrays => {
-          uriArrays.forEach(uriSubArray => {
-            configFiles = configFiles.concat(uriSubArray);
-          });
-          return configFiles;
-        })
-        .then(uriPathArray => {
-          if (uriPathArray) {
-            // Get rid of any paths that return undefined or null when evaluated.
-            uriPathArray = uriPathArray.filter(Boolean);
-            if (!uriPathArray.length) {
-              // Return an error to be displayed for the user.
-              return Promise.reject('Unable to find sandbox config (dw.json)');
-            } else if (uriPathArray.length === 1) {
-              // If only one dw.json config file is found, then use it.
-              return uriPathArray[0].fsPath;
-            } else {
-              // If there is more than one dw.json configuration file found in
-              // the workspace, then show a quick-pick modal for the user to
-              // select which configuration they would like to use.
-              return window.showQuickPick(
-                uriPathArray.map(config => config.fsPath),
-                { placeHolder: 'Select configuration' }
-              );
-            }
-          } else {
-            return Promise.reject('Unable to find sandbox config (dw.json).');
-          }
-        })
-        .then(configPath => this.readConfigFromFile(configPath));
+      dwConfigFiles.forEach(uriSubArray => {
+        configFiles = configFiles.concat(uriSubArray);
+      });
+
+      // Get rid of any paths that return undefined or null when evaluated.
+      configFiles = configFiles.filter(Boolean);
+
+      // 1 dw.json file found
+      if (configFiles.length === 1 && configFiles[0].fsPath) {
+        result = await this.readConfigFromFile(configFiles[0].fsPath);
+
+      // > 1 dw.json file found
+      } else if (configFiles.length > 1) {
+        const dwConfig = await window.showQuickPick(
+          configFiles.map(config => config.fsPath),
+          { placeHolder: 'Select configuration' }
+        );
+        result = await this.readConfigFromFile(dwConfig);
+      }
+
+      return result;
     }
   }
 
@@ -236,6 +290,7 @@ export default class OCAPIService {
         try {
           const conf = JSON.parse(Buffer.concat(chunks).toString());
           conf.configFilename = filePath;
+          conf.ok = true;
           resolve(conf);
         } catch (e) {
           reject(e);

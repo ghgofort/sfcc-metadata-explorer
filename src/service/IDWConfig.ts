@@ -12,4 +12,5 @@ export interface IDWConfig {
   username: string;
   password: string;
   endpoint: string;
+  ok: boolean;
 }

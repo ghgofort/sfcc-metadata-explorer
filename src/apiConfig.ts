@@ -4,8 +4,6 @@
  *    the available OCAPI calls.
  */
 
-const PATH_PARAMETER: string = 'PATH_PARAMETER';
-
 export const apiConfig = {
 
   resources: {
@@ -17,24 +15,33 @@ export const apiConfig = {
     systemObjectDefinitions: {
       api: 'data',
       availableCalls: {
-        // Gets the requested system object definition(s) based upon included
+        // Gets the list of system object definitions, filtered by any included
         // query parameters.
         get: {
           headers: {
             contentType: 'application/json'
           },
           method: 'GET',
-
-          // Defines any required parameters to be validated against in the
-          // callSetup() method of an OCAPIService class instance.
           params: [
             {
               id: 'objectType',
               type: 'string',
-              use: PATH_PARAMETER
+              use: 'PATH_PARAMETER'
             }
-          ]
-        }
+          ],
+          path: '/system_object_definitions/{objectType}'
+        },
+
+        // Get a list of the system object definitions filtered by the included
+        // query parameters.
+        getAll: {
+          headers: {
+            contentType: 'application/json'
+          },
+          method: 'GET',
+          path: '/system_object_definitions'
+        },
+        //
       }
     }
   },

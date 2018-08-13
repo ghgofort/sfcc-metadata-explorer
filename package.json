@@ -17,8 +17,8 @@
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "sfcc-metadata-explorer.getSystemObjectDefs",
+                "title": "Get system object definitions from sandbox."
             }
         ]
     },
