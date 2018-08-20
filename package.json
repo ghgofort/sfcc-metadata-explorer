@@ -1,24 +1,26 @@
 {
     "name": "sfcc-metadata-explorer",
-    "displayName": "sfcc-metadata-explorer",
+    "displayName": "SFCC Metadata Explorer",
     "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
     "version": "0.0.1",
     "publisher": "ghgofort",
     "engines": {
-        "vscode": "^1.21.0"
+        "vscode": "^1.21.0",
+        "node": "^7.9.0"
     },
     "categories": [
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.sayHello"
+        "onCommand:extension.sfccexplorer.getobjects"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.sayHello",
-                "title": "Hello World"
+                "command": "extension.sfccexplorer.getobjects",
+                "title": "Populate SFCC System Object Definitions",
+                "description": "Get system object definitions from sandbox."
             }
         ]
     },
@@ -30,9 +32,13 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.6.1",
-        "vscode": "^1.1.6",
+        "@types/mocha": "^2.2.42",
         "@types/node": "^7.0.43",
-        "@types/mocha": "^2.2.42"
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.18"
+    },
+    "dependencies": {
+        "node-fetch": "^2.2.0",
+        "vscode-uri": "^1.0.3"
     }
 }

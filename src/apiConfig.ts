@@ -4,9 +4,9 @@
  *    the available OCAPI calls.
  */
 
-const PATH_PARAMETER: string = 'PATH_PARAMETER';
-
 export const apiConfig = {
+  clientId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {
 
     /**
@@ -14,25 +14,53 @@ export const apiConfig = {
      * Resource : SystemObjectDefinitions
      */
     systemObjectDefinitions: {
+      api: 'data',
       availableCalls: {
-        // Gets the requested system object definition(s) based upon included
+        // Gets the list of system object definitions, filtered by any included
         // query parameters.
         get: {
+          authorization: 'BM_USER',
           headers: {
-            contentType: 'application/json'
+            'Content-Type': 'application/json'
           },
-
-          // Defines any required parameters to be validated against in the
-          // callSetup() method of an OCAPIService class instance.
+          method: 'GET',
           params: [
             {
               id: 'objectType',
               type: 'string',
-              use: PATH_PARAMETER
+              use: 'PATH_PARAMETER'
             }
-          ]
-        }
+          ],
+          path: 'system_object_definitions/{objectType}'
+        },
+
+        // Get a list of the system object definitions filtered by the included
+        // query parameters.
+        getAll: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            }
+          ],
+          path: 'system_object_definitions',
+        },
+        //
       }
     }
-  }
+  },
+
+  /*
+   * -- Target API Version ---
+   * This should be the same as the version number for wich the client ID access
+   * assigned in your sandboxes OCAPI Configuration and should be in the same
+   * format as it is in an OCAPI URL (i.e.: v18_8).
+   */
+  version: 'v18_8'
 };

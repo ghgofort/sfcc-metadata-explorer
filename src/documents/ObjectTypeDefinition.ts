@@ -8,15 +8,15 @@
  * @class ObjectTypeDefinition
  */
 export default class ObjectTypeDefinition {
-  attributeDefinitionCount: number = 0;
-  attributeGroupCount: number = 0;
-  contentObject: boolean = false;
-  description: string = '';
-  displayName: string = '';
-  link: string = '';
-  objectType: string = '';
-  queryable: boolean = true;
-  readOnly: boolean = false;
+  public attributeDefinitionCount: number = 0;
+  public attributeGroupCount: number = 0;
+  public contentObject: boolean = false;
+  public description: string = '';
+  public displayName: string = '';
+  public link: string = '';
+  public objectType: string = '';
+  public queryable: boolean = true;
+  public readOnly: boolean = false;
 
   /**
    * @constructor

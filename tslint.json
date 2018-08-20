@@ -8,11 +8,14 @@
       "arrow-parens": false,
       "curly": true,
       "indent": [true, "spaces", 2],
+      "no-console": false,
+      "object-literal-key-quotes": false,
       "quotemark": [
         true,
         "single"
       ],
-      "trailing-comma": false
+      "semicolon": true,
+      "trailing-comma": false,
     },
     "rulesDirectory": []
 }
