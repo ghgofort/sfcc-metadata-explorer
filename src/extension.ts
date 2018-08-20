@@ -26,24 +26,26 @@ export function activate(context: vscode.ExtensionContext) {
 
       service
         .getCallSetup('systemObjectDefinitions', 'getAll', { select: '(**)' })
-        .then(
-          callSetup => {
-            _callSetup = callSetup;
-            console.log(callSetup);
-            service.makeCall(callSetup).then(resp => {
-
+        .then(callSetup => {
+          _callSetup = callSetup;
+          console.log(callSetup);
+          service
+            .makeCall(callSetup)
+            .then(resp => {
               if (resp.ok) {
-              return resp.json();
-            } else {
-              console.error(resp);
-            }
-            }).then(callSetupJSON => {
+                return resp.json();
+              } else {
+                console.error(resp);
+              }
+            })
+            .then(callSetupJSON => {
               console.log(callSetupJSON);
-            }).catch(e => {
+            })
+            .catch(e => {
               console.error(e);
             });
-          }
-        ).catch(e => {
+        })
+        .catch(e => {
           console.error(e);
         });
 
