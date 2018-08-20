@@ -22,7 +22,7 @@ export interface ICallSetup {
   callName?: string;
   endpoint: string;
   headers: {
-    contentType: string,
+    'Content-Type': string,
     [propName: string]: string;
   };
   method: HTTP_VERB;

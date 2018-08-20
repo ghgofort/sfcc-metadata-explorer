@@ -1,3 +1,5 @@
+import { ICallSetup } from './service/ICallSetup';
+import { OAuth2Token } from './authorization/OAuth2Token';
 'use strict';
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
@@ -17,15 +19,38 @@ export function activate(context: vscode.ExtensionContext) {
   // Now provide the implementation of the command with  registerCommand
   // The commandId parameter must match the command field in package.json
   const disposable = vscode.commands.registerCommand(
-      'sfcc-metadata-explorer.getSystemObjectDefs',
+    'extension.sfccexplorer.getobjects',
     () => {
       const service: OCAPIService = new OCAPIService();
-      // const callSetup = OCAPIService.getCallSetup('system_object_definitions',
-      // 'get');
+      let _callSetup: ICallSetup = null;
+
+      service
+        .getCallSetup('systemObjectDefinitions', 'getAll', { select: '(**)' })
+        .then(
+          callSetup => {
+            _callSetup = callSetup;
+            console.log(callSetup);
+            service.makeCall(callSetup).then(resp => {
+
+              if (resp.ok) {
+              return resp.json();
+            } else {
+              console.error(resp);
+            }
+            }).then(callSetupJSON => {
+              console.log(callSetupJSON);
+            }).catch(e => {
+              console.error(e);
+            });
+          }
+        ).catch(e => {
+          console.error(e);
+        });
 
       // Display a message box to the user
       vscode.window.showInformationMessage('Hello World!');
-    });
+    }
+  );
 
   context.subscriptions.push(disposable);
 }

@@ -27,7 +27,7 @@ export class OAuth2Token {
 
   public isValid(): boolean {
     const timeNow = Date.now();
-    if (timeNow - this.timeCreated > this.expiresIn) {
+    if (timeNow - this.timeCreated > this.expiresIn * 1000) {
       return false;
     }
     return true;

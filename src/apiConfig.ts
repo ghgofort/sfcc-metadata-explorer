@@ -5,7 +5,8 @@
  */
 
 export const apiConfig = {
-
+  clientId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+  clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {
 
     /**
@@ -18,8 +19,9 @@ export const apiConfig = {
         // Gets the list of system object definitions, filtered by any included
         // query parameters.
         get: {
+          authorization: 'BM_USER',
           headers: {
-            contentType: 'application/json'
+            'Content-Type': 'application/json'
           },
           method: 'GET',
           params: [
@@ -29,17 +31,25 @@ export const apiConfig = {
               use: 'PATH_PARAMETER'
             }
           ],
-          path: '/system_object_definitions/{objectType}'
+          path: 'system_object_definitions/{objectType}'
         },
 
         // Get a list of the system object definitions filtered by the included
         // query parameters.
         getAll: {
+          authorization: 'BM_USER',
           headers: {
-            contentType: 'application/json'
+            'Content-Type': 'application/json'
           },
           method: 'GET',
-          path: '/system_object_definitions'
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            }
+          ],
+          path: 'system_object_definitions',
         },
         //
       }

@@ -26,7 +26,7 @@ suite('OCAPIService Tests', () => {
       callName: '',
       endpoint: '',
       headers: {
-        contentType: 'application/json'
+        'Content-Type': 'application/json'
       },
       method: HTTP_VERB.get,
       setupErrMsg: '',

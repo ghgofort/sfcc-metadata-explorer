@@ -17,6 +17,7 @@ import { apiConfig } from '../apiConfig';
 import { OAuth2Token } from '../authorization/OAuth2Token';
 import { HTTP_VERB, ICallSetup } from './ICallSetup';
 import { IDWConfig } from './IDWConfig';
+import { URLSearchParams } from 'url';
 
 /**
  * @class OCAPIService
@@ -26,7 +27,7 @@ export class OCAPIService {
   public authToken: OAuth2Token = null;
   private isGettingToken: boolean = false;
   private dwConfig: IDWConfig = {
-    endpoint: '',
+    hostname: '',
     ok: false,
     password: '',
     username: ''
@@ -49,7 +50,7 @@ export class OCAPIService {
   public async getCallSetup(
     resourceName: string,
     callName: string,
-    callData: object
+    callData?: object
   ): Promise<ICallSetup> {
     // Setup default values where appropriate.
     const setupResult: ICallSetup = {
@@ -57,7 +58,7 @@ export class OCAPIService {
       callName: '',
       endpoint: '',
       headers: {
-        contentType: 'application/json'
+        'Content-Type': 'application/json'
       },
       method: HTTP_VERB.get,
       setupErrMsg: '',
@@ -71,70 +72,110 @@ export class OCAPIService {
     // apiConig.ts configuration file.
     if (apiConfig.resources.hasOwnProperty(resourceName)) {
       resConfig = apiConfig.resources[resourceName];
-
-      // Check if an API version is specified in the API configuration file.
-      if (resConfig.api) {
-        setupResult.endpoint += '/dw/' + resConfig.api + '/';
-
-        // Check if the call name is configured for the specified resource.
-        if (
-          resConfig.availableCalls &&
-          resConfig.availableCalls.hasOwnProperty(callName)
-        ) {
-          callConfig = resConfig.availableCalls[callName];
-
-          // Add the path to the endpoint.
-          if (callConfig.path) {
-            setupResult.endpoint += callConfig.path;
-          } else {
-            setupResult.setupError = true;
-            setupResult.setupErrMsg += '\nMissing call path in the apiConfig.';
-            setupResult.setupErrMsg += '\n- OCAPI resource: ' + resourceName;
-            setupResult.setupErrMsg += '\n- Call type: ' + callName;
-          }
-
-          // Check that any required parameters are included in the callData.
-          if (callConfig.params && callConfig.params.length) {
-            callConfig.forEach(param => {
-              const replaceMe = '{' + param.id + '}';
-              if (
-                callData[param.id] &&
-                typeof callData[param.id] === param.type
-              ) {
-                // Determine where the parameter needs to be included in the
-                // call and add it to the call setup object.
-                if (
-                  param.use === 'PATH_PARAMETER' &&
-                  setupResult.endpoint.indexOf(replaceMe) > -1
-                ) {
-                  setupResult.endpoint.replace(replaceMe, callData[param.id]);
-                } else if (param.use === 'QUERY_PARAMETER') {
-                  // Check if this is the first query string parameter, or an
-                  // additional parameter being added to the list.
-                  setupResult.endpoint +=
-                    setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
-                  // Append to the URL as a query string type parameter.
-                  setupResult.endpoint += encodeURIComponent(param.id) + '=' +
-                  encodeURIComponent(callData[param.id]);
-                }
-              } else {
-                setupResult.setupError = true;
-                setupResult.setupErrMsg += '\nMissing call parameter: ' + param;
-                setupResult.setupErrMsg += '\n- Resource: ' + resourceName;
-                setupResult.setupErrMsg += '\n- Call type: ' + callName;
-              }
-            });
-          }
-        }
-      } else {
-        setupResult.setupError = true;
-        setupResult.setupErrMsg +=
-          '\nNo API version was specified in the apiConfig object';
-      }
     } else {
       setupResult.setupError = true;
       setupResult.setupErrMsg +=
-        '\nNo setup was found in apiConfig for the specified resource';
+        '\nNo setup found in apiConfig for resource: ' + resourceName;
+    }
+
+    // If an API is specified, then append it to the endpoint.
+    if (resConfig && resConfig.api) {
+      setupResult.endpoint += '/s/-/dw/' + resConfig.api + '/';
+    } else {
+      setupResult.setupError = true;
+      setupResult.setupErrMsg +=
+        '\nNo API version was specified in the apiConfig object';
+    }
+
+    if (apiConfig.hasOwnProperty('version')) {
+      setupResult.endpoint += apiConfig.version + '/';
+    } else {
+      setupResult.setupError = true;
+      setupResult.setupErrMsg += '\nNo API version is specified in the apiConfig';
+    }
+
+    // Check if the call name is configured for the specified resource.
+    if (
+      resConfig &&
+      resConfig.availableCalls &&
+      resConfig.availableCalls.hasOwnProperty(callName)
+    ) {
+      setupResult.callName = callName;
+      callConfig = resConfig.availableCalls[callName];
+    } else {
+      setupResult.setupError = true;
+      setupResult.setupErrMsg +=
+        '\nNo matching method call found for: ' +
+        callName +
+        '\nResource: ' +
+        resourceName;
+    }
+
+    // Add the path to the endpoint.
+    if (callConfig && callConfig.path) {
+      setupResult.endpoint += callConfig.path;
+    } else {
+      setupResult.setupError = true;
+      setupResult.setupErrMsg += '\nMissing call path in the apiConfig:';
+      setupResult.setupErrMsg += '\n- OCAPI resource: ' + resourceName;
+      setupResult.setupErrMsg += '\n- Call type: ' + callName;
+    }
+
+    // If headers are specified, then replace the default with the specified.
+    if (callConfig && callConfig.headers) {
+      setupResult.headers = callConfig.headers;
+    }
+
+    if (callConfig && callConfig.method) {
+      setupResult.method = callConfig.method;
+    }
+
+    // Check that any required parameters are included in the callData.
+    if (callConfig && callConfig.params && callConfig.params.length) {
+      const usedParams = [];
+
+      callConfig.params.forEach(param => {
+        const replaceMe = '{' + param.id + '}';
+        if (
+          callData[param.id] &&
+          typeof callData[param.id] === param.type &&
+          typeof param.use === 'string'
+        ) {
+          // Determine where the parameter needs to be included in the
+          // call and add it to the call setup object.
+          if (
+            param.use === 'PATH_PARAMETER' &&
+            setupResult.endpoint.indexOf(replaceMe) > -1
+          ) {
+            setupResult.endpoint.replace(replaceMe, callData[param.id]);
+          } else if (param.use === 'QUERY_PARAMETER') {
+            // Check if this is the first query string parameter, or an
+            // additional parameter being added to the list.
+            setupResult.endpoint +=
+              setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
+            // Append to the URL as a query string type parameter.
+            setupResult.endpoint +=
+              encodeURIComponent(param.id) +
+              '=' +
+              encodeURIComponent(callData[param.id]);
+          } else {
+            // If it is not a query string parameter, and not a part of the call
+            // path, then include the argument as part of the request body.
+            setupResult.body[param.id] = callData[param.id];
+          }
+
+          // Mark this parameter as used.
+          usedParams.push(param.id);
+        } else {
+          setupResult.setupError = true;
+          setupResult.setupErrMsg += '\nMissing call parameter: ' + param;
+          setupResult.setupErrMsg += '\n- Resource: ' + resourceName;
+          setupResult.setupErrMsg += '\n- Call type: ' + callName;
+        }
+      });
+
+      // Remove any already added data properties.
+      const dataKeys = Object.keys(callData).filter(k => usedParams.indexOf(k));
     }
 
     // If the call setup was complete, then get the sandbox configuration.
@@ -146,27 +187,118 @@ export class OCAPIService {
       } else {
         // Concatenate the sandbox URL with the call endpoint to get the
         // complete endpoint URI.
-        setupResult.endpoint = this.dwConfig.endpoint + setupResult.endpoint;
+        setupResult.endpoint =
+          'https://' + this.dwConfig.hostname + setupResult.endpoint;
+
+        // Check if there needs to be an OAuth2 token included with the request.
+        if (callConfig && typeof callConfig.authorization === 'string') {
+          const token = await this.getOAuth2Token(callConfig.authorization);
+          setupResult.headers['Authorization'] =
+            token.tokenType + ' ' + token.accessToken;
+        }
       }
     }
 
     return setupResult;
   }
 
-  public makeCall(args: ICallSetup) {
-    if (
-      this.dwConfig.endpoint &&
-      this.dwConfig.username &&
-      this.dwConfig.password
+  /**
+   * Gets an OAuth 2.0 token wich is then included in the authorization header
+   * for subsequent calls to the OCAPI Shop or Data APIs. The grant is requested
+   * from either the Digital Application Server for a BM user grant type, or
+   * from the Digital Authorization Server for a client credentials grant type.
+   *
+   * @param {string} tokenType - The type of token that is needed for the API
+   *    call to be made. This should either be 'BM_USER' for a Business Manager
+   *    User type of token, or 'CLIENT_CREDENTIALS' for a Client Credentials
+   *    type of token. See the OCAPI documentation for more information about
+   *    token types.
+   */
+  public async getOAuth2Token(tokenType: string): Promise<OAuth2Token> {
+    // Get the sandbox configuration.
+    this.dwConfig = await this.getDWConfig();
+    if (!this.dwConfig.ok) {
+      console.error('DW config is no bueno...');
+      return Promise.reject(
+        'There was an error parsing the dw.json config file'
+      );
+    } else if (
+      tokenType === 'BM_USER' &&
+      apiConfig.hasOwnProperty('clientId')
     ) {
-      if (this.authToken && this.authToken.isValid()) {
-        /** @todo */
-      } else {
-        /** @todo */
-      }
-    } else {
-      /** @todo */
+      this.isGettingToken = true;
+
+      // Concatenate the pieces of the URL.
+      let url =
+        'https://' +
+        this.dwConfig.hostname +
+        '/dw/oauth2/access_token?client_id=' +
+        apiConfig.clientId;
+
+      // Encode credentials to base64
+      const encodedString = Buffer.from(
+        this.dwConfig.username +
+          ':' +
+          this.dwConfig.password +
+          ':' +
+          apiConfig.clientPassword
+      ).toString('base64');
+      const authString = 'Basic ' + encodedString;
+      const bodyParams = new URLSearchParams();
+      bodyParams.append(
+        'grant_type',
+        'urn:demandware:params:oauth:grant-type:client-id:dwsid:dwsecuretoken'
+      );
+
+      const result: Promise<OAuth2Token> = new Promise((resolve, reject) => {
+        fetch(url, {
+          body: bodyParams,
+          headers: {
+            Authorization: authString,
+            'Content-Type': 'application/x-www-form-urlencoded'
+          },
+          method: 'POST'
+        })
+          .then(resp => {
+            if (resp.ok) {
+              return resp.json();
+            } else {
+              reject(
+                'Could not retrieve Auth Token from Digital Application Server'
+              );
+            }
+          })
+          .then(resp => {
+            this.authToken = new OAuth2Token(resp);
+            resolve(this.authToken);
+          })
+          .catch(e => {
+            reject(e);
+          });
+      });
+
+      return result;
+    } else if (tokenType === 'CLIENT_CREDENTIALS') {
+      /** @todo: implement getOAuth2Token for auth server authentication */
     }
+  }
+
+  public async makeCall(callSetup: ICallSetup) {
+    let params;
+    if (callSetup.body && Object.keys(callSetup.body).length > 0) {
+      params = {
+        headers: callSetup.headers,
+        method: callSetup.method,
+        body: callSetup.body
+      };
+    } else {
+      params = {
+        headers: callSetup.headers,
+        method: callSetup.method
+      };
+    }
+
+    return await fetch(callSetup.endpoint, params);
   }
 
   /**
@@ -182,7 +314,8 @@ export class OCAPIService {
    */
   private async getDWConfig(): Promise<IDWConfig> {
     // Check if the configuration has already been loaded.
-    if (this.dwConfig.endpoint &&
+    if (
+      this.dwConfig.hostname &&
       this.dwConfig.username &&
       this.dwConfig.password &&
       this.dwConfig.ok
@@ -191,7 +324,7 @@ export class OCAPIService {
     } else {
       // Setup the default response.
       let result: IDWConfig = {
-        endpoint: '',
+        hostname: '',
         ok: false,
         password: '',
         username: ''
@@ -224,7 +357,7 @@ export class OCAPIService {
       if (configFiles.length === 1 && configFiles[0].fsPath) {
         result = await this.readConfigFromFile(configFiles[0].fsPath);
 
-      // > 1 dw.json file found
+        // > 1 dw.json file found
       } else if (configFiles.length > 1) {
         const dwConfig = await window.showQuickPick(
           configFiles.map(config => config.fsPath),
@@ -234,32 +367,6 @@ export class OCAPIService {
       }
 
       return result;
-    }
-  }
-
-  /**
-   * Gets an OAuth 2.0 token wich is then included in the authorization header
-   * for subsequent calls to the OCAPI Shop or Data APIs. The grant is requested
-   * from either the Digital Application Server for a BM user grant type, or
-   * from the Digital Authorization Server for a client credentials grant type.
-   *
-   * @param {string} tokenType - The type of token that is needed for the API
-   *    call to be made. This should either be 'BM_USER' for a Business Manager
-   *    User type of token, or 'CLIENT_CREDENTIALS' for a Client Credentials
-   *    type of token. See the OCAPI documentation for more information about
-   *    token types.
-   */
-  private getOAuth2Token(tokenType: string) {
-    // Check if the configuration is loaded
-    if (tokenType === 'BM_USER') {
-      this.isGettingToken = true;
-      const url = '';
-      fetch(url, {
-        /** @todo */
-        a: url
-      });
-    } else if (tokenType === 'CLIENT_CREDENTIALS') {
-      /** @todo: implement getOAuth2Token for auth server authentication */
     }
   }
 
