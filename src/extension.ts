@@ -1,56 +1,28 @@
-import { ICallSetup } from './service/ICallSetup';
-import { OAuth2Token } from './authorization/OAuth2Token';
 'use strict';
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
-import { OCAPIService } from './service/OCAPIService';
+
+import { commands, ExtensionContext, window} from 'vscode';
+import { MetadataView } from './components/MetadataView';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
-  // Use the console to output diagnostic information (console.log) and errors (console.error)
-  // This line of code will only be executed once when your extension is activated
-  console.log(
-    'Congratulations, your extension "sfcc-metadata-explorer" is now active!'
-  );
+export function activate(context: ExtensionContext) {
+  // Setup view for System Object Definitions view.
+  const metaView: MetadataView = new MetadataView(context);
+  metaView.getDataFromProvider('systemObjectDefinitions');
+  const treeView = window.createTreeView('systemObjectDefinitions', {
+    treeDataProvider: meta
+  })
+
 
   // The command has been defined in the package.json file
   // Now provide the implementation of the command with  registerCommand
   // The commandId parameter must match the command field in package.json
-  const disposable = vscode.commands.registerCommand(
+  const disposable = commands.registerCommand(
     'extension.sfccexplorer.getobjects',
     () => {
-      const service: OCAPIService = new OCAPIService();
-      let _callSetup: ICallSetup = null;
-
-      service
-        .getCallSetup('systemObjectDefinitions', 'getAll', { select: '(**)' })
-        .then(callSetup => {
-          _callSetup = callSetup;
-          console.log(callSetup);
-          service
-            .makeCall(callSetup)
-            .then(resp => {
-              if (resp.ok) {
-                return resp.json();
-              } else {
-                console.error(resp);
-              }
-            })
-            .then(callSetupJSON => {
-              console.log(callSetupJSON);
-            })
-            .catch(e => {
-              console.error(e);
-            });
-        })
-        .catch(e => {
-          console.error(e);
-        });
 
       // Display a message box to the user
-      vscode.window.showInformationMessage('Hello World!');
+      window.showInformationMessage('Hello World!');
     }
   );
 
