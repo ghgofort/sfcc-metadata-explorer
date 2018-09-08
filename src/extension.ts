@@ -1,17 +1,17 @@
 'use strict';
 
-import { commands, ExtensionContext, window} from 'vscode';
+import { commands, ExtensionContext, window } from 'vscode';
 import { MetadataView } from './components/MetadataView';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: ExtensionContext) {
   // Setup view for System Object Definitions view.
-  const metaView: MetadataView = new MetadataView(context);
-  metaView.getDataFromProvider('systemObjectDefinitions');
-  const treeView = window.createTreeView('systemObjectDefinitions', {
-    treeDataProvider: meta
-  })
+  // const metaView: MetadataView = new MetadataView(context);
+  // metaView.getDataFromProvider('systemObjectDefinitions');
+  // const treeView = window.createTreeView('systemObjectDefinitions', {
+  //   treeDataProvider: metaView
+  // })
 
 
   // The command has been defined in the package.json file
