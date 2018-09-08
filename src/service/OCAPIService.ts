@@ -283,7 +283,7 @@ export class OCAPIService {
     }
   }
 
-  public async makeCall(callSetup: ICallSetup) {
+  public async makeCall(callSetup: ICallSetup): Promise<any> {
     let params;
     if (callSetup.body && Object.keys(callSetup.body).length > 0) {
       params = {
@@ -298,7 +298,14 @@ export class OCAPIService {
       };
     }
 
-    return await fetch(callSetup.endpoint, params);
+    return await fetch(callSetup.endpoint, params)
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json();
+      } else {
+        console.error(resp);
+      }
+    });
   }
 
   /**
