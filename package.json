@@ -26,14 +26,14 @@
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "metadataExplorer",
-          "icon": "resources/cloud-white.svg",
-          "title": "SFCC Metadata Explorer"
+          "id": "metadata-explorer",
+          "title": "SFCC Metadata Explorer",
+          "icon": "resources/cloud.svg"
         }
       ]
     },
     "views": {
-      "metadataExplorer": [
+      "metadata-explorer": [
         {
           "id": "systemObjectDefinitionsView",
           "name": "System Object Definitions"

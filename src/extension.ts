@@ -3,15 +3,16 @@
 import { commands, ExtensionContext, window } from 'vscode';
 import { MetadataView } from './components/MetadataView';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+/**
+ * The entry point for the extension. This lifecycle method is called when the
+ * extension is first loaded.
+ *
+ * @param context - The context object used to subscribe commands with.
+ */
 export function activate(context: ExtensionContext) {
   // Setup view for System Object Definitions view.
-  // const metaView: MetadataView = new MetadataView(context);
-  // metaView.getDataFromProvider('systemObjectDefinitions');
-  // const treeView = window.createTreeView('systemObjectDefinitions', {
-  //   treeDataProvider: metaView
-  // })
+  const metaView: MetadataView = new MetadataView(context);
+  metaView.getDataFromProvider('systemObjectDefinitions');
 
 
   // The command has been defined in the package.json file
@@ -23,6 +24,7 @@ export function activate(context: ExtensionContext) {
 
       // Display a message box to the user
       window.showInformationMessage('Hello World!');
+      console.log('hello from the other side');
     }
   );
 

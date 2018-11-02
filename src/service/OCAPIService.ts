@@ -339,7 +339,7 @@ export class OCAPIService {
 
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
-      const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders;
+      const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders || [];
       const dwConfigFiles = await Promise.all(
         workspaceFolders.map(wf =>
           workspace.findFiles(

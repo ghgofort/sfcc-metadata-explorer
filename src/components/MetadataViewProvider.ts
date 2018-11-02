@@ -57,7 +57,7 @@ export class MetadataViewProvider
    */
   async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
     if (!element) {
-      // If no element was passed, the refresh the root data.
+      // If no element was passed, then refresh the root data.
       const service: OCAPIService = new OCAPIService();
       let _callSetup: ICallSetup = null;
       let _callResult = {};
