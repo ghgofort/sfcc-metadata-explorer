@@ -283,7 +283,7 @@ export class OCAPIService {
     }
   }
 
-  public async makeCall(callSetup: ICallSetup) {
+  public async makeCall(callSetup: ICallSetup): Promise<any> {
     let params;
     if (callSetup.body && Object.keys(callSetup.body).length > 0) {
       params = {
@@ -298,7 +298,14 @@ export class OCAPIService {
       };
     }
 
-    return await fetch(callSetup.endpoint, params);
+    return await fetch(callSetup.endpoint, params)
+    .then(resp => {
+      if (resp.ok) {
+        return resp.json();
+      } else {
+        console.error(resp);
+      }
+    });
   }
 
   /**
@@ -332,7 +339,7 @@ export class OCAPIService {
 
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
-      const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders;
+      const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders || [];
       const dwConfigFiles = await Promise.all(
         workspaceFolders.map(wf =>
           workspace.findFiles(
