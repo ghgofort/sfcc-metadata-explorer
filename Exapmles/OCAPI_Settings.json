@@ -1,0 +1,21 @@
+{
+  "_v": "18.8",
+    "clients":
+  [
+    {
+      "allowed_origins": [],
+      "client_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "resources":
+        [
+          {
+            "resource_id": "/system_object_definitions",
+            "methods": ["get"],
+            "read_attributes": "(**)",
+            "write_attributes": "(**)",
+            "cache_time": 900,
+            "version_range": { "from": "18.8" }
+          }
+        ]
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import { TreeItemCollapsibleState } from 'vscode';
 /**
  * @file MetadataViewProvider.ts
  * @fileoverview - This file holds the MetadataViewProvider class implementation
@@ -7,7 +6,7 @@ import { TreeItemCollapsibleState } from 'vscode';
  */
 
 import { MetadataNode } from './MetadataNode';
-import { Event, EventEmitter, TreeDataProvider, TreeItem } from 'vscode';
+import { Event, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, TreeItem } from 'vscode';
 import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
 
@@ -60,7 +59,7 @@ export class MetadataViewProvider
       // If no element was passed, then refresh the root data.
       const service: OCAPIService = new OCAPIService();
       let _callSetup: ICallSetup = null;
-      let _callResult = {};
+      let _callResult: any;
 
       try {
         _callSetup = await service.getCallSetup(
@@ -69,7 +68,19 @@ export class MetadataViewProvider
           { select: '(**)' }
         );
         _callResult = await service.makeCall(_callSetup);
-        console.log(_callResult);
+
+        // If the API call returns data, then map each data item to a TreeItem.
+        if (_callResult.data && Array.isArray(_callResult.data)) {
+          return _callResult.data.map(sysObj => {
+            console.log(sysObj);
+            let name = sysObj.object_type === 'CustomObject' &&
+              typeof sysObj.display_name !== 'undefined' ?
+              sysObj.display_name.default + ' (CustomObject)' :
+              sysObj.object_type;
+            const node = new MetadataNode(name, TreeItemCollapsibleState.None);
+            return node;
+          });
+        }
       } catch (e) {
         console.error(e);
         return Promise.reject(e);
