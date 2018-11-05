@@ -9,6 +9,7 @@ import { MetadataNode } from './MetadataNode';
 import { Event, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, TreeItem } from 'vscode';
 import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
+import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 
 /**
  * @class MetadataViewProvider
@@ -62,6 +63,7 @@ export class MetadataViewProvider
       let _callResult: any;
 
       try {
+        // Async calls
         _callSetup = await service.getCallSetup(
           'systemObjectDefinitions',
           'getAll',
@@ -69,25 +71,48 @@ export class MetadataViewProvider
         );
         _callResult = await service.makeCall(_callSetup);
 
-        // If the API call returns data, then map each data item to a TreeItem.
+        // If the API call returns data create a tree.
         if (_callResult.data && Array.isArray(_callResult.data)) {
+          // Sort the SystemObjects & the CustomObjects
+          const custObjectArray = [];
+          const sysObjectArray = [];
+          _callResult.data.forEach(resultObject => {
+            if (resultObject.object_type === 'CustomObject' &&
+              typeof resultObject.display_name !== 'undefined'
+            ) {
+              custObjectArray.push(resultObject);
+            } else {
+              sysObjectArray.push(resultObject);
+            }
+          });
+
+
           return _callResult.data.map(sysObj => {
             console.log(sysObj);
             let name = sysObj.object_type === 'CustomObject' &&
               typeof sysObj.display_name !== 'undefined' ?
               sysObj.display_name.default + ' (CustomObject)' :
               sysObj.object_type;
-            const node = new MetadataNode(name, TreeItemCollapsibleState.None);
+
+            // Create a MetaDataNode instance which implements the TreeItem
+            // interface and holds the data of the document type that it
+            // represents.
+            const node = new MetadataNode(name, TreeItemCollapsibleState.None,
+              new ObjectTypeDefinition(sysObj));
             return node;
           });
         }
+
+        // If the call did not recieve data show a message.
+        /** @todo - Display message if items not found */
       } catch (e) {
         console.error(e);
         return Promise.reject(e);
       }
     } else {
-      // If an element was passed in, then get the specific data for that call.
-      /** @todo */
+      if (element.attribute_group_count > 0) {
+
+      }
     }
   }
 }
