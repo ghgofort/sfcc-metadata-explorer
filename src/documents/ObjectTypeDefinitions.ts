@@ -4,15 +4,15 @@
  * object_type_definitions document type.
  */
 
-import ObjectTypeDefinition from "./ObjectTypeDefinition";
+import ObjectTypeDefinition from './ObjectTypeDefinition';
 
 export class ObjectTypeDefinitions {
   public count: number = 0;
   public data: ObjectTypeDefinition[] = [];
   public expand: string[] = [];
-  public next: string = "";
-  public previous: string = "";
-  public select: string = "";
+  public next: string = '';
+  public previous: string = '';
+  public select: string = '';
   public start: number = 0;
   public total: number = 0;
 

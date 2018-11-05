@@ -97,8 +97,12 @@ export class MetadataViewProvider
             // Create a MetaDataNode instance which implements the TreeItem
             // interface and holds the data of the document type that it
             // represents.
-            const node = new MetadataNode(name, TreeItemCollapsibleState.None,
-              new ObjectTypeDefinition(sysObj));
+            const node = new MetadataNode(
+              name,
+              TreeItemCollapsibleState.None,
+              { objectTypeDefinition: new ObjectTypeDefinition(sysObj) }
+            );
+
             return node;
           });
         }
@@ -110,8 +114,9 @@ export class MetadataViewProvider
         return Promise.reject(e);
       }
     } else {
-      if (element.attribute_group_count > 0) {
-
+      // Only expandable elements have children.
+      if (element.expandable) {
+        if (element.nodeType === )
       }
     }
   }

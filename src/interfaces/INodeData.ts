@@ -1,5 +1,7 @@
-import ObjectTypeDefinition from "../documents/ObjectTypeDefinition";
-import ObjectAttributeDefinition from "../documents/ObjectAttributeDefinition";
+
+import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
+import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 
 'use strict';
 
@@ -12,7 +14,8 @@ import ObjectAttributeDefinition from "../documents/ObjectAttributeDefinition";
  */
 
 export default interface INodeData {
-    objectAttributeDefinition?: ObjectAttributeDefinition
-    objectTypeDefinition?: ObjectTypeDefinition,
-    type: string
+    objectAttributeDefinition?: ObjectAttributeDefinition,
+    obtectAttributeGroup?: ObjectAttributeGroup,
+    objectTypeDefinition?: ObjectTypeDefinition
+    nodeValue?: string|number
 }

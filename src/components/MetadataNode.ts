@@ -5,10 +5,10 @@
  */
 
 import { Command, TreeItemCollapsibleState, TreeItem } from 'vscode';
+import INodeData from '../interfaces/INodeData';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
-import { ObjectTypeDefinitions } from '../documents/ObjectTypeDefinitions';
 
 /**
  * @class MetadataNode
@@ -18,9 +18,26 @@ import { ObjectTypeDefinitions } from '../documents/ObjectTypeDefinitions';
  * property, or value.
  */
 export class MetadataNode extends TreeItem {
-  _expandable: boolean;
-  _nodeType: string;
-  _objectTypeDefinition: ObjectTypeDefinition;
+  // Define member properties.
+  private _expandable: boolean;
+  private _nodeType: string;
+  objectAttributeDefinition: ObjectAttributeDefinition;
+  objectAttributeGroup: ObjectAttributeGroup;
+  objectTypeDefinition: ObjectTypeDefinition;
+  value: string|number;
+
+  /**
+   * @static
+   * @member {{definition: string, attribute: string, group: string}} nodeTypes -
+   *    An object literal mapping short names for node types to their SFCC
+   *    document types.
+   */
+  public static nodeTypes = {
+    definition: 'objectTypeDefinition',
+    attribute: 'objectAttributeDefinition',
+    group: 'objectAttributeGroup',
+    value: 'value'
+  }
 
   /**
    * The constructor function that calls the super class constructor, and then
@@ -37,24 +54,37 @@ export class MetadataNode extends TreeItem {
   constructor(
     public readonly name: string,
     public readonly collapsibleState: TreeItemCollapsibleState,
-    args: INodeData
+    nodeData: INodeData
   ) {
     super(name, collapsibleState);
+    const expandableTypes = ['group', 'definition', 'attribute', 'value'];
 
-    // Create the ObjectTypeDefinition member instance. Create an empty one if
-    // this is a parent node.
-    if (typeof args.objectTypeDefinition !== 'undefined') {
-      this._objectTypeDefinition = args.objectTypeDefinition;
-    }
+    // Loop through the nodeData Object properties to get the correct type.
+    // There will only be one property, since the node can only be one of the
+    // specified types.
+    Object.keys(nodeData).forEach(_dataType => {
+      this[_dataType] = nodeData[_dataType];
+      const nodeTypeIndex = expandableTypes.findIndex(type => {
+        return _dataType.toLocaleLowerCase().indexOf(type) > -1;
+      });
+      this._nodeType = expandableTypes[nodeTypeIndex];
+    });
 
-
+    // Set the instance member properties for the child Class.
+    this.expandable = expandableTypes.indexOf(this._nodeType) > -1;
+    this[this.nodeType] = nodeData[this.nodeType];
   }
 
-  get tooltip(): string {
-    return this.name;
-  }
+  /* Member Mutators & Accessors
+     ======================================================================== */
 
-  get expandable(): boolean {
-    return this._expandable;
-  }
+  /** @member {boolean} expandable - Boolean for if the node is expandable. */
+  get expandable(): boolean { return this._expandable; }
+  set expandable(value: boolean) { this._expandable = value; }
+
+  /** @member {string} nodeType - Readonly string for getting the node type. */
+  get nodeType(): string { return MetadataNode.nodeTypes[this._nodeType]; }
+
+  /** @member {string} tooltip - Readonly string for rendering a tooltip. */
+  get tooltip(): string { return this.name; }
 }
