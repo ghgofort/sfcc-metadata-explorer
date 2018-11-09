@@ -74,17 +74,17 @@ export class MetadataViewProvider
         // If the API call returns data create a tree.
         if (_callResult.data && Array.isArray(_callResult.data)) {
           // Sort the SystemObjects & the CustomObjects
-          const custObjectArray = [];
-          const sysObjectArray = [];
-          _callResult.data.forEach(resultObject => {
-            if (resultObject.object_type === 'CustomObject' &&
-              typeof resultObject.display_name !== 'undefined'
-            ) {
-              custObjectArray.push(resultObject);
-            } else {
-              sysObjectArray.push(resultObject);
-            }
-          });
+          // const custObjectArray = [];
+          // const sysObjectArray = [];
+          // _callResult.data.forEach(resultObject => {
+          //   if (resultObject.object_type === 'CustomObject' &&
+          //     typeof resultObject.display_name !== 'undefined'
+          //   ) {
+          //     custObjectArray.push(resultObject);
+          //   } else {
+          //     sysObjectArray.push(resultObject);
+          //   }
+          // });
 
 
           return _callResult.data.map(sysObj => {
@@ -99,7 +99,7 @@ export class MetadataViewProvider
             // represents.
             const node = new MetadataNode(
               name,
-              TreeItemCollapsibleState.None,
+              TreeItemCollapsibleState.Collapsed,
               { objectTypeDefinition: new ObjectTypeDefinition(sysObj) }
             );
 
@@ -116,7 +116,13 @@ export class MetadataViewProvider
     } else {
       // Only expandable elements have children.
       if (element.expandable) {
-        if (element.nodeType === )
+        if (element.nodeType === 'objectTypeDefinition') {
+          // Get the System/Custom Object attributes.
+
+
+        } else if (element.nodeType === 'objectAttributeDefinition') {
+          /** @todo - Get children for object attribute definiton */
+        }
       }
     }
   }
