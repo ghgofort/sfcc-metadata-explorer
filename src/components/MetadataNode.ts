@@ -24,7 +24,7 @@ export class MetadataNode extends TreeItem {
   objectAttributeDefinition: ObjectAttributeDefinition;
   objectAttributeGroup: ObjectAttributeGroup;
   objectTypeDefinition: ObjectTypeDefinition;
-  value: string|number;
+  value: string | number;
 
   /**
    * @static
@@ -56,8 +56,12 @@ export class MetadataNode extends TreeItem {
     public readonly collapsibleState: TreeItemCollapsibleState,
     nodeData: INodeData
   ) {
+    // Call the TreeNode constructor.
     super(name, collapsibleState);
-    const expandableTypes = ['group', 'definition', 'attribute', 'value'];
+
+    // The types of tree nodes that have child nodes.
+    const expandableTypes = Object.keys(MetadataNode.nodeTypes)
+      .filter(nodeType => nodeType !== 'value');
 
     // Loop through the nodeData Object properties to get the correct type.
     // There will only be one property, since the node can only be one of the
@@ -77,7 +81,6 @@ export class MetadataNode extends TreeItem {
 
   /* Member Mutators & Accessors
      ======================================================================== */
-
   /** @member {boolean} expandable - Boolean for if the node is expandable. */
   get expandable(): boolean { return this._expandable; }
   set expandable(value: boolean) { this._expandable = value; }
