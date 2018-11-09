@@ -116,7 +116,13 @@ export class MetadataViewProvider
     } else {
       // Only expandable elements have children.
       if (element.expandable) {
-        if (element.nodeType === )
+        if (element.nodeType === 'objectTypeDefinition') {
+          // Get the System/Custom Object attributes.
+
+
+        } else if (element.nodeType === 'objectAttributeDefinition') {
+          /** @todo - Get children for object attribute definiton */
+        }
       }
     }
   }
