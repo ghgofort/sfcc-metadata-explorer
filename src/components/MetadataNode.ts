@@ -35,6 +35,7 @@ export class MetadataNode extends TreeItem {
   public static nodeTypes = {
     definition: 'objectTypeDefinition',
     attribute: 'objectAttributeDefinition',
+    attributeValue: 'objectAttributeValueDefinition',
     group: 'objectAttributeGroup',
     value: 'value'
   }
@@ -69,7 +70,7 @@ export class MetadataNode extends TreeItem {
     Object.keys(nodeData).forEach(_dataType => {
       this[_dataType] = nodeData[_dataType];
       const nodeTypeIndex = expandableTypes.findIndex(type => {
-        return _dataType.toLocaleLowerCase().indexOf(type) > -1;
+        return MetadataNode.nodeTypes[type] === _dataType;
       });
       this._nodeType = expandableTypes[nodeTypeIndex];
     });
