@@ -16,8 +16,7 @@ export const apiConfig = {
     systemObjectDefinitions: {
       api: 'data',
       availableCalls: {
-        // Gets the list of system object definitions, filtered by any included
-        // query parameters.
+        // Gets a single system object definition.
         get: {
           authorization: 'BM_USER',
           headers: {
@@ -51,7 +50,29 @@ export const apiConfig = {
           ],
           path: 'system_object_definitions',
         },
-        //
+
+        // Get a list of the system object attributes for the specified system
+        // object type.
+        attributes: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_definitions'
+        },
       }
     }
   },

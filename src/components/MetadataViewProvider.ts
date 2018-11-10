@@ -10,6 +10,7 @@ import { Event, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, TreeIt
 import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 
 /**
  * @class MetadataViewProvider
@@ -56,24 +57,40 @@ export class MetadataViewProvider
    * @return {Promise<MetadataNode[]>}
    */
   async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
-    if (!element) {
-      // If no element was passed, then refresh the root data.
-      const service: OCAPIService = new OCAPIService();
-      let _callSetup: ICallSetup = null;
-      let _callResult: any;
+    const service: OCAPIService = new OCAPIService();
+    let _callSetup: ICallSetup = null;
+    let _callResult: any;
+    console.log(element);
 
-      try {
+    try {
+      // If no element was passed, then refresh the root data.
+      if (!element) {
         // Async calls
         _callSetup = await service.getCallSetup(
           'systemObjectDefinitions',
           'getAll',
           { select: '(**)' }
         );
-        _callResult = await service.makeCall(_callSetup);
+
+        // DEBUG --- REMOVE ME
+        console.log(_callSetup);
+
+
+        try {
+          _callResult = await service.makeCall(_callSetup);
+        } catch (e) {
+          console.log(e);
+          throw new Error(e.toString());
+        }
+
+
+        // DEGUG --- REMOVE ME
+        console.log(_callResult);
 
         // If the API call returns data create a tree.
         if (_callResult.data && Array.isArray(_callResult.data)) {
           // Sort the SystemObjects & the CustomObjects
+          // ======================================================
           // const custObjectArray = [];
           // const sysObjectArray = [];
           // _callResult.data.forEach(resultObject => {
@@ -85,7 +102,6 @@ export class MetadataViewProvider
           //     sysObjectArray.push(resultObject);
           //   }
           // });
-
 
           return _callResult.data.map(sysObj => {
             console.log(sysObj);
@@ -106,24 +122,67 @@ export class MetadataViewProvider
             return node;
           });
         }
+      } else {
+        // DEGUG --- REMOVE ME
+        console.log('Element was passed');
 
-        // If the call did not recieve data show a message.
-        /** @todo - Display message if items not found */
-      } catch (e) {
-        console.error(e);
-        return Promise.reject(e);
-      }
-    } else {
-      // Only expandable elements have children.
-      if (element.expandable) {
-        if (element.nodeType === 'objectTypeDefinition') {
-          // Get the System/Custom Object attributes.
+        // Only expandable elements have children.
+        if (element.expandable) {
+          // DEGUG --- REMOVE ME
+          console.log(element.nodeType);
 
+          if (element.nodeType === 'objectTypeDefinition') {
+            // Get the System/Custom Object attributes.
+            _callSetup = await service.getCallSetup(
+              'systemObjectDefinitions',
+              'attributes',
+              {
+                select: '(**)',
+                objectType: element.objectTypeDefinition.objectType
+              }
+            );
 
-        } else if (element.nodeType === 'objectAttributeDefinition') {
-          /** @todo - Get children for object attribute definiton */
+            // DEGUG --- REMOVE ME
+            console.log('callSetup: ', _callSetup);
+
+            // Make the call to the OCAPI Service.
+            try {
+              _callResult = await service.makeCall(_callSetup);
+            } catch (e) {
+              console.log(e);
+              throw new Error(e.toString());
+            }
+
+            if (!_callResult.error && _callResult.data) {
+              console.log(_callResult);
+
+              // If the API call returns data create a tree.
+              if (_callResult.data && Array.isArray(_callResult.data)) {
+                return _callResult.data.map(resultObj => {
+                  return new MetadataNode(
+                    resultObj.id,
+                    TreeItemCollapsibleState.Collapsed,
+                    { objectAttributeDefinition: new ObjectAttributeDefinition(resultObj) }
+                  )
+                });
+              }
+            }
+
+            return [new MetadataNode('name', TreeItemCollapsibleState.None, {})];
+          } else if (element.nodeType === 'objectAttributeDefinition') {
+            /** @todo - Get children for object attribute definiton */
+            return Promise.reject(new Error('Method not implemented for object attribute definitions'));
+          }
+        } else {
+          return [];
         }
       }
+
+      // If the call did not recieve data show a message.
+      /** @todo - Display message if items not found */
+    } catch (e) {
+      console.error(e);
+      return Promise.reject(e);
     }
   }
 }
