@@ -37,12 +37,12 @@ export class OCAPIService {
    * Returns an object literal that conforms to the ICallSetup interface so that
    * it can be passed directly to the makeCall() method of this class.
    * @public
-   * @param callName - The name of the SFCC OCAPI call to make. The name is
+   * @param {string} resourceName - The name of the OCAPI Data API resource to query.
+   * @param {string} callName - The name of the SFCC OCAPI call to make. The name is
    *    in the format that is used in the URI to identify which asset we are
    *    requesting form the server.
-   * @param callData - An object of key/value pairs to be extracted into the
+   * @param {Object} [callData] - An object of key/value pairs to be extracted into the
    *    URL parameters, headers, and body of the OCAPI request.
-   * @param resourceName - The name of the OCAPI Data API resource to query.
    * @returns An object conforming to the ICallSetup interface with the data
    *    for making the call to the API endpoint, or an appropriate error
    *    message.
@@ -147,7 +147,8 @@ export class OCAPIService {
             param.use === 'PATH_PARAMETER' &&
             setupResult.endpoint.indexOf(replaceMe) > -1
           ) {
-            setupResult.endpoint.replace(replaceMe, callData[param.id]);
+            setupResult.endpoint = setupResult.endpoint.replace(
+                replaceMe, callData[param.id]);
           } else if (param.use === 'QUERY_PARAMETER') {
             // Check if this is the first query string parameter, or an
             // additional parameter being added to the list.
@@ -303,7 +304,9 @@ export class OCAPIService {
       if (resp.ok) {
         return resp.json();
       } else {
-        console.error(resp);
+        const errMsg = resp.statusText + ' :: Code ' + resp.status;
+        console.error(errMsg);
+        return { error: true, errorMessage: errMsg };
       }
     });
   }
