@@ -6,7 +6,12 @@
  */
 
 import { MetadataNode } from './MetadataNode';
-import { Event, EventEmitter, TreeDataProvider, TreeItemCollapsibleState, TreeItem } from 'vscode';
+import {
+  Event,
+  EventEmitter,
+  TreeDataProvider,
+  TreeItemCollapsibleState
+} from 'vscode';
 import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
@@ -72,10 +77,6 @@ export class MetadataViewProvider
           { select: '(**)' }
         );
 
-        // DEBUG --- REMOVE ME
-        console.log(_callSetup);
-
-
         try {
           _callResult = await service.makeCall(_callSetup);
         } catch (e) {
@@ -83,43 +84,22 @@ export class MetadataViewProvider
           throw new Error(e.toString());
         }
 
-
-        // DEGUG --- REMOVE ME
-        console.log(_callResult);
-
         // If the API call returns data create a tree.
         if (_callResult.data && Array.isArray(_callResult.data)) {
-          // Sort the SystemObjects & the CustomObjects
-          // ======================================================
-          // const custObjectArray = [];
-          // const sysObjectArray = [];
-          // _callResult.data.forEach(resultObject => {
-          //   if (resultObject.object_type === 'CustomObject' &&
-          //     typeof resultObject.display_name !== 'undefined'
-          //   ) {
-          //     custObjectArray.push(resultObject);
-          //   } else {
-          //     sysObjectArray.push(resultObject);
-          //   }
-          // });
-
           return _callResult.data.map(sysObj => {
             console.log(sysObj);
-            let name = sysObj.object_type === 'CustomObject' &&
-              typeof sysObj.display_name !== 'undefined' ?
-              sysObj.display_name.default + ' (CustomObject)' :
-              sysObj.object_type;
+            let name =
+              sysObj.object_type === 'CustomObject' &&
+              typeof sysObj.display_name !== 'undefined'
+                ? sysObj.display_name.default + ' (CustomObject)'
+                : sysObj.object_type;
 
             // Create a MetaDataNode instance which implements the TreeItem
             // interface and holds the data of the document type that it
             // represents.
-            const node = new MetadataNode(
-              name,
-              TreeItemCollapsibleState.Collapsed,
-              { objectTypeDefinition: new ObjectTypeDefinition(sysObj) }
-            );
-
-            return node;
+            return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
+              objectTypeDefinition: new ObjectTypeDefinition(sysObj)
+            });
           });
         }
       } else {
@@ -131,6 +111,8 @@ export class MetadataViewProvider
           // DEGUG --- REMOVE ME
           console.log(element.nodeType);
 
+          /* Object Type Definiton
+             ================================================================ */
           if (element.nodeType === 'objectTypeDefinition') {
             // Get the System/Custom Object attributes.
             _callSetup = await service.getCallSetup(
@@ -142,36 +124,57 @@ export class MetadataViewProvider
               }
             );
 
-            // DEGUG --- REMOVE ME
-            console.log('callSetup: ', _callSetup);
-
             // Make the call to the OCAPI Service.
             try {
               _callResult = await service.makeCall(_callSetup);
             } catch (e) {
-              console.log(e);
+              console.error(e);
               throw new Error(e.toString());
             }
 
+            // If the API call returns data create the first level of a tree.
             if (!_callResult.error && _callResult.data) {
-              console.log(_callResult);
-
-              // If the API call returns data create a tree.
               if (_callResult.data && Array.isArray(_callResult.data)) {
                 return _callResult.data.map(resultObj => {
                   return new MetadataNode(
                     resultObj.id,
                     TreeItemCollapsibleState.Collapsed,
-                    { objectAttributeDefinition: new ObjectAttributeDefinition(resultObj) }
-                  )
+                    {
+                      objectAttributeDefinition: new ObjectAttributeDefinition(
+                        resultObj
+                      )
+                    }
+                  );
                 });
               }
             }
 
-            return [new MetadataNode('name', TreeItemCollapsibleState.None, {})];
+            // If there is an error display a single node indicating that there
+            // was a failure to load the object definitions.
+            return [
+              new MetadataNode(
+                'Unable to load...',
+                TreeItemCollapsibleState.None,
+                {}
+              )
+            ];
+
+            /* Object Attribute Definiton
+             ================================================================ */
           } else if (element.nodeType === 'objectAttributeDefinition') {
-            /** @todo - Get children for object attribute definiton */
-            return Promise.reject(new Error('Method not implemented for object attribute definitions'));
+            const attr: ObjectAttributeDefinition =
+              element.objectAttributeDefinition;
+
+            return Object.keys(attr).map(key => {
+              if (typeof attr[key] === 'string') {
+                return new MetadataNode(
+                  key +' : ' + attr[key],
+                  TreeItemCollapsibleState.None,
+                  {}
+                )
+              }
+            });
+
           }
         } else {
           return [];
