@@ -6,8 +6,11 @@
 
 /**
  * @class ObjectTypeDefinition
+ * @classdesc - Provides a data class for working with the OCAPI Data API
+ *    document type object_type_definition.
  */
 export default class ObjectTypeDefinition {
+  // Declare class member variable defaults.
   public attributeDefinitionCount: number = 0;
   public attributeGroupCount: number = 0;
   public contentObject: boolean = false;
