@@ -22,11 +22,12 @@ export class MetadataNode extends TreeItem {
   // Define member properties.
   private _expandable: boolean;
   private _nodeType: string;
-  objectAttributeDefinition: ObjectAttributeDefinition;
-  objectAttributeGroup: ObjectAttributeGroup;
-  objectAttributeValueDefinition: ObjectAttributeValueDefinition;
-  objectTypeDefinition: ObjectTypeDefinition;
-  value: string | number;
+  public baseNodeName: string;
+  public objectAttributeDefinition: ObjectAttributeDefinition;
+  public objectAttributeGroup: ObjectAttributeGroup;
+  public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
+  public objectTypeDefinition: ObjectTypeDefinition;
+  public value: string | number;
 
   /**
    * @static
@@ -35,6 +36,7 @@ export class MetadataNode extends TreeItem {
    *    document types.
    */
   public static nodeTypes = {
+    baseNodeName: 'baseNodeName',
     definition: 'objectTypeDefinition',
     attribute: 'objectAttributeDefinition',
     attributeValue: 'objectAttributeValueDefinition',

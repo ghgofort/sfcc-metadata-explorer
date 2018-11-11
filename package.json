@@ -16,6 +16,17 @@
   ],
   "main": "./out/extension",
   "contributes": {
+    "configuration": {
+      "title": "SFCC Metadata Explorer Configuration",
+      "properties": {
+        "extension.sfccmetadata.explorer.systemobjects": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the system objects tree",
+          "scope": "window"
+        }
+      }
+    },
     "commands": [
       {
         "command": "extension.sfccexplorer.getobjects",

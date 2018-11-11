@@ -10,7 +10,9 @@ import {
   Event,
   EventEmitter,
   TreeDataProvider,
-  TreeItemCollapsibleState
+  TreeItemCollapsibleState,
+  WorkspaceConfiguration,
+  workspace
 } from 'vscode';
 import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
@@ -76,45 +78,77 @@ export class MetadataViewProvider
       /* No Element -- Root
          ==================================================================== */
       if (!element) {
-        // Async calls
-        _callSetup = await service.getCallSetup(
-          'systemObjectDefinitions',
-          'getAll',
-          { select: '(**)' }
+        const metaNodes: MetadataNode[] = [];
+
+        // Get the workspace configuration object for all configuration settings
+        // related to this extension.
+        const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(
+          'extension.metadata'
         );
 
-        try {
-          _callResult = await service.makeCall(_callSetup);
-        } catch (e) {
-          console.log(e);
-          throw new Error(e.toString());
+        // Get the VSCode settings for display of each base tree node.
+        const showSystemObjects: boolean = Boolean(
+          workspaceConfig.get('explorer.systemobjects')
+            ? workspaceConfig.get('explorer.systemobjects')
+            : false
+        );
+
+        if (showSystemObjects) {
+          metaNodes.push(new MetadataNode(
+            'System Object Definitions',
+            TreeItemCollapsibleState.Collapsed,
+            { baseNodeName: 'systemObjectDefinitions' }
+          ));
         }
 
-        // If the API call returns data create a tree.
-        if (_callResult.data && Array.isArray(_callResult.data)) {
-          // Add the display name to the custom objects so that they can be
-          // easily identified as custom.
-          return _callResult.data.map(sysObj => {
-            let name =
-              sysObj.object_type === 'CustomObject' &&
-              typeof sysObj.display_name !== 'undefined'
-                ? sysObj.display_name.default + ' (CustomObject)'
-                : sysObj.object_type;
+        console.log(metaNodes);
 
-            // Create a MetaDataNode instance which implements the TreeItem
-            // interface and holds the data of the document type that it
-            // represents.
-            return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
-              objectTypeDefinition: new ObjectTypeDefinition(sysObj)
-            });
-          });
-        }
+        return Promise.resolve(metaNodes);
+
+
       } else {
         // Only expandable elements types have children.
         if (element.expandable) {
-          if (element.nodeType === 'objectTypeDefinition') {
+          if (element.nodeType === 'baseNodeName') {
+            /* Base Node -- Metdata Type
+             * ============================================================== */
+            // Async call to get the appropriate OCAPI type.
+            _callSetup = await service.getCallSetup(
+              element.baseNodeName,
+              'getAll',
+              { select: '(**)' }
+            );
+
+            try {
+              _callResult = await service.makeCall(_callSetup);
+            } catch (e) {
+              console.log(e);
+              throw new Error(e.toString());
+            }
+
+            // If the API call returns data create a tree.
+            if (_callResult.data && Array.isArray(_callResult.data)) {
+              // Add the display name to the custom objects so that they can be
+              // easily identified as custom.
+              return _callResult.data.map(sysObj => {
+                let name =
+                  sysObj.object_type === 'CustomObject' &&
+                  typeof sysObj.display_name !== 'undefined'
+                    ? sysObj.display_name.default + ' (CustomObject)'
+                    : sysObj.object_type;
+
+                // Create a MetaDataNode instance which implements the TreeItem
+                // interface and holds the data of the document type that it
+                // represents.
+                return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
+                  objectTypeDefinition: new ObjectTypeDefinition(sysObj)
+                });
+              });
+            }
+
+          } else if (element.nodeType === 'objectTypeDefinition') {
             /* Object Type Definiton
-             * ================================================================ */
+             * ============================================================== */
             // Get the System/Custom Object attributes.
             _callSetup = await service.getCallSetup(
               'systemObjectDefinitions',
