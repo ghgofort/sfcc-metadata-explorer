@@ -47,7 +47,6 @@ export default class ObjectAttributeDefinition {
   public valueType: string;
   public visible: boolean;
 
-
   /**
    * @constructor
    * @param {Object} args - The raw JSON response object:
@@ -60,7 +59,8 @@ export default class ObjectAttributeDefinition {
    *    use in the import and export files.
    */
   constructor(args) {
-    this.defaultValue = args.default_value ||
+    this.defaultValue =
+      new ObjectAttributeValueDefinition(args.default_value) ||
       new ObjectAttributeValueDefinition({});
     this.description = args.description || { default: '' };
     this.displayName = args.display_name || { default: '' };
@@ -88,7 +88,7 @@ export default class ObjectAttributeDefinition {
     this.setValueType = args.set_value_type || '';
     this.siteSpecific = args.site_specific || false;
     this.system = args.system || false;
-    this.unit = args.unit || { default: '' }
+    this.unit = args.unit || { default: '' };
     this.valueDefinitions = args.value_definitions || [];
     this.valueType = args.value_type || '';
     this.visible = args.visible || false;

@@ -9,6 +9,7 @@ import INodeData from '../interfaces/INodeData';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
+import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 
 /**
  * @class MetadataNode
@@ -23,6 +24,7 @@ export class MetadataNode extends TreeItem {
   private _nodeType: string;
   objectAttributeDefinition: ObjectAttributeDefinition;
   objectAttributeGroup: ObjectAttributeGroup;
+  objectAttributeValueDefinition: ObjectAttributeValueDefinition;
   objectTypeDefinition: ObjectTypeDefinition;
   value: string | number;
 

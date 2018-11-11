@@ -6,7 +6,13 @@
 
 import ObjectTypeDefinition from './ObjectTypeDefinition';
 
+/**
+ * @class ObjectTypeDefinitions
+ * @classdesc - A data model class for working with the OCAPI data API's
+ *    object_type_definitions document type.
+ */
 export class ObjectTypeDefinitions {
+  // Declare class member variables.
   public count: number = 0;
   public data: ObjectTypeDefinition[] = [];
   public expand: string[] = [];
@@ -16,6 +22,10 @@ export class ObjectTypeDefinitions {
   public start: number = 0;
   public total: number = 0;
 
+  /**
+   * @param args - The raw JSON document returned from an OCAPI call.
+   * @constructor
+   */
   constructor(args) {
     // Get any arguments that were passed into the instance to set the values on
     // Object initialization.

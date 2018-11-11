@@ -16,6 +16,7 @@ import { OCAPIService } from '../service/OCAPIService';
 import { ICallSetup } from '../service/ICallSetup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
+import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 
 /**
  * @class MetadataViewProvider
@@ -25,11 +26,16 @@ import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
  */
 export class MetadataViewProvider
   implements TreeDataProvider<MetadataNode | undefined> {
+  // Declare memeber variables.
   readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
-
   public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
 
+  /**
+   *
+   * @param {string} providerType - The type of provider being initialized;
+   * @param {EventEmitter<MetadataNode | undefined>} eventEmitter
+   */
   constructor(
     providerType: string,
     eventEmitter: EventEmitter<MetadataNode | undefined>
@@ -65,10 +71,10 @@ export class MetadataViewProvider
     const service: OCAPIService = new OCAPIService();
     let _callSetup: ICallSetup = null;
     let _callResult: any;
-    console.log(element);
 
     try {
-      // If no element was passed, then refresh the root data.
+      /* No Element -- Root
+         ==================================================================== */
       if (!element) {
         // Async calls
         _callSetup = await service.getCallSetup(
@@ -86,8 +92,9 @@ export class MetadataViewProvider
 
         // If the API call returns data create a tree.
         if (_callResult.data && Array.isArray(_callResult.data)) {
+          // Add the display name to the custom objects so that they can be
+          // easily identified as custom.
           return _callResult.data.map(sysObj => {
-            console.log(sysObj);
             let name =
               sysObj.object_type === 'CustomObject' &&
               typeof sysObj.display_name !== 'undefined'
@@ -103,17 +110,11 @@ export class MetadataViewProvider
           });
         }
       } else {
-        // DEGUG --- REMOVE ME
-        console.log('Element was passed');
-
-        // Only expandable elements have children.
+        // Only expandable elements types have children.
         if (element.expandable) {
-          // DEGUG --- REMOVE ME
-          console.log(element.nodeType);
-
-          /* Object Type Definiton
-             ================================================================ */
           if (element.nodeType === 'objectTypeDefinition') {
+            /* Object Type Definiton
+             * ================================================================ */
             // Get the System/Custom Object attributes.
             _callSetup = await service.getCallSetup(
               'systemObjectDefinitions',
@@ -158,23 +159,83 @@ export class MetadataViewProvider
                 {}
               )
             ];
-
-            /* Object Attribute Definiton
-             ================================================================ */
           } else if (element.nodeType === 'objectAttributeDefinition') {
-            const attr: ObjectAttributeDefinition =
+            /* Object Attribute Definiton
+             * ============================================================== */
+            const objAttrDef: ObjectAttributeDefinition =
               element.objectAttributeDefinition;
 
-            return Object.keys(attr).map(key => {
-              if (typeof attr[key] === 'string') {
+            // Loop through the member properties and handle each possible type
+            // for display as a node on the tree.
+            return Object.keys(objAttrDef).map(key => {
+              // == Primitive Types
+              if (
+                typeof objAttrDef[key] === 'string' ||
+                typeof objAttrDef[key] === 'number' ||
+                typeof objAttrDef[key] === 'boolean'
+              ) {
                 return new MetadataNode(
-                  key +' : ' + attr[key],
+                  key + ' : ' + objAttrDef[key],
                   TreeItemCollapsibleState.None,
                   {}
-                )
+                );
+              } else if (
+                // == Localized Strings
+                typeof objAttrDef[key] === 'object' &&
+                objAttrDef[key] !== null &&
+                typeof objAttrDef[key].default === 'string'
+              ) {
+                return new MetadataNode(
+                  key + ' : ' + objAttrDef[key].default,
+                  TreeItemCollapsibleState.None,
+                  {}
+                );
+              } else if (
+                objAttrDef[key] instanceof ObjectAttributeValueDefinition
+              ) {
+                // == ObjectAttributeValueDefinition
+                if (typeof objAttrDef[key].id !== 'undefined') {
+                  return new MetadataNode(
+                    key + ': ' + objAttrDef[key].id,
+                    TreeItemCollapsibleState.Collapsed,
+                    { objectAttributeValueDefinition: objAttrDef[key] }
+                  );
+                }
+                return new MetadataNode(
+                  key + ': (undefined)',
+                  TreeItemCollapsibleState.None,
+                  { objectAttributeValueDefinition: objAttrDef[key] }
+                );
               }
             });
+          } else if (element.nodeType === 'objectAttributeValueDefinition') {
+            /* OjbectAttributeValueDefinition
+             * ============================================================== */
+            return Object.keys(element.objectAttributeValueDefinition).map(
+              key => {
+                const value = element.objectAttributeValueDefinition[key];
 
+                if (
+                  typeof value === 'string' ||
+                  typeof value === 'number' ||
+                  typeof value === 'boolean'
+                ) {
+                  // == Primitive Types
+                  return new MetadataNode(
+                    key + ': ' + value,
+                    TreeItemCollapsibleState.None,
+                    {}
+                  );
+                } else {
+                  // == Localized String
+                  return new MetadataNode(
+                    key + ': ' + value.default,
+                    TreeItemCollapsibleState.None,
+                    {}
+                  );
+                }
+              }
+            );
           }
         } else {
           return [];
