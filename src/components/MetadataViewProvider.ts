@@ -83,29 +83,26 @@ export class MetadataViewProvider
         // Get the workspace configuration object for all configuration settings
         // related to this extension.
         const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(
-          'extension.metadata'
+          'extension.sfccmetadata'
         );
 
         // Get the VSCode settings for display of each base tree node.
         const showSystemObjects: boolean = Boolean(
           workspaceConfig.get('explorer.systemobjects')
-            ? workspaceConfig.get('explorer.systemobjects')
-            : false
         );
 
+        // If the user config is enabled, then show the option.
         if (showSystemObjects) {
-          metaNodes.push(new MetadataNode(
-            'System Object Definitions',
-            TreeItemCollapsibleState.Collapsed,
-            { baseNodeName: 'systemObjectDefinitions' }
-          ));
+          metaNodes.push(
+            new MetadataNode(
+              'System Object Definitions',
+              TreeItemCollapsibleState.Collapsed,
+              { baseNodeName: 'systemObjectDefinitions' }
+            )
+          );
         }
 
-        console.log(metaNodes);
-
         return Promise.resolve(metaNodes);
-
-
       } else {
         // Only expandable elements types have children.
         if (element.expandable) {
@@ -140,12 +137,15 @@ export class MetadataViewProvider
                 // Create a MetaDataNode instance which implements the TreeItem
                 // interface and holds the data of the document type that it
                 // represents.
-                return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
-                  objectTypeDefinition: new ObjectTypeDefinition(sysObj)
-                });
+                return new MetadataNode(
+                  name,
+                  TreeItemCollapsibleState.Collapsed,
+                  {
+                    objectTypeDefinition: new ObjectTypeDefinition(sysObj)
+                  }
+                );
               });
             }
-
           } else if (element.nodeType === 'objectTypeDefinition') {
             /* Object Type Definiton
              * ============================================================== */
