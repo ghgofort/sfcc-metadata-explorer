@@ -4,6 +4,10 @@
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
   "version": "0.0.1",
   "publisher": "ghgofort",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ghgofort/sfcc-metadata-explorer"
+  },
   "engines": {
     "vscode": "^1.21.0",
     "node": "^7.9.0"
@@ -37,15 +41,26 @@
       {
         "command": "extension.sfccexplorer.systemobjectattribute.add",
         "title": "Add System Object Attributer",
-        "description": "Add a new attribute to a SFCC system object on a connected sandbox."
+        "description": "Add a new attribute to a SFCC system object on a connected sandbox.",
+        "icon":{
+          "dark": "resources/dark/add.svg",
+          "light": "resources/light/add.svg"
+        }
       }
     ],
+    "menus": {
+      "view/title": [{
+        "when": "view == systemObjectAttributeDefinitionsView",
+        "command": "extension.sfccexplorer.systemobjectattribute.add",
+        "group": "navigation"
+      }]
+    },
     "viewsContainers": {
       "activitybar": [
         {
           "id": "metadata-explorer",
           "title": "SFCC Metadata Explorer",
-          "icon": "resources/cloud.svg"
+          "icon": "resources/dark/sfcc_meta_explorer.svg"
         }
       ]
     },
