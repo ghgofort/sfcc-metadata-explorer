@@ -33,6 +33,11 @@
         "command": "extension.sfccexplorer.getobjects",
         "title": "Populate SFCC System Object Definitions",
         "description": "Get system object definitions from sandbox."
+      },
+      {
+        "command": "extension.sfccexplorer.systemobjectattribute.add",
+        "title": "Add System Object Attributer",
+        "description": "Add a new attribute to a SFCC system object on a connected sandbox."
       }
     ],
     "viewsContainers": {
