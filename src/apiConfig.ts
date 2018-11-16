@@ -53,7 +53,7 @@ export const apiConfig = {
 
         // Get a list of the system object attributes for the specified system
         // object type.
-        attributes: {
+        getAttributes: {
           authorization: 'BM_USER',
           headers: {
             'Content-Type': 'application/json'
@@ -72,6 +72,30 @@ export const apiConfig = {
 
           ],
           path: 'system_object_definitions/{objectType}/attribute_definitions'
+        },
+
+        // Get a list of the system object attributes for the specified system
+        // object type.
+        createAttribute: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dw-validate-existing': true
+          },
+          method: 'POST',
+          params: [
+            {
+              id: 'id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
       }
     }

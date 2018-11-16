@@ -152,7 +152,7 @@ export class MetadataViewProvider
             // Get the System/Custom Object attributes.
             _callSetup = await service.getCallSetup(
               'systemObjectDefinitions',
-              'attributes',
+              'getAttributes',
               {
                 select: '(**)',
                 objectType: element.objectTypeDefinition.objectType

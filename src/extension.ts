@@ -2,6 +2,8 @@
 
 import { commands, ExtensionContext, window } from 'vscode';
 import { MetadataView } from './components/MetadataView';
+import OCAPIHelper from './helpers/OCAPIHelper';
+import ObjectAttributeDefinition from './documents/ObjectAttributeDefinition';
 
 /**
  * The entry point for the extension. This lifecycle method is called when the
@@ -21,9 +23,13 @@ export function activate(context: ExtensionContext) {
   const disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjectattribute.add',
     () => {
+      const attributeDefinition = new ObjectAttributeDefinition({});
+      OCAPIHelper.addSystemObjectAttribute(attributeDefinition);
+      attributeDefinition.id = 'testId';
+
+
       // Display a message box to the user
       window.showInformationMessage('Hello World!');
-      console.log('hello from the other side');
     }
   );
 
