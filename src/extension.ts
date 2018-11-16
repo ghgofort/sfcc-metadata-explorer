@@ -21,7 +21,6 @@ export function activate(context: ExtensionContext) {
   const disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjectattribute.add',
     () => {
-
       // Display a message box to the user
       window.showInformationMessage('Hello World!');
       console.log('hello from the other side');

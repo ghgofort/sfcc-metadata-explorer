@@ -40,7 +40,7 @@
       },
       {
         "command": "extension.sfccexplorer.systemobjectattribute.add",
-        "title": "Add System Object Attributer",
+        "title": "Add a New System Object Attribute",
         "description": "Add a new attribute to a SFCC system object on a connected sandbox.",
         "icon":{
           "dark": "resources/dark/add.svg",
@@ -50,8 +50,8 @@
     ],
     "menus": {
       "view/title": [{
-        "when": "view == systemObjectAttributeDefinitionsView",
         "command": "extension.sfccexplorer.systemobjectattribute.add",
+        "when": "view == systemObjectDefinitionsView",
         "group": "navigation"
       }]
     },
