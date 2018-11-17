@@ -1,9 +1,8 @@
 'use strict';
 
-import { commands, ExtensionContext, window } from 'vscode';
+import { commands, ExtensionContext, window, Disposable } from 'vscode';
 import { MetadataView } from './components/MetadataView';
 import OCAPIHelper from './helpers/OCAPIHelper';
-import ObjectAttributeDefinition from './documents/ObjectAttributeDefinition';
 
 /**
  * The entry point for the extension. This lifecycle method is called when the
@@ -16,24 +15,17 @@ export function activate(context: ExtensionContext) {
   const metaView: MetadataView = new MetadataView(context);
   metaView.getDataFromProvider('systemObjectDefinitions');
 
-
-  // The command has been defined in the package.json file
-  // Now provide the implementation of the command with  registerCommand
-  // The commandId parameter must match the command field in package.json
-  const disposable = commands.registerCommand(
+  /**
+   * Binds the handler function for the event. The command has been defined in
+   * the package.json file.
+   *
+   * @listens extension.sfccexplorer.systemobjectattribute.add
+   */
+  const addAttributeDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjectattribute.add',
-    () => {
-      const attributeDefinition = new ObjectAttributeDefinition({});
-      OCAPIHelper.addSystemObjectAttribute(attributeDefinition);
-      attributeDefinition.id = 'testId';
+      OCAPIHelper.addAttributeNode);
 
-
-      // Display a message box to the user
-      window.showInformationMessage('Hello World!');
-    }
-  );
-
-  context.subscriptions.push(disposable);
+  context.subscriptions.push(addAttributeDisposable);
 }
 
 // this method is called when your extension is deactivated
