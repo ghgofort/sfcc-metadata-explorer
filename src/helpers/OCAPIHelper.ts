@@ -9,7 +9,13 @@ import { ICallSetup } from '../service/ICallSetup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import { OCAPIService } from '../service/OCAPIService';
 import { MetadataView } from '../components/MetadataView';
-import { window, CancellationTokenSource, CancellationToken } from 'vscode';
+import {
+  window,
+  CancellationTokenSource,
+  CancellationToken,
+  QuickPickOptions,
+  InputBoxOptions
+} from 'vscode';
 
 /**
  * @class OCAPIHelper
@@ -19,10 +25,28 @@ import { window, CancellationTokenSource, CancellationToken } from 'vscode';
  */
 export default class OCAPIHelper {
   /* ========================================================================
-   * Static Instance Methods
+   * Static Members
    * ======================================================================== */
+  public static readonly ATTRIBUTE_TYPES = [
+    'Boolean',
+    'Date',
+    'Date + Time',
+    'Email',
+    'Enum of Integers',
+    'Enum of Strings',
+    'HTML',
+    'Image',
+    'Integer',
+    'Number',
+    'Password',
+    'Set of Integers',
+    'Set of Numbers',
+    'Set of Strings',
+    'String',
+    'Text'
+  ];
 
-   /**
+  /**
    * Makes a call to the OCAPIService class to add a new system object attribute
    * definition to the system object who's Id is specified.
    *
@@ -77,12 +101,99 @@ export default class OCAPIHelper {
     metadataView: MetadataView
   ): Promise<any> {
     // Create a cancelation token instance to cancel the request when needed.
-    const cancelAddAttributeToken: CancellationToken =
-      new CancellationTokenSource().token;
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelAddAttributeToken: CancellationToken = tokenSource.token;
+    const objAttributeDefinition: ObjectAttributeDefinition = new ObjectAttributeDefinition(
+      {}
+    );
 
-    // Show an input box for the user to enter the Id for the new attribute.
-    window.showInputBox({}, cancelAddAttributeToken);
+    /**
+     * @todo: Get display strings from a resource bundle.
+     */
 
-    return Promise.reject('This method is not implemented');
+    // Create options objects for the dialogs.
+    const idInputOptions: InputBoxOptions = {
+      prompt: 'Enter Attribute Id:',
+      validateInput: OCAPIHelper.validateAttributeId
+    };
+    const qpOptions: QuickPickOptions = {
+      placeHolder: 'Select the type for the attribute'
+    };
+
+
+    /* Begin Form Wizard
+       ====================================================================== */
+    try {
+      // Show an input box for the user to enter the Id for the new attribute.
+      const attributeId = await window.showInputBox(
+        idInputOptions,
+        cancelAddAttributeToken
+      );
+
+      // If the user cancels then the return is undefined.
+      if (typeof attributeId === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+      // Show a select option box to choose what type the new attribute will be.
+      const attributeType = await window.showQuickPick(
+        OCAPIHelper.ATTRIBUTE_TYPES,
+        qpOptions,
+        cancelAddAttributeToken
+      );
+
+      // If the user cancels, then exit the wizard.
+      if (typeof attributeType === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+
+    } catch (e) {
+      console.log(e);
+      return Promise.reject({
+        error: true,
+        cancelled: false,
+        errorObject: e
+      });
+    }
+
+  }
+
+  /**
+   * Validates that a string is an allowed Id for a SFCC SystemObject attribute.
+   *
+   * @param {string} id - The Id to validate against the SFCC criteria.
+   * @returns {string|null} - Returns an error message if the reuslt was not
+   *    valid, OR returns null if the result was valid.
+   */
+  public static validateAttributeId(id: string): string {
+    // Make a copy of the id string without any allowed speial characters.
+    let idWithoutAllowed = String(id);
+    // Special chars allowed in SystemAttributeDefinition Id field.
+    const allowedSpecialChars = [
+      '+',
+      '-',
+      '$',
+      '.',
+      '%',
+      '§',
+      '&',
+      '*',
+      '#',
+      '/'
+    ];
+
+    // Remove any allowed special characters.
+    allowedSpecialChars.forEach(char => {
+      idWithoutAllowed.replace(char, '');
+    });
+
+    // Validate that there are no more special characters.
+    const regex = /\W/;
+    let containsSpecialChars = regex.test(id);
+
+    return containsSpecialChars
+      ? 'Id for attribute contains illegal characters'
+      : null;
   }
 }

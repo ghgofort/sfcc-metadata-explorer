@@ -14,7 +14,7 @@ import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
  *      SFCC OCAPI.
  */
 export default class ObjectAttributeDefinition {
-  // Declare class members.
+  // Declare public class members.
   public defaultValue: ObjectAttributeValueDefinition;
   public description: IOCAPITypes.ILocalizedString;
   public displayName: IOCAPITypes.ILocalizedString;
@@ -46,6 +46,28 @@ export default class ObjectAttributeDefinition {
   public valueDefinitions: ObjectAttributeValueDefinition[];
   public valueType: string;
   public visible: boolean;
+
+  // members that need to be renamed when sending the doc.
+  private readonly MEMBER_MAP = {
+    displayName: 'display_name',
+    effectiveId: 'effective_id',
+    externallyDefined: 'externally_defined',
+    externallyManaged: 'externally_managed',
+    fieldHeight: 'field_height',
+    fieldWidth: 'field_width',
+    maxValue: 'max_value',
+    minLength: 'min_length',
+    minValue: 'min_value',
+    multiValueType: 'multi_value_type',
+    orderRequired: 'order_required',
+    readOnly: 'read_only',
+    regularExpression: 'regular_expression',
+    requiresEncoding: 'requires_encoding',
+    setValueType: 'set_value_type',
+    siteSpecific: 'site_specific',
+    valueDefinitions: 'value_definitions',
+    valueType: 'value_type'
+  };
 
   /**
    * @constructor
@@ -92,5 +114,59 @@ export default class ObjectAttributeDefinition {
     this.valueDefinitions = args.value_definitions || [];
     this.valueType = args.value_type || '';
     this.visible = args.visible || false;
+  }
+
+  public toJson(): string {
+    const mmNames = Object.keys(this.MEMBER_MAP);
+    const sendDoc = [
+      'defaultValue',
+      'description',
+      'displayName',
+      'effectiveId',
+      'externallyDefined',
+      'externallyManaged',
+      'fieldHeight',
+      'fieldWidth',
+      'id',
+      'key',
+      'link',
+      'localizable',
+      'mandatory',
+      'maxValue',
+      'minLength',
+      'minValue',
+      'multiValueType',
+      'orderRequired',
+      'queryable',
+      'readOnly',
+      'regularExpression',
+      'requiresEncoding',
+      'scale',
+      'searchable',
+      'setValueType',
+      'siteSpecific',
+      'system',
+      'unit',
+      'valueDefinitions',
+      'valueType',
+      'visible'
+    ].map(localPropName => {
+      if (mmNames.indexOf(localPropName) > -1) {
+        // If the mapped name exists, then re-map for JSON object.
+        return {
+          key: this.MEMBER_MAP[localPropName],
+          value: this[localPropName]
+        };
+      }
+
+      // If the name doesn't exist in the map then use the local name.
+      return {
+        key: localPropName,
+        value: this[localPropName]
+      };
+    });
+
+
+    return JSON.stringify(sendDoc);
   }
 }

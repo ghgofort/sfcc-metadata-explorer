@@ -80,7 +80,8 @@ export const apiConfig = {
           authorization: 'BM_USER',
           headers: {
             'Content-Type': 'application/json',
-            'x-dw-validate-existing': true
+            'x-dw-validate-existing': true,
+            'Accept': 'application/json'
           },
           method: 'POST',
           params: [
