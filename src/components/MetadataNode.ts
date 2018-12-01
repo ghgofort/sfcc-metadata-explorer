@@ -77,6 +77,7 @@ export class MetadataNode extends TreeItem {
         return MetadataNode.nodeTypes[type] === _dataType;
       });
       this._nodeType = expandableTypes[nodeTypeIndex];
+      this.contextValue = expandableTypes[nodeTypeIndex];
     });
 
     // Set the instance member properties for the child Class.

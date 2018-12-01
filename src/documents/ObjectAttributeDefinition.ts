@@ -5,6 +5,7 @@
  * custom object.
  */
 
+import IAPIDocument from '../interfaces/IAPIDocument';
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
 
@@ -13,7 +14,7 @@ import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
  * @param {Object} args - The raw JSON object document returned from a call to
  *      SFCC OCAPI.
  */
-export default class ObjectAttributeDefinition {
+export default class ObjectAttributeDefinition implements IAPIDocument {
   // Declare public class members.
   public defaultValue: ObjectAttributeValueDefinition;
   public description: IOCAPITypes.ILocalizedString;
@@ -47,8 +48,13 @@ export default class ObjectAttributeDefinition {
   public valueType: string;
   public visible: boolean;
 
+  // A list of field Ids that can be set to include only properties that need
+  // to be set when sending the document definition in an API call.
+  public includedFields: string[];
+
   // members that need to be renamed when sending the doc.
-  private readonly MEMBER_MAP = {
+  readonly MEMBER_MAP = {
+    defaultValue: 'default_value',
     displayName: 'display_name',
     effectiveId: 'effective_id',
     externallyDefined: 'externally_defined',
@@ -114,49 +120,45 @@ export default class ObjectAttributeDefinition {
     this.valueDefinitions = args.value_definitions || [];
     this.valueType = args.value_type || '';
     this.visible = args.visible || false;
+    this.includedFields = args.includeFields || [];
   }
 
-  public toJson(): string {
+  /**
+   * Gets a JSON string representation in the form of the OCAPI document.
+   *
+   * @param {string[]} [includeFields = []] - An optional argument to specify which
+   *    class properties to include in the JSON string result. If empty, all of
+   *    the class properties will be included. This is not ideal when updating
+   *    because it will overwrite values for attribute properties that were
+   *    previously set with the class defaults. In this case, specify only the
+   *    fields that you are updating.
+   * @return {Object} - Returns a JS Object literal in the form of the OCAPI
+   *    document definition.
+   */
+  public getDocument(includeFields: string[] = []): Object {
+    const documentObj = {};
     const mmNames = Object.keys(this.MEMBER_MAP);
-    const sendDoc = [
-      'defaultValue',
-      'description',
-      'displayName',
-      'effectiveId',
-      'externallyDefined',
-      'externallyManaged',
-      'fieldHeight',
-      'fieldWidth',
-      'id',
-      'key',
-      'link',
-      'localizable',
-      'mandatory',
-      'maxValue',
-      'minLength',
-      'minValue',
-      'multiValueType',
-      'orderRequired',
-      'queryable',
-      'readOnly',
-      'regularExpression',
-      'requiresEncoding',
-      'scale',
-      'searchable',
-      'setValueType',
-      'siteSpecific',
-      'system',
-      'unit',
-      'valueDefinitions',
-      'valueType',
-      'visible'
-    ].map(localPropName => {
-      if (mmNames.indexOf(localPropName) > -1) {
+    let memberNames = Object.keys(this).filter(
+      key => typeof key !== 'function'
+    );
+
+    // If the fields to return were specified, then filter the array of
+    // properties to assign to the new object literal.
+    if (includeFields && includeFields.length) {
+      memberNames = memberNames.filter(
+        name => includeFields.indexOf(name) > -1
+      );
+    } else if (this.includedFields.length) {
+      memberNames = memberNames.filter(
+        name => this.includedFields.indexOf(name) > -1
+      );
+    }
+
+    // Create a property on the results object.
+    memberNames.forEach(localPropName => {
+      if (mmNames.indexOf(localPropName) > -1 && this[localPropName]) {
         // If the mapped name exists, then re-map for JSON object.
-        return {
-          key: this.MEMBER_MAP[localPropName],
-          value: this[localPropName]
-        };
+        documentObj[this.MEMBER_MAP[localPropName]] = this[localPropName];
       }
 
       // If the name doesn't exist in the map then use the local name.
@@ -166,7 +168,6 @@ export default class ObjectAttributeDefinition {
       };
     });
 
-
-    return JSON.stringify(sendDoc);
+    return JSON.stringify(documentObj);
   }
 }

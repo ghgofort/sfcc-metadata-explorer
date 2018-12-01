@@ -63,14 +63,15 @@ export default class OCAPIHelper {
     attributeDefinition: ObjectAttributeDefinition
   ): Promise<any> {
     const service: OCAPIService = new OCAPIService();
+    const docObj: Object = attributeDefinition.getDocument();
     let _callSetup: ICallSetup = null;
     let _callResult: any;
 
     try {
       _callSetup = await service.getCallSetup(
         'systemObjectDefinitions',
-        'addAttribute',
-        attributeDefinition
+        'createAttribute',
+        attributeDefinition.getDocument()
       );
 
       _callResult = await service.makeCall(_callSetup);
@@ -96,6 +97,8 @@ export default class OCAPIHelper {
    * @param {MetadataView} metadataView - The view instance that was created
    *    when the extension was loaded. This is used to add interact with the
    *    views.
+   * @returns {Promise<any>} - Returns a Promise that resolves to a results
+   *    object from the API call.
    */
   public static async addAttributeNode(
     metadataView: MetadataView
@@ -119,7 +122,6 @@ export default class OCAPIHelper {
     const qpOptions: QuickPickOptions = {
       placeHolder: 'Select the type for the attribute'
     };
-
 
     /* Begin Form Wizard
        ====================================================================== */
@@ -147,7 +149,22 @@ export default class OCAPIHelper {
         return Promise.reject({ error: false, cancelled: true });
       }
 
+      // Assign attribute values to the request document object.
+      objAttributeDefinition.valueType = attributeType;
+      objAttributeDefinition.id = attributeId;
+      objAttributeDefinition.includedFields.push('valueType');
+      objAttributeDefinition.includedFields.push('Id');
 
+      /**
+       * @todo: START HERE --- Pass selected item to the event.
+       */
+
+      // Get the currently selected SystemObjects
+      // const selected = metadataView.currentProvider.;
+
+      // Return the reuslt of the API call.
+      return OCAPIHelper.addAttributeDefiniton(attributeId,
+        objAttributeDefinition);
     } catch (e) {
       console.log(e);
       return Promise.reject({
@@ -156,7 +173,6 @@ export default class OCAPIHelper {
         errorObject: e
       });
     }
-
   }
 
   /**

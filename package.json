@@ -53,6 +53,10 @@
         "command": "extension.sfccexplorer.systemobjectattribute.add",
         "when": "view == systemObjectDefinitionsView",
         "group": "navigation"
+      }],
+      "view/item/context": [{
+        "command": "extension.sfccexplorer.systemobjectattribute.add",
+        "when": "view == systemObjectDefinitionsView && viewItem == definition"
       }]
     },
     "viewsContainers": {
