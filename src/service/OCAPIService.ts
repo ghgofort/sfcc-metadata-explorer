@@ -50,7 +50,7 @@ export class OCAPIService {
   public async getCallSetup(
     resourceName: string,
     callName: string,
-    callData?: object
+    callData?: any
   ): Promise<ICallSetup> {
     // Setup default values where appropriate.
     const setupResult: ICallSetup = {
@@ -174,6 +174,11 @@ export class OCAPIService {
           setupResult.setupErrMsg += '\n- Call type: ' + callName;
         }
       });
+
+      // If an explicit body was included, then append it to the seutp object.
+      if ('body' in callData) {
+        setupResult.body = callData.body;
+      }
 
       // Remove any already added data properties.
       const dataKeys = Object.keys(callData).filter(k => usedParams.indexOf(k));
@@ -299,6 +304,8 @@ export class OCAPIService {
       };
     }
 
+    console.log('params: ', params);
+
     return await fetch(callSetup.endpoint, params)
     .then(resp => {
       if (resp.ok) {
@@ -308,6 +315,8 @@ export class OCAPIService {
         console.error(errMsg);
         return { error: true, errorMessage: errMsg };
       }
+    }).catch(err => {
+      console.log(err);
     });
   }
 

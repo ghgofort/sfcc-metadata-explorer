@@ -60,7 +60,6 @@ export class MetadataViewProvider
    *    TreeItem or a Promise that resolves to the TreeItem instance.
    */
   public getTreeItem(element: MetadataNode): MetadataNode {
-    console.log(element.contextValue);
     return element;
   }
 

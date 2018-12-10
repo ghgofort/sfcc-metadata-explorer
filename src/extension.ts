@@ -3,6 +3,7 @@
 import { commands, ExtensionContext, window, Disposable } from 'vscode';
 import { MetadataView } from './components/MetadataView';
 import OCAPIHelper from './helpers/OCAPIHelper';
+import { MetadataNode } from './components/MetadataNode';
 
 /**
  * The entry point for the extension. This lifecycle method is called when the
@@ -13,6 +14,7 @@ import OCAPIHelper from './helpers/OCAPIHelper';
 export function activate(context: ExtensionContext) {
   // Setup view for System Object Definitions view.
   const metaView: MetadataView = new MetadataView(context);
+  const ocapiHelper = new OCAPIHelper(metaView);
   metaView.getDataFromProvider('systemObjectDefinitions');
 
   /**
@@ -22,8 +24,13 @@ export function activate(context: ExtensionContext) {
    * @listens extension.sfccexplorer.systemobjectattribute.add
    */
   const addAttributeDisposable: Disposable = commands.registerCommand(
-    'extension.sfccexplorer.systemobjectattribute.add',
-      OCAPIHelper.addAttributeNode);
+    'extension.sfccexplorer.systemobjectattribute.add', (metaNode: MetadataNode) => {
+      ocapiHelper.addAttributeNode(metaNode)
+        .then(data => {
+          console.log(data);
+        }
+      ).catch(err => console.log(err));
+    });
 
   context.subscriptions.push(addAttributeDisposable);
 }

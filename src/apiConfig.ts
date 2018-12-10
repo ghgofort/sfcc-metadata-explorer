@@ -83,7 +83,7 @@ export const apiConfig = {
             'x-dw-validate-existing': true,
             'Accept': 'application/json'
           },
-          method: 'POST',
+          method: 'PUT',
           params: [
             {
               id: 'id',

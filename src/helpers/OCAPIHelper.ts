@@ -16,6 +16,7 @@ import {
   QuickPickOptions,
   InputBoxOptions
 } from 'vscode';
+import { MetadataNode } from '../components/MetadataNode';
 
 /**
  * @class OCAPIHelper
@@ -24,9 +25,7 @@ import {
  * object definitions used by the SFCC instance.
  */
 export default class OCAPIHelper {
-  /* ========================================================================
-   * Static Members
-   * ======================================================================== */
+  private metadataView : MetadataView;
   public static readonly ATTRIBUTE_TYPES = [
     'Boolean',
     'Date',
@@ -47,10 +46,22 @@ export default class OCAPIHelper {
   ];
 
   /**
+   * @param {MetadataView} metaView - The MetadataView class instance that can
+   *    be used to read the seleted items in the MetadataViewProvider instance.
+   */
+  constructor(metaView : MetadataView) {
+    this.metadataView = metaView;
+  }
+
+  /* ========================================================================
+   * Private Instance Members
+   * ======================================================================== */
+
+  /**
    * Makes a call to the OCAPIService class to add a new system object attribute
    * definition to the system object who's Id is specified.
    *
-   * @param {string} systemObjectId - The Id of the system object to that the
+   * @param {string} objectType - The Id of the system object to that the
    *    new attribute definition should be added to.
    * @param {ObjectAttributeDefinition} attributeDefinition - The object
    *    attribute defintion class instance that can be passed to the OCAPI
@@ -58,20 +69,25 @@ export default class OCAPIHelper {
    * @returns {Promise<Object>} - Returns a promise that resoves to an Object.
    *    The object is the JSON result reutrned form the service call.
    */
-  public static async addAttributeDefiniton(
-    systemObjectId: string,
+  private async addAttributeDefiniton(
+    objectType: string,
     attributeDefinition: ObjectAttributeDefinition
   ): Promise<any> {
     const service: OCAPIService = new OCAPIService();
-    const docObj: Object = attributeDefinition.getDocument();
+    const docObj = attributeDefinition.getDocument();
     let _callSetup: ICallSetup = null;
     let _callResult: any;
+    const callData: any = {
+      body: JSON.stringify(docObj),
+      objectType: objectType,
+      id: attributeDefinition.id
+    };
 
     try {
       _callSetup = await service.getCallSetup(
         'systemObjectDefinitions',
         'createAttribute',
-        attributeDefinition.getDocument()
+        callData
       );
 
       _callResult = await service.makeCall(_callSetup);
@@ -81,6 +97,49 @@ export default class OCAPIHelper {
 
     return Promise.resolve(_callResult);
   }
+
+
+  /**
+   * Validates that a string is an allowed Id for a SFCC SystemObject attribute.
+   *
+   * @param {string} id - The Id to validate against the SFCC criteria.
+   * @returns {string|null} - Returns an error message if the reuslt was not
+   *    valid, OR returns null if the result was valid.
+   */
+  private validateAttributeId(id: string): string {
+    // Make a copy of the id string without any allowed speial characters.
+    let idWithoutAllowed = String(id);
+    // Special chars allowed in SystemAttributeDefinition Id field.
+    const allowedSpecialChars = [
+      '+',
+      '-',
+      '$',
+      '.',
+      '%',
+      '§',
+      '&',
+      '*',
+      '#',
+      '/'
+    ];
+
+    // Remove any allowed special characters.
+    allowedSpecialChars.forEach(char => {
+      idWithoutAllowed.replace(char, '');
+    });
+
+    // Validate that there are no more special characters.
+    const regex = /\W/;
+    let containsSpecialChars = regex.test(id);
+
+    return containsSpecialChars
+      ? 'Id for attribute contains illegal characters'
+      : null;
+  }
+
+  /* ========================================================================
+   * Public Instance Members
+   * ======================================================================== */
 
   /**
    * Uses a 'wizard' like approach to get the needed information for creating a
@@ -94,15 +153,12 @@ export default class OCAPIHelper {
    *  - A request is made to the OCAPI endpoint to create the system object
    *    attribute definition, and the indicator is removed from the tree node.
    *
-   * @param {MetadataView} metadataView - The view instance that was created
-   *    when the extension was loaded. This is used to add interact with the
-   *    views.
+   * @param {string} objectType - The ID of the System Object Type that the new
+   *    attribute should be added to.
    * @returns {Promise<any>} - Returns a Promise that resolves to a results
    *    object from the API call.
    */
-  public static async addAttributeNode(
-    metadataView: MetadataView
-  ): Promise<any> {
+  public async addAttributeNode(node: MetadataNode): Promise<any> {
     // Create a cancelation token instance to cancel the request when needed.
     const tokenSource: CancellationTokenSource = new CancellationTokenSource();
     const cancelAddAttributeToken: CancellationToken = tokenSource.token;
@@ -114,10 +170,13 @@ export default class OCAPIHelper {
      * @todo: Get display strings from a resource bundle.
      */
 
+    // Get the system object from the current node.
+    const systemObjectId = node.name;
+
     // Create options objects for the dialogs.
     const idInputOptions: InputBoxOptions = {
       prompt: 'Enter Attribute Id:',
-      validateInput: OCAPIHelper.validateAttributeId
+      validateInput: this.validateAttributeId
     };
     const qpOptions: QuickPickOptions = {
       placeHolder: 'Select the type for the attribute'
@@ -152,18 +211,12 @@ export default class OCAPIHelper {
       // Assign attribute values to the request document object.
       objAttributeDefinition.valueType = attributeType;
       objAttributeDefinition.id = attributeId;
-      objAttributeDefinition.includedFields.push('valueType');
-      objAttributeDefinition.includedFields.push('Id');
-
-      /**
-       * @todo: START HERE --- Pass selected item to the event.
-       */
 
       // Get the currently selected SystemObjects
       // const selected = metadataView.currentProvider.;
 
       // Return the reuslt of the API call.
-      return OCAPIHelper.addAttributeDefiniton(attributeId,
+      return this.addAttributeDefiniton(systemObjectId,
         objAttributeDefinition);
     } catch (e) {
       console.log(e);
@@ -173,43 +226,5 @@ export default class OCAPIHelper {
         errorObject: e
       });
     }
-  }
-
-  /**
-   * Validates that a string is an allowed Id for a SFCC SystemObject attribute.
-   *
-   * @param {string} id - The Id to validate against the SFCC criteria.
-   * @returns {string|null} - Returns an error message if the reuslt was not
-   *    valid, OR returns null if the result was valid.
-   */
-  public static validateAttributeId(id: string): string {
-    // Make a copy of the id string without any allowed speial characters.
-    let idWithoutAllowed = String(id);
-    // Special chars allowed in SystemAttributeDefinition Id field.
-    const allowedSpecialChars = [
-      '+',
-      '-',
-      '$',
-      '.',
-      '%',
-      '§',
-      '&',
-      '*',
-      '#',
-      '/'
-    ];
-
-    // Remove any allowed special characters.
-    allowedSpecialChars.forEach(char => {
-      idWithoutAllowed.replace(char, '');
-    });
-
-    // Validate that there are no more special characters.
-    const regex = /\W/;
-    let containsSpecialChars = regex.test(id);
-
-    return containsSpecialChars
-      ? 'Id for attribute contains illegal characters'
-      : null;
   }
 }
