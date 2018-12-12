@@ -35,4 +35,22 @@ export default class ObjectAttributeValueDefinition {
       this.value = args.value || {};
     }
   }
+
+  /**
+   * Gets a JSON string representation in the form of the OCAPI document.
+   *
+   * @param {string[]} [includeFields = []] - An optional argument to specify which
+   *    class properties to include in the JSON string result. If empty, all of
+   *    the class properties will be included. This is not ideal when updating
+   *    because it will overwrite values for attribute properties that were
+   *    previously set with the class defaults. In this case, specify only the
+   *    fields that you are updating.
+   * @return {Object} - Returns a JSON object representation of the OCAPI
+   *    document class that can be submitted to the API methods.
+   */
+  public getDocument(includeFields: string[] = []): Object {
+    let result = {};
+
+    return result;
+  }
 }

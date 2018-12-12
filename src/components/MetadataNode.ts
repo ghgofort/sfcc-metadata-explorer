@@ -77,6 +77,7 @@ export class MetadataNode extends TreeItem {
         return MetadataNode.nodeTypes[type] === _dataType;
       });
       this._nodeType = expandableTypes[nodeTypeIndex];
+      this.contextValue = expandableTypes[nodeTypeIndex];
     });
 
     // Set the instance member properties for the child Class.
@@ -95,4 +96,5 @@ export class MetadataNode extends TreeItem {
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }
+  get description(): string { return this.description }
 }

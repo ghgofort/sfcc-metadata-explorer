@@ -9,6 +9,7 @@ import { MetadataNode } from './MetadataNode';
 import {
   Event,
   EventEmitter,
+  Range,
   TreeDataProvider,
   TreeItemCollapsibleState,
   WorkspaceConfiguration,
@@ -152,8 +153,9 @@ export class MetadataViewProvider
             // Get the System/Custom Object attributes.
             _callSetup = await service.getCallSetup(
               'systemObjectDefinitions',
-              'attributes',
+              'getAttributes',
               {
+                count: 100,
                 select: '(**)',
                 objectType: element.objectTypeDefinition.objectType
               }
@@ -167,21 +169,24 @@ export class MetadataViewProvider
               throw new Error(e.toString());
             }
 
+            console.log(_callResult);
+
             // If the API call returns data create the first level of a tree.
-            if (!_callResult.error && _callResult.data) {
-              if (_callResult.data && Array.isArray(_callResult.data)) {
-                return _callResult.data.map(resultObj => {
-                  return new MetadataNode(
-                    resultObj.id,
-                    TreeItemCollapsibleState.Collapsed,
-                    {
-                      objectAttributeDefinition: new ObjectAttributeDefinition(
-                        resultObj
-                      )
-                    }
-                  );
-                });
-              }
+            if (!_callResult.error &&
+                typeof _callResult.data !== 'undefined' &&
+                Array.isArray(_callResult.data)
+            ) {
+              return _callResult.data.map(resultObj => {
+                return new MetadataNode(
+                  resultObj.id,
+                  TreeItemCollapsibleState.Collapsed,
+                  {
+                    objectAttributeDefinition: new ObjectAttributeDefinition(
+                      resultObj
+                    )
+                  }
+                );
+              });
             }
 
             // If there is an error display a single node indicating that there
