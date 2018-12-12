@@ -22,8 +22,6 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public effectiveId: string;
   public externallyDefined: boolean;
   public externallyManaged: boolean;
-  public fieldHeight: number;
-  public fieldWidth: number;
   public id: string;
   public key: boolean;
   public link: string;
@@ -95,8 +93,6 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
     this.effectiveId = args.effective_id || '';
     this.externallyDefined = args.externally_defined || false;
     this.externallyManaged = args.externally_managed || false;
-    this.fieldHeight = args.field_height || -1;
-    this.fieldWidth = args.field_width || -1;
     this.id = args.id || '';
     this.key = args.key || false;
     this.link = args.link || '';
@@ -139,7 +135,10 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
     const documentObj = {};
     const mmNames = Object.keys(this.MEMBER_MAP);
     let memberNames = Object.keys(this).filter(
-      key => typeof key !== 'function'
+      key =>
+        typeof key !== 'function' &&
+        key !== 'MEMBER_MAP' &&
+        key !== 'includedFields'
     );
 
     // If the fields to return were specified, then filter the array of
@@ -156,36 +155,40 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
 
     // Create a property on the results object.
     memberNames.forEach(localPropName => {
+      const docPropName: string = localPropName in this.MEMBER_MAP ?
+        this.MEMBER_MAP[localPropName] : localPropName;
       let localPropVal: any;
 
       if (typeof this[localPropName] !== 'undefined') {
         localPropVal = this[localPropName];
-        const isComplexType = typeof localPropVal !== 'number' &&
+        const isComplexType =
+          typeof localPropVal !== 'number' &&
           typeof localPropVal !== 'string' &&
           typeof localPropVal !== 'boolean';
 
-          if (!isComplexType) {
-            documentObj[localPropName] = localPropVal;
-          } else {
-            if (localPropVal instanceof ObjectAttributeValueDefinition) {
-              // ==> ObjectAttributeValueDefinition - this.defaultValue
-              documentObj[localPropName] = localPropVal.getDocument();
-            } else if (Array.isArray(localPropVal)) {
-              // ==> Array<ObjectAttributeValueDefinition> - this.valueDefinitions
-              documentObj[localPropName] = localPropVal.length ?
-                localPropVal.map(arrayMember => {
+        if (!isComplexType) {
+          documentObj[docPropName] = localPropVal;
+        } else {
+          if (localPropVal instanceof ObjectAttributeValueDefinition) {
+            // ==> ObjectAttributeValueDefinition - this.defaultValue
+            documentObj[docPropName] = localPropVal.getDocument();
+          } else if (Array.isArray(localPropVal)) {
+            // ==> Array<ObjectAttributeValueDefinition> - this.valueDefinitions
+            documentObj[docPropName] = localPropVal.length
+              ? localPropVal.map(arrayMember => {
                   // valueDefinitions is the only instance property that is an
                   // Array type.
                   if (arrayMember instanceof ObjectAttributeValueDefinition) {
                     return arrayMember.getDocument();
                   }
-                }) : [];
-            } else {
-              // ==> IOCAPITypes.ILocalizedString - this.description,
-              // this.displayName, & this.unit
-              documentObj[localPropName] = localPropVal;
-            }
+                })
+              : [];
+          } else {
+            // ==> IOCAPITypes.ILocalizedString - this.description,
+            // this.displayName, & this.unit
+            documentObj[docPropName] = localPropVal;
           }
+        }
       }
     });
 

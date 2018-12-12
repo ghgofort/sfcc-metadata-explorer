@@ -68,8 +68,11 @@ export const apiConfig = {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
+            }, {
+              id: 'count',
+              type: 'number',
+              use: 'QUERY_PARAMETER'
             }
-
           ],
           path: 'system_object_definitions/{objectType}/attribute_definitions'
         },

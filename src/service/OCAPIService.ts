@@ -203,6 +203,8 @@ export class OCAPIService {
             token.tokenType + ' ' + token.accessToken;
         }
       }
+    } else {
+      console.error('ERROR in setupResult', setupResult);
     }
 
     return setupResult;
@@ -305,6 +307,7 @@ export class OCAPIService {
     }
 
     console.log('params: ', params);
+    console.log('endpoint: ', callSetup.endpoint);
 
     return await fetch(callSetup.endpoint, params)
     .then(resp => {

@@ -71,10 +71,27 @@ export default class OCAPIHelper {
    */
   private async addAttributeDefiniton(
     objectType: string,
-    attributeDefinition: ObjectAttributeDefinition
+    attributeDefinition: ObjectAttributeDefinition,
+    includeDescription: boolean = false
   ): Promise<any> {
     const service: OCAPIService = new OCAPIService();
-    const docObj = attributeDefinition.getDocument();
+    let includeFields = [
+      'displayName',
+      'key',
+      'localizable',
+      'mandatory',
+      'searchable',
+      'siteSpecific',
+      'valueType',
+      'visible'
+    ];
+
+    // Only include the description if it was specified.
+    if (includeDescription) {
+      includeFields.push('description');
+    }
+
+    const docObj = attributeDefinition.getDocument(includeFields);
     let _callSetup: ICallSetup = null;
     let _callResult: any;
     const callData: any = {
@@ -178,9 +195,15 @@ export default class OCAPIHelper {
       prompt: 'Enter Attribute Id:',
       validateInput: this.validateAttributeId
     };
+    const displayNameInputOptions: InputBoxOptions = {
+      prompt: 'Enter Attribute Display Name:'
+    };
     const qpOptions: QuickPickOptions = {
       placeHolder: 'Select the type for the attribute'
     };
+    const descriptionInputOptions = {
+      prompt: 'Enter Attribute Description (Optional):'
+    }
 
     /* Begin Form Wizard
        ====================================================================== */
@@ -208,8 +231,30 @@ export default class OCAPIHelper {
         return Promise.reject({ error: false, cancelled: true });
       }
 
+      const displayName = await window.showInputBox(
+        displayNameInputOptions,
+        cancelAddAttributeToken
+      );
+
+      // If the user cancels, then exit the wizard.
+      if (typeof displayName === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+      const description = await window.showInputBox(
+        descriptionInputOptions,
+        cancelAddAttributeToken
+      );
+
+      // If the user cancels, then exit the wizard.
+      if (typeof description === 'undefined') {
+
+      }
+
       // Assign attribute values to the request document object.
-      objAttributeDefinition.valueType = attributeType;
+      objAttributeDefinition.description.default = description;
+      objAttributeDefinition.displayName.default = displayName;
+      objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
       objAttributeDefinition.id = attributeId;
 
       // Get the currently selected SystemObjects
