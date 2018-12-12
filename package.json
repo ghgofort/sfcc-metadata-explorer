@@ -42,17 +42,19 @@
         "command": "extension.sfccexplorer.systemobjectattribute.add",
         "title": "Add a New System Object Attribute",
         "description": "Add a new attribute to a SFCC system object on a connected sandbox.",
-        "icon":{
+        "icon": {
           "dark": "resources/dark/add.svg",
           "light": "resources/light/add.svg"
         }
       }
     ],
     "menus": {
-      "view/item/context": [{
-        "command": "extension.sfccexplorer.systemobjectattribute.add",
-        "when": "view == systemObjectDefinitionsView && viewItem == definition"
-      }]
+      "view/item/context": [
+        {
+          "command": "extension.sfccexplorer.systemobjectattribute.add",
+          "when": "view == systemObjectDefinitionsView && viewItem == definition"
+        }
+      ]
     },
     "viewsContainers": {
       "activitybar": [
@@ -86,7 +88,7 @@
     "vscode": "^1.1.21"
   },
   "dependencies": {
-    "node-fetch": "^2.2.0",
+    "node-fetch": "^2.3.0",
     "vscode-uri": "^1.0.3"
   }
 }
