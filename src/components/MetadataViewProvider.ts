@@ -52,6 +52,10 @@ export class MetadataViewProvider
    * Public Instance Methods
    * ======================================================================== */
 
+  public refresh(): void {
+    this.eventEmitter.fire();
+  }
+
   /**
    * Returns the individual TreeItem instance
    * @param {MetadataNode} element - The element associated with the given

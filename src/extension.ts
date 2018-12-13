@@ -30,9 +30,23 @@ export function activate(context: ExtensionContext) {
           console.log(data);
         }
       ).catch(err => console.log(err));
-    });
+    }
+  );
+
+  /**
+   * Binds the handler for the TreeViewProvider refresh action to its handler
+   * function.
+   *
+   * @listens extension.sfccexplorer.refresh
+   */
+  const refreshTreeDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.refresh', (metaDataView: any) => {
+      metaView.currentProvider.refresh();
+    }
+  );
 
   context.subscriptions.push(addAttributeDisposable);
+  context.subscriptions.push(refreshTreeDisposable);
 }
 
 // this method is called when your extension is deactivated
