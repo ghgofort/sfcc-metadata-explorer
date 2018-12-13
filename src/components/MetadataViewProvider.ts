@@ -118,7 +118,10 @@ export class MetadataViewProvider
             _callSetup = await service.getCallSetup(
               element.baseNodeName,
               'getAll',
-              { select: '(**)' }
+              {
+                count: 200,
+                select: '(**)'
+              }
             );
 
             try {
@@ -159,7 +162,6 @@ export class MetadataViewProvider
               'systemObjectDefinitions',
               'getAttributes',
               {
-                count: 100,
                 select: '(**)',
                 objectType: element.objectTypeDefinition.objectType
               }

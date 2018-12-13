@@ -7,12 +7,19 @@ This extension consists of a tree view in the explorer to navigate through your 
 This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases, and has not been released to the VSCode marketplace yet. If you choose to download the source code and manually build the extension, the functionality is currently limited to the following 'finished features'.
 
 ### Finished Work
-* #### View existing System Object definitions within an SFCC instance (Example: dw.catalog.Product SystemObject).
-* #### A user can view Custom Object definitions. (Example: Power Reviews cartridge defines custom object PowerReviewsCO). Custom objects are currently displayed within the list of System Objects with the qualifyer '(Custom Object)' printed after the CustomObjectDefinition's Id.
-* #### A user can view the definitions for attributes of a system object.
-* #### A user can see the values for the attribute definitions fields (i.e. Attribute type is string).
-* #### Users can add new system object attributes through the context menu of the SystemObjectDefinition item in the tree
-   * ![Example - add system object attribute definition](/resources/markdown_resources/example_add-attribute-definition.png)
+* #### View System Object Definitions
+   * View the system object definitions within an SFCC instance.
+   * Each system object is expandable to view the attributes that define each object instance.
+   * Each attribute is in turn expandable to view information about the attribute, including attribute type, id, display name, etc.
+* #### View Custom Object Definitions.
+   * Custom objects are currently displayed within the list of System Objects with the qualifyer '(Custom Object)' printed after the CustomObjectDefinition's Id (see screen capture below).
+* #### View System Objec of a system object.
+* #### Add Attribute Definition to System Object
+   * Each system object attribute has a context menu (right click or CMD+click) with a command to create a new attribute definition.
+   * Several inputs are shown to gather information about the new attribute definition:
+       * ![Example - add system object attribute definition step 1](/resources/markdown_resources/example_add_definition_step1.png)
+
+       * ![Example - add system object attribute definition step 2](/resources/marddown_resources/example_add_definition_step2.png)
 
 ## Requirements
 
