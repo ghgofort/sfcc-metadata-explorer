@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/ghgofort/sfcc-metadata-explorer"
   },
+  "license": "MIT - SEE LICENSE FILE ./LICENSE",
   "engines": {
     "vscode": "^1.21.0",
     "node": "^7.9.0"
@@ -46,9 +47,24 @@
           "dark": "resources/dark/add.svg",
           "light": "resources/light/add.svg"
         }
+      },
+      {
+        "command": "extension.sfccexplorer.refresh",
+        "title": "Refresh",
+        "icon": {
+          "dark": "resources/dark/refresh.svg",
+          "light": "resources/light/refresh.svg"
+        }
       }
     ],
     "menus": {
+      "view/title": [
+        {
+          "command": "extension.sfccexplorer.refresh",
+          "when": "view == systemObjectDefinitionsView",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "extension.sfccexplorer.systemobjectattribute.add",
