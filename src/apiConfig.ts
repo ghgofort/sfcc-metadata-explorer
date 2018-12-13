@@ -46,6 +46,10 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
+            }, {
+              id: 'count',
+              type: 'number',
+              use: 'QUERY_PARAMETER'
             }
           ],
           path: 'system_object_definitions',
@@ -68,10 +72,6 @@ export const apiConfig = {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
-              id: 'count',
-              type: 'number',
-              use: 'QUERY_PARAMETER'
             }
           ],
           path: 'system_object_definitions/{objectType}/attribute_definitions'
