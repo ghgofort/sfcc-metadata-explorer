@@ -27,6 +27,7 @@ export class MetadataNode extends TreeItem {
   public objectAttributeGroup: ObjectAttributeGroup;
   public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
   public objectTypeDefinition: ObjectTypeDefinition;
+  public parentId: string;
   public value: string | number;
 
   /**
@@ -36,6 +37,7 @@ export class MetadataNode extends TreeItem {
    *    document types.
    */
   public static nodeTypes = {
+    parentContainer: 'parentContainer',
     baseNodeName: 'baseNodeName',
     definition: 'objectTypeDefinition',
     attribute: 'objectAttributeDefinition',
@@ -63,6 +65,7 @@ export class MetadataNode extends TreeItem {
   ) {
     // Call the TreeNode constructor.
     super(name, collapsibleState);
+    const instance = this;
 
     // The types of tree nodes that have child nodes.
     const expandableTypes = Object.keys(MetadataNode.nodeTypes)
@@ -71,18 +74,21 @@ export class MetadataNode extends TreeItem {
     // Loop through the nodeData Object properties to get the correct type.
     // There will only be one property, since the node can only be one of the
     // specified types.
-    Object.keys(nodeData).forEach(_dataType => {
-      this[_dataType] = nodeData[_dataType];
-      const nodeTypeIndex = expandableTypes.findIndex(type => {
-        return MetadataNode.nodeTypes[type] === _dataType;
-      });
-      this._nodeType = expandableTypes[nodeTypeIndex];
-      this.contextValue = expandableTypes[nodeTypeIndex];
-    });
+    Object.keys(nodeData)
+      .filter(attrName => attrName !== 'parentId')
+      .forEach(_dataType => {
+        instance[_dataType] = nodeData[_dataType];
+        const nodeTypeIndex = expandableTypes.findIndex(type => {
+          return MetadataNode.nodeTypes[type] === _dataType;
+        });
+        instance._nodeType = expandableTypes[nodeTypeIndex];
+        instance.contextValue = expandableTypes[nodeTypeIndex];
+      }
+    );
 
     // Set the instance member properties for the child Class.
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
-    this[this.nodeType] = nodeData[this.nodeType];
+    this.parentId = nodeData.parentId;
   }
 
   /* Member Mutators & Accessors

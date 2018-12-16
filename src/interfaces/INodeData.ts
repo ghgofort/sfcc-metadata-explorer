@@ -13,11 +13,14 @@ import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 
+/** @interface INodeData */
 export default interface INodeData {
+    parentId: string;
     objectAttributeDefinition?: ObjectAttributeDefinition;
-    obtectAttributeGroup?: ObjectAttributeGroup;
+    objectAttributeGroup?: ObjectAttributeGroup;
     objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
     objectTypeDefinition?: ObjectTypeDefinition;
+    parentContainer?: string;
     baseNodeName?: string;
     nodeValue?: string|number;
 }

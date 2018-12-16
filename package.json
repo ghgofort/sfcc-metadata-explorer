@@ -40,13 +40,18 @@
         "description": "Get system object definitions from sandbox."
       },
       {
-        "command": "extension.sfccexplorer.systemobjectattribute.add",
+        "command": "extension.sfccexplorer.systemobject.addattribute",
         "title": "Add a New System Object Attribute",
         "description": "Add a new attribute to a SFCC system object on a connected sandbox.",
         "icon": {
           "dark": "resources/dark/add.svg",
           "light": "resources/light/add.svg"
         }
+      },
+      {
+        "command": "extension.sfccexplorer.systemobjectattribute.setdefault",
+        "title": "Set Default Value of System Object Attribute",
+        "description": "Sets the default value of a custom attribute of the SitePreferences system object."
       },
       {
         "command": "extension.sfccexplorer.refresh",
@@ -67,8 +72,12 @@
       ],
       "view/item/context": [
         {
-          "command": "extension.sfccexplorer.systemobjectattribute.add",
+          "command": "extension.sfccexplorer.systemobject.addattribute",
           "when": "view == systemObjectDefinitionsView && viewItem == definition"
+        },
+        {
+          "command": "extension.sfccexplorer.systemobjectattribute.setdefault",
+          "when": "view == systemObjectDefinitionsView && viewItem =~ attribute"
         }
       ]
     },
