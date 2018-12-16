@@ -25,7 +25,7 @@ import { MetadataNode } from '../components/MetadataNode';
  * object definitions used by the SFCC instance.
  */
 export default class OCAPIHelper {
-  private metadataView : MetadataView;
+  private metadataView: MetadataView;
   public static readonly ATTRIBUTE_TYPES = [
     'Boolean',
     'Date',
@@ -49,7 +49,7 @@ export default class OCAPIHelper {
    * @param {MetadataView} metaView - The MetadataView class instance that can
    *    be used to read the seleted items in the MetadataViewProvider instance.
    */
-  constructor(metaView : MetadataView) {
+  constructor(metaView: MetadataView) {
     this.metadataView = metaView;
   }
 
@@ -114,7 +114,6 @@ export default class OCAPIHelper {
 
     return Promise.resolve(_callResult);
   }
-
 
   /**
    * Validates that a string is an allowed Id for a SFCC SystemObject attribute.
@@ -203,7 +202,7 @@ export default class OCAPIHelper {
     };
     const descriptionInputOptions = {
       prompt: 'Enter Attribute Description (Optional):'
-    }
+    };
 
     /* Begin Form Wizard
        ====================================================================== */
@@ -248,7 +247,6 @@ export default class OCAPIHelper {
 
       // If the user cancels, then exit the wizard.
       if (typeof description === 'undefined') {
-
       }
 
       // Assign attribute values to the request document object.
@@ -261,8 +259,7 @@ export default class OCAPIHelper {
       // const selected = metadataView.currentProvider.;
 
       // Return the reuslt of the API call.
-      return this.addAttributeDefiniton(systemObjectId,
-        objAttributeDefinition);
+      return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition);
     } catch (e) {
       console.log(e);
       return Promise.reject({
@@ -271,5 +268,40 @@ export default class OCAPIHelper {
         errorObject: e
       });
     }
+  }
+
+  /**
+   * Makes an OCAPI call to set the default value of a system object attribute
+   * if this operation is supported on the attribute/object type combination.
+   *
+   * @param {MetadataNode} node - The node object that was selected when the
+   *    context menu option was selected.
+   * @returns {Promise<any>} - Returns a promise that resolves with the reuslts
+   *    of the call to the OCAPI endpoint.
+   */
+  public setDefaultAttributeValue(node: MetadataNode): Promise<any> {
+    const ALLOWED_SYSTEM_OBJECTS = [
+      'SitePreferences',
+      'OrganizationPreferences'
+    ];
+    const ALLOWED_ATTRIBUTE_TYPES = ['string', 'number', 'boolean'];
+
+    const attributeDefinition: ObjectAttributeDefinition =
+      node.objectAttributeDefinition;
+
+    let isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
+      type => 'root.systemObjectDefinitions.' + type === node.parentId
+    );
+
+    // Check if this is a system object that allows for default attribute values,
+    // and that the data type allows for default values.
+    if (
+      isCallAllowed &&
+      ALLOWED_ATTRIBUTE_TYPES.indexOf(attributeDefinition.valueType) > -1
+    ) {
+      /** @todo make call to the OCAPI api to set the default value */
+    }
+
+    return Promise.reject('METHOD NOT IMPLEMENTED');
   }
 }

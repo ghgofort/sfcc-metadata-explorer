@@ -13,7 +13,9 @@ import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 
+/** @interface INodeData */
 export default interface INodeData {
+    parentId: string;
     objectAttributeDefinition?: ObjectAttributeDefinition;
     obtectAttributeGroup?: ObjectAttributeGroup;
     objectAttributeValueDefinition?: ObjectAttributeValueDefinition;

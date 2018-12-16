@@ -21,16 +21,19 @@ export function activate(context: ExtensionContext) {
    * Binds the handler function for the event. The command has been defined in
    * the package.json file.
    *
-   * @listens extension.sfccexplorer.systemobjectattribute.add
+   * @listens extension.sfccexplorer.systemobject.addattribute
    */
   const addAttributeDisposable: Disposable = commands.registerCommand(
-    'extension.sfccexplorer.systemobjectattribute.add', (metaNode: MetadataNode) => {
+    'extension.sfccexplorer.systemobject.addattribute', (metaNode: MetadataNode) => {
       ocapiHelper.addAttributeNode(metaNode)
         .then(data => {
           console.log(data);
           metaView.currentProvider.refresh();
         }
-      ).catch(err => console.log(err));
+      ).catch(err => {
+        window.showErrorMessage('Unable to add attribute: {0}', err);
+        console.log(err);
+      });
     }
   );
 
@@ -43,6 +46,25 @@ export function activate(context: ExtensionContext) {
   const refreshTreeDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.refresh', (metaDataView: any) => {
       metaView.currentProvider.refresh();
+    }
+  );
+
+  /**
+   * Binds the handler for the context menu command to set the default value of
+   * a system object attribute.
+   *
+   * @listens extension.sfccexplorer.systemobjectattribute.setdefault
+   */
+  const setDefaultDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.systemobjectattribute.setdefault',
+    (metaNode: MetadataNode) => {
+      ocapiHelper.setDefaultAttributeValue(metaNode)
+        .then(data => {
+
+        }).catch(err => {
+          window.showErrorMessage('Unable to set default value: {0}', err);
+          console.log(err)
+        });
     }
   );
 

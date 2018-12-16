@@ -27,6 +27,7 @@ export class MetadataNode extends TreeItem {
   public objectAttributeGroup: ObjectAttributeGroup;
   public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
   public objectTypeDefinition: ObjectTypeDefinition;
+  public parentId: string;
   public value: string | number;
 
   /**

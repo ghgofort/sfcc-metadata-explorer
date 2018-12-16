@@ -102,7 +102,10 @@ export class MetadataViewProvider
             new MetadataNode(
               'System Object Definitions',
               TreeItemCollapsibleState.Collapsed,
-              { baseNodeName: 'systemObjectDefinitions' }
+              {
+                parentId: 'root',
+                baseNodeName: 'systemObjectDefinitions'
+              }
             )
           );
         }
@@ -149,6 +152,7 @@ export class MetadataViewProvider
                   name,
                   TreeItemCollapsibleState.Collapsed,
                   {
+                    parentId: 'root.systemObjectDefinitions',
                     objectTypeDefinition: new ObjectTypeDefinition(sysObj)
                   }
                 );
@@ -178,15 +182,19 @@ export class MetadataViewProvider
             console.log(_callResult);
 
             // If the API call returns data create the first level of a tree.
-            if (!_callResult.error &&
-                typeof _callResult.data !== 'undefined' &&
-                Array.isArray(_callResult.data)
+            if (
+              !_callResult.error &&
+              typeof _callResult.data !== 'undefined' &&
+              Array.isArray(_callResult.data)
             ) {
               return _callResult.data.map(resultObj => {
                 return new MetadataNode(
                   resultObj.id,
                   TreeItemCollapsibleState.Collapsed,
                   {
+                    parentId:
+                      'root.systemObjectDefinitions.' +
+                      element.objectTypeDefinition.objectType,
                     objectAttributeDefinition: new ObjectAttributeDefinition(
                       resultObj
                     )
@@ -201,7 +209,11 @@ export class MetadataViewProvider
               new MetadataNode(
                 'Unable to load...',
                 TreeItemCollapsibleState.None,
-                {}
+                {
+                  parentId:
+                    'root.systemObjectDefinitions.' +
+                    element.objectTypeDefinition.objectType
+                }
               )
             ];
           } else if (element.nodeType === 'objectAttributeDefinition') {
@@ -222,7 +234,12 @@ export class MetadataViewProvider
                 return new MetadataNode(
                   key + ' : ' + objAttrDef[key],
                   TreeItemCollapsibleState.None,
-                  {}
+                  {
+                    parentId:
+                      element.parentId +
+                      '.' +
+                      element.objectAttributeDefinition.id
+                  }
                 );
               } else if (
                 // == Localized Strings
@@ -233,7 +250,12 @@ export class MetadataViewProvider
                 return new MetadataNode(
                   key + ' : ' + objAttrDef[key].default,
                   TreeItemCollapsibleState.None,
-                  {}
+                  {
+                    parentId:
+                      element.parentId +
+                      '.' +
+                      element.objectAttributeDefinition.id
+                  }
                 );
               } else if (
                 objAttrDef[key] instanceof ObjectAttributeValueDefinition
@@ -243,13 +265,25 @@ export class MetadataViewProvider
                   return new MetadataNode(
                     key + ': ' + objAttrDef[key].id,
                     TreeItemCollapsibleState.Collapsed,
-                    { objectAttributeValueDefinition: objAttrDef[key] }
+                    {
+                      objectAttributeValueDefinition: objAttrDef[key],
+                      parentId:
+                        element.parentId +
+                        '.' +
+                        element.objectAttributeDefinition.id
+                    }
                   );
                 }
                 return new MetadataNode(
                   key + ': (undefined)',
                   TreeItemCollapsibleState.None,
-                  { objectAttributeValueDefinition: objAttrDef[key] }
+                  {
+                    objectAttributeValueDefinition: objAttrDef[key],
+                    parentId:
+                      element.parentId +
+                      '.' +
+                      element.objectAttributeDefinition.id
+                  }
                 );
               }
             });
@@ -269,14 +303,20 @@ export class MetadataViewProvider
                   return new MetadataNode(
                     key + ': ' + value,
                     TreeItemCollapsibleState.None,
-                    {}
+                    {
+                      parentId:
+                        element.parentId + 'objectAttributeValueDefinition'
+                    }
                   );
                 } else {
                   // == Localized String
                   return new MetadataNode(
                     key + ': ' + value.default,
                     TreeItemCollapsibleState.None,
-                    {}
+                    {
+                      parentId:
+                        element.parentId + 'objectAttributeValueDefinition'
+                    }
                   );
                 }
               }
