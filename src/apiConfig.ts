@@ -101,6 +101,27 @@ export const apiConfig = {
           ],
           path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
+
+        // Get the attribute groups
+        getAttributeGroups: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_groups'
+        }
       }
     }
   },

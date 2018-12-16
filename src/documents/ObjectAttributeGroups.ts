@@ -1,20 +1,21 @@
 /**
- * @file ObjectTypeDefinition.ts
- * @fileoverview - Provides a class for standardized handling of the OCAPI
- * object_type_definitions document type.
+ * @file ObjectAttributeGroups.ts
+ * @fileoverview - Exports a single class for working with system object
+ *    attribute groups with OCAPI.
  */
 
-import ObjectTypeDefinition from './ObjectTypeDefinition';
+import ObjectAttributeGroup from './ObjectAttributeGroup';
 
 /**
- * @class ObjectTypeDefinitions
- * @classdesc - A data model class for working with the OCAPI data API's
- *    object_type_definitions document type.
+ * @class ObjectAttributeGroups
+ * @classdesc - Represents a list of returned attribute groups from a call to
+ *    the API endpoint to retrieve the system object attribute groups of a SFCC
+ *    system object.
  */
-export class ObjectTypeDefinitions {
-  // Declare class member variables.
+export default class ObjectAttributeGroups {
+  // Class Member Fields
   public count: number = 0;
-  public data: ObjectTypeDefinition[] = [];
+  public data: ObjectAttributeGroup[] = [];
   public expand: string[] = [];
   public next: string = '';
   public previous: string = '';
@@ -23,18 +24,16 @@ export class ObjectTypeDefinitions {
   public total: number = 0;
 
   /**
-   * @param {Object} [args] - The raw JSON document returned from an OCAPI call.
+   * @param {Object} [args] - Raw JSON response from OCAPI call.
    * @constructor
    */
   constructor(args) {
-    // Get any arguments that were passed into the instance to set the values on
-    // Object initialization.
     if (args) {
       if (args.count) {
         this.count = args.count;
       }
       if (args.data) {
-        this.data = args.data.map(type => new ObjectTypeDefinition(type));
+        this.data = args.data.map(group => new ObjectAttributeGroup(group));
       }
       if (args.expand) {
         this.expand = args.expand;

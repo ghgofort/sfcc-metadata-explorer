@@ -13,7 +13,8 @@ This extension provides Sales Force Comerce Cloud (SFCC) developers with an alte
    * Each attribute is in turn expandable to view information about the attribute, including attribute type, id, display name, etc.
 * #### View Custom Object Definitions.
    * Custom objects are currently displayed within the list of System Objects with the qualifyer '(Custom Object)' printed after the CustomObjectDefinition's Id (see screen capture below).
-* #### View System Objec of a system object.
+* #### View Attribute Definitions of System Object
+* #### View Attribute Groups of a System Object
 * #### Add Attribute Definition to System Object
    * Each system object attribute has a context menu (right click or CMD+click) with a command to create a new attribute definition.
    * Several inputs are shown to gather information about the new attribute definition:
@@ -53,9 +54,11 @@ _Because this extension is still in the initial development, additional issues w
 
 ## Release Notes
 
+Release of a Beta version of this extension will be in the near future.
+
 ### Updates since last release
 
-
+- Viewing of system object attribute groups is now supported.
 - Context menu action has been added to the system objects for adding a new system object attribute.
   - The attribute details are collected through a wizard that gets the value of each field, and then makes a single call to the Open Commerce API to create the new system object attribute definition.
 - Display of the system & custom objects has been added.
