@@ -17,9 +17,10 @@ import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDef
 export default interface INodeData {
     parentId: string;
     objectAttributeDefinition?: ObjectAttributeDefinition;
-    obtectAttributeGroup?: ObjectAttributeGroup;
+    objectAttributeGroup?: ObjectAttributeGroup;
     objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
     objectTypeDefinition?: ObjectTypeDefinition;
+    parentContainer?: string;
     baseNodeName?: string;
     nodeValue?: string|number;
 }
