@@ -24,16 +24,18 @@ export function activate(context: ExtensionContext) {
    * @listens extension.sfccexplorer.systemobject.addattribute
    */
   const addAttributeDisposable: Disposable = commands.registerCommand(
-    'extension.sfccexplorer.systemobject.addattribute', (metaNode: MetadataNode) => {
-      ocapiHelper.addAttributeNode(metaNode)
+    'extension.sfccexplorer.systemobject.addattribute',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .addAttributeNode(metaNode)
         .then(data => {
           console.log(data);
           metaView.currentProvider.refresh();
-        }
-      ).catch(err => {
-        window.showErrorMessage('Unable to add attribute: {0}', err);
-        console.log(err);
-      });
+        })
+        .catch(err => {
+          window.showErrorMessage('Unable to add attribute: {0}', err);
+          console.log(err);
+        });
     }
   );
 
@@ -44,8 +46,31 @@ export function activate(context: ExtensionContext) {
    * @listens extension.sfccexplorer.refresh
    */
   const refreshTreeDisposable: Disposable = commands.registerCommand(
-    'extension.sfccexplorer.refresh', (metaDataView: any) => {
+    'extension.sfccexplorer.refresh',
+    (metaDataView: any) => {
       metaView.currentProvider.refresh();
+    }
+  );
+
+  /**
+   * Binds the OCAPI helper method to handle the assigning of attributes to
+   * attribute groups to the VSCode event.
+   *
+   * @listens extension.sfccexplorer.systemobjectattribute.addtogroup
+   */
+  const assignToGroupDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.systemobjectattribute.addtogroup',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .assignAttributesToGroup(metaNode)
+        .then(data => {
+          console.log(data);
+          metaView.currentProvider.refresh();
+        })
+        .catch(err => {
+          window.showErrorMessage('Unable to add attribute: {0}', err);
+          console.log(err);
+        });
     }
   );
 
@@ -58,16 +83,23 @@ export function activate(context: ExtensionContext) {
   const setDefaultDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjectattribute.setdefault',
     (metaNode: MetadataNode) => {
-      ocapiHelper.setDefaultAttributeValue(metaNode)
+      ocapiHelper
+        .setDefaultAttributeValue(metaNode)
         .then(data => {
-
-        }).catch(err => {
+          /**
+           * @todo : Implement the helper method to set the default value of
+           *    system object attributes.
+           */
+        })
+        .catch(err => {
           window.showErrorMessage('Unable to set default value: {0}', err);
-          console.log(err)
+          console.log(err);
         });
     }
   );
 
+  context.subscriptions.push(assignToGroupDisposable);
+  context.subscriptions.push(setDefaultDisposable);
   context.subscriptions.push(addAttributeDisposable);
   context.subscriptions.push(refreshTreeDisposable);
 }

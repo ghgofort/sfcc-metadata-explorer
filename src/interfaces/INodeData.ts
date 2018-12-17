@@ -20,6 +20,7 @@ export default interface INodeData {
     objectAttributeGroup?: ObjectAttributeGroup;
     objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
     objectTypeDefinition?: ObjectTypeDefinition;
+    stringList?: string[];
     parentContainer?: string;
     baseNodeName?: string;
     nodeValue?: string|number;

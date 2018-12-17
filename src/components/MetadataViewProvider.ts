@@ -76,7 +76,7 @@ export class MetadataViewProvider
    *    starting point for expansion of the tree when selected.
    * @return {Promise<MetadataNode[]>}
    */
-  async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
+  public async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
     try {
       if (!element) {
         // Get the base nodes of the tree.
@@ -96,6 +96,8 @@ export class MetadataViewProvider
             return this.getAttributeGroupChildren(element);
           } else if (element.nodeType === 'objectAttributeValueDefinition') {
             return this.getAttributeValueDefinitionChildren(element);
+          } else if (element.nodeType === 'stringList') {
+            return this.getStringListChildren(element);
           }
         } else {
           // Return an empty array for types that are not expandable.
@@ -383,12 +385,65 @@ export class MetadataViewProvider
   private async getAttributeGroupChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
+    const childNodes: MetadataNode[] = [];
     const attrGroup = element.objectAttributeGroup;
-    return Object.keys(attrGroup).map(groupProperty => {
-      return new MetadataNode(groupProperty, TreeItemCollapsibleState.None, {
+    const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
+
+    // Attribute Definitions
+    if (hasAttributes) {
+      const attrDefTitles = attrGroup.attributeDefinitions.map(
+        attrDef => attrDef.id
+      );
+
+      childNodes.push(
+        new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
+          parentId: element.parentId + '.' + element.id,
+          stringList: attrDefTitles
+        })
+      );
+    }
+
+    // Description
+    childNodes.push(
+      new MetadataNode('description', TreeItemCollapsibleState.Collapsed, {
         parentId: element.parentId + '.' + attrGroup.id
-      });
-    });
+      })
+    );
+
+    // Display Name
+    childNodes.push(
+      new MetadataNode(
+        'display name: ' + attrGroup.displayName,
+        TreeItemCollapsibleState.Collapsed,
+        {
+          parentId: element.parentId + '.' + attrGroup.id
+        }
+      )
+    );
+
+    // Internal
+    childNodes.push(
+      new MetadataNode(
+        'internal: ' + attrGroup.internal,
+        TreeItemCollapsibleState.Collapsed,
+        {
+          parentId: element.parentId + '.' + attrGroup.id
+        }
+      )
+    );
+
+    // Position
+    childNodes.push(
+      new MetadataNode(
+        'position: ' + attrGroup.position,
+        TreeItemCollapsibleState.Collapsed,
+        {
+          parentId: element.parentId + '.' + attrGroup.id
+        }
+      )
+    );
+
+    return Promise.resolve(childNodes);
   }
 
   /**
@@ -457,5 +512,20 @@ export class MetadataViewProvider
         );
       }
     });
+  }
+
+  /**
+   * Gets the children elements simple string array type nodes.
+   * @param {MetadataNode} element - The MetadataNode instance.
+   * @return {Promise<MetadataNode[]>}
+   */
+  private async getStringListChildren(
+    element: MetadataNode
+  ): Promise<MetadataNode[]> {
+    return element.stringList.map(str => new MetadataNode(
+      str,
+      TreeItemCollapsibleState.None,
+      { parentId: element.parentId + '.' + element.name }
+    ));
   }
 }
