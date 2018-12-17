@@ -142,6 +142,7 @@ export default class OCAPIHelper {
       );
     } catch (e) {
       console.log(e);
+      return Promise.reject('User Cancled Action');
     }
 
     return attributeId;
