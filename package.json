@@ -54,6 +54,11 @@
         "description": "Sets the default value of a custom attribute of the SitePreferences system object."
       },
       {
+        "command": "extension.sfccexplorer.systemobjectattribute.addtogroup",
+        "title": "Assign attribute to attribute group",
+        "description": "Adds a system object attribute definition to a system object attribute group."
+      },
+      {
         "command": "extension.sfccexplorer.refresh",
         "title": "Refresh",
         "icon": {
@@ -76,8 +81,8 @@
           "when": "view == systemObjectDefinitionsView && viewItem == definition"
         },
         {
-          "command": "extension.sfccexplorer.systemobjectattribute.setdefault",
-          "when": "view == systemObjectDefinitionsView && viewItem =~ attribute"
+          "command": "extension.sfccexplorer.systemobjectattribute.addtogroup",
+          "when": "view == systemObjectDefinitionsView && viewItem == attribute"
         }
       ]
     },

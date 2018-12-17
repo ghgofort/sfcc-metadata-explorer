@@ -76,7 +76,7 @@ export class MetadataViewProvider
    *    starting point for expansion of the tree when selected.
    * @return {Promise<MetadataNode[]>}
    */
-  async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
+  public async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
     try {
       if (!element) {
         // Get the base nodes of the tree.

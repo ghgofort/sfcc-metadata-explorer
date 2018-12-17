@@ -26,6 +26,8 @@ import { MetadataNode } from '../components/MetadataNode';
  */
 export default class OCAPIHelper {
   private metadataView: MetadataView;
+  private service: OCAPIService = new OCAPIService();
+
   public static readonly ATTRIBUTE_TYPES = [
     'Boolean',
     'Date',
@@ -74,7 +76,6 @@ export default class OCAPIHelper {
     attributeDefinition: ObjectAttributeDefinition,
     includeDescription: boolean = false
   ): Promise<any> {
-    const service: OCAPIService = new OCAPIService();
     let includeFields = [
       'displayName',
       'key',
@@ -101,18 +102,49 @@ export default class OCAPIHelper {
     };
 
     try {
-      _callSetup = await service.getCallSetup(
+      _callSetup = await this.service.getCallSetup(
         'systemObjectDefinitions',
         'createAttribute',
         callData
       );
 
-      _callResult = await service.makeCall(_callSetup);
+      _callResult = await this.service.makeCall(_callSetup);
     } catch (e) {
       console.log(e);
     }
 
     return Promise.resolve(_callResult);
+  }
+
+
+  /**
+   * Presents the user with a selection box to choose which attribute group to
+   * add the attribute to. Returns a promise that resolves with the selection.
+   *
+   * @param {string[]} groupIds - The attribute group Ids for the system object.
+   * @returns {Promise<string>} - Returns a promise that resolves with the
+   *    string Id of the selected attribute group as the data.
+   */
+  private async getGroupIdFromUser(groupIds: string[]): Promise<string> {
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelAddAttributeToken: CancellationToken = tokenSource.token;
+    const qpOptions: QuickPickOptions = {
+      placeHolder: 'Select the attribute group'
+    };
+    let attributeId: string = '';
+
+    try {
+      // Show a select option box to choose the attribute group.
+      attributeId = await window.showQuickPick(
+        groupIds,
+        qpOptions,
+        cancelAddAttributeToken
+      );
+    } catch (e) {
+      console.log(e);
+    }
+
+    return attributeId;
   }
 
   /**
@@ -271,6 +303,66 @@ export default class OCAPIHelper {
   }
 
   /**
+   * Assings the speciifecd attribute definitions to the specified attribute
+   * group using a call to the OCAPIService.
+   *
+   * @param node - An array of selected MetadataNodes
+   */
+  public async assignAttributesToGroup(node: MetadataNode): Promise<any> {
+    const path = node.parentId.split('.');
+    const objectType = path[path.length - 2];
+    let availableGroups: string[] = [];
+    let _callSetup: ICallSetup;
+    let _callResult: any;
+
+    // First, get the attribute groups to display as choices.
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'getAttributeGroups',
+        {
+          select: '(**)',
+          objectType: objectType
+        }
+      );
+
+      _callResult = await this.service.makeCall(_callSetup);
+
+      // If the API call returns data create the first level of a tree.
+      if (
+        !_callResult.error &&
+        typeof _callResult.data !== 'undefined' &&
+        Array.isArray(_callResult.data)
+      ) {
+        availableGroups = _callResult.data.map(group => group.id);
+        const assignGroupId = await this.getGroupIdFromUser(availableGroups);
+
+        _callSetup = await this.service.getCallSetup(
+          'systemObjectDefinitions',
+          'assignAttributeToGroup',
+          {
+            objectType: objectType,
+            groupId: assignGroupId,
+            attributeId: node.objectAttributeDefinition.id
+          }
+        );
+
+        return await this.service.makeCall(_callSetup);
+
+      } else if (!_callResult.error &&
+        typeof _callResult.count !== 'undefined' &&
+        _callResult.count === 0
+      ) {
+        Promise.reject('There are no attribute groups.')
+      }
+    } catch (e) {
+      console.log('ERROR: Unable to assign attribute to group: ', e);
+    }
+
+    return Promise.reject('ERROR: Unable to assign attribute to group.');
+  }
+
+  /**
    * Makes an OCAPI call to set the default value of a system object attribute
    * if this operation is supported on the attribute/object type combination.
    *
@@ -279,7 +371,7 @@ export default class OCAPIHelper {
    * @returns {Promise<any>} - Returns a promise that resolves with the reuslts
    *    of the call to the OCAPI endpoint.
    */
-  public setDefaultAttributeValue(node: MetadataNode): Promise<any> {
+  public async setDefaultAttributeValue(node: MetadataNode): Promise<any> {
     const ALLOWED_SYSTEM_OBJECTS = [
       'SitePreferences',
       'OrganizationPreferences'
