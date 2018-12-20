@@ -31,6 +31,7 @@ export class MetadataNode extends TreeItem {
   public parentId: string;
   public stringList: string[];
   public value: string | number;
+  public displayDescription: string;
 
   /**
    * @static
@@ -78,7 +79,8 @@ export class MetadataNode extends TreeItem {
     // There will only be one property, since the node can only be one of the
     // specified types.
     Object.keys(nodeData)
-      .filter(attrName => attrName !== 'parentId')
+      .filter(attrName => attrName !== 'parentId' &&
+        attrName !== 'displayDescription')
       .forEach(_dataType => {
         instance[_dataType] = nodeData[_dataType];
         const nodeTypeIndex = expandableTypes.findIndex(type => {
@@ -92,6 +94,7 @@ export class MetadataNode extends TreeItem {
     // Set the instance member properties for the child Class.
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
     this.parentId = nodeData.parentId;
+    this.displayDescription = nodeData.displayDescription || '';
   }
 
   /* Member Mutators & Accessors
@@ -105,5 +108,5 @@ export class MetadataNode extends TreeItem {
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }
-  get description(): string { return this.name }
+  get description(): string { return this.displayDescription || this.name }
 }
