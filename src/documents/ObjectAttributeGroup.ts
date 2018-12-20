@@ -35,11 +35,11 @@ export default class ObjectAttributeGroup {
       if (args.attribute_definitions_count) {
         this.attributeDefinitionsCount = args.attribute_definitions_count;
       }
-      if (args.description) {
-        this.description = args.description;
+      if (args.description && args.description.default) {
+        this.description = args.description.default;
       }
-      if (args.display_name) {
-        this.displayName = args.display_name;
+      if (args.display_name && args.display_name.default) {
+        this.displayName = args.display_name.default;
       }
       if (args.id) {
         this.id = args.id;

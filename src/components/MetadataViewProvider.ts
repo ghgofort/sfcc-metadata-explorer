@@ -398,49 +398,29 @@ export class MetadataViewProvider
       childNodes.push(
         new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
           parentId: element.parentId + '.' + element.id,
-          stringList: attrDefTitles
+          stringList: attrDefTitles,
+          displayDescription: attrGroup.attributeDefinitionsCount.toString()
         })
       );
     }
 
-    // Description
-    childNodes.push(
-      new MetadataNode('description', TreeItemCollapsibleState.Collapsed, {
-        parentId: element.parentId + '.' + attrGroup.id
-      })
-    );
+    const nodeMap: Object = {
+      displayName: 'display name'
+    };
 
-    // Display Name
-    childNodes.push(
-      new MetadataNode(
-        'display name: ' + attrGroup.displayName,
-        TreeItemCollapsibleState.Collapsed,
-        {
-          parentId: element.parentId + '.' + attrGroup.id
-        }
-      )
-    );
+    ['id', 'description', 'displayName', 'internal', 'position', 'link'].forEach(
+      property => {
+        const propertyNode: MetadataNode = new MetadataNode(
+          (nodeMap[property] || property),
+          TreeItemCollapsibleState.None,
+          {
+            parentId: element.parentId + '.' + attrGroup.id,
+            displayDescription: attrGroup[property]
+          }
+        );
 
-    // Internal
-    childNodes.push(
-      new MetadataNode(
-        'internal: ' + attrGroup.internal,
-        TreeItemCollapsibleState.Collapsed,
-        {
-          parentId: element.parentId + '.' + attrGroup.id
-        }
-      )
-    );
-
-    // Position
-    childNodes.push(
-      new MetadataNode(
-        'position: ' + attrGroup.position,
-        TreeItemCollapsibleState.Collapsed,
-        {
-          parentId: element.parentId + '.' + attrGroup.id
-        }
-      )
+        childNodes.push(propertyNode);
+      }
     );
 
     return Promise.resolve(childNodes);
@@ -522,10 +502,11 @@ export class MetadataViewProvider
   private async getStringListChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    return element.stringList.map(str => new MetadataNode(
-      str,
-      TreeItemCollapsibleState.None,
-      { parentId: element.parentId + '.' + element.name }
-    ));
+    return element.stringList.map(
+      str =>
+        new MetadataNode(str, TreeItemCollapsibleState.None, {
+          parentId: element.parentId + '.' + element.name
+        })
+    );
   }
 }

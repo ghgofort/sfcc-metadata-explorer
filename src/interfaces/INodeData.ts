@@ -24,4 +24,5 @@ export default interface INodeData {
     parentContainer?: string;
     baseNodeName?: string;
     nodeValue?: string|number;
+    displayDescription?: string;
 }
