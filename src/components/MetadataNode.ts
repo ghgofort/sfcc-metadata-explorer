@@ -108,5 +108,5 @@ export class MetadataNode extends TreeItem {
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }
-  get description(): string { return this.displayDescription || this.name }
+  get description(): string { return this.displayDescription || '' }
 }

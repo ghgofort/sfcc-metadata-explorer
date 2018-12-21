@@ -160,7 +160,10 @@ export class MetadataViewProvider
               parentId: element.parentId + '.' + objectType,
               objectAttributeDefinition: new ObjectAttributeDefinition(
                 resultObj
-              )
+              ),
+              displayDescription: resultObj.display_name
+                ? resultObj.display_name.default
+                : ''
             }
           );
         });
@@ -181,6 +184,7 @@ export class MetadataViewProvider
         'getAttributeGroups',
         {
           select: '(**)',
+          expand: 'definition',
           objectType: objectType
         }
       );
@@ -199,7 +203,10 @@ export class MetadataViewProvider
             TreeItemCollapsibleState.Collapsed,
             {
               parentId: element.parentId + '.' + objectType,
-              objectAttributeGroup: new ObjectAttributeGroup(resultObj)
+              objectAttributeGroup: new ObjectAttributeGroup(resultObj),
+              displayDescription: resultObj.display_name
+                ? resultObj.display_name.default
+                : ''
             }
           );
         });
@@ -266,7 +273,8 @@ export class MetadataViewProvider
         // represents.
         return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
           parentId: 'root.systemObjectDefinitions',
-          objectTypeDefinition: new ObjectTypeDefinition(sysObj)
+          objectTypeDefinition: new ObjectTypeDefinition(sysObj),
+          displayDescription: ' '
         });
       });
     }
@@ -330,6 +338,10 @@ export class MetadataViewProvider
         displayTextMap[ctnrName],
         TreeItemCollapsibleState.Collapsed,
         {
+          displayDescription:
+            ctnrName === 'objectAttributeDefinitions'
+              ? element.objectTypeDefinition.attributeDefinitionCount.toString()
+              : element.objectTypeDefinition.attributeGroupCount.toString(),
           parentContainer: ctnrName,
           parentId:
             element.parentId + '.' + element.objectTypeDefinition.objectType
@@ -408,20 +420,25 @@ export class MetadataViewProvider
       displayName: 'display name'
     };
 
-    ['id', 'description', 'displayName', 'internal', 'position', 'link'].forEach(
-      property => {
-        const propertyNode: MetadataNode = new MetadataNode(
-          (nodeMap[property] || property),
-          TreeItemCollapsibleState.None,
-          {
-            parentId: element.parentId + '.' + attrGroup.id,
-            displayDescription: attrGroup[property]
-          }
-        );
+    [
+      'id',
+      'description',
+      'displayName',
+      'internal',
+      'position',
+      'link'
+    ].forEach(property => {
+      const propertyNode: MetadataNode = new MetadataNode(
+        nodeMap[property] || property,
+        TreeItemCollapsibleState.None,
+        {
+          parentId: element.parentId + '.' + attrGroup.id,
+          displayDescription: attrGroup[property]
+        }
+      );
 
-        childNodes.push(propertyNode);
-      }
-    );
+      childNodes.push(propertyNode);
+    });
 
     return Promise.resolve(childNodes);
   }

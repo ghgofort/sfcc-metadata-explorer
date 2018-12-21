@@ -41,8 +41,8 @@
       },
       {
         "command": "extension.sfccexplorer.systemobject.addattribute",
-        "title": "Add a New System Object Attribute",
-        "description": "Add a new attribute to a SFCC system object on a connected sandbox.",
+        "title": "Add new attribute...",
+        "description": "Add a new custom attribute to the system object.",
         "icon": {
           "dark": "resources/dark/add.svg",
           "light": "resources/light/add.svg"
@@ -65,6 +65,11 @@
           "dark": "resources/dark/refresh.svg",
           "light": "resources/light/refresh.svg"
         }
+      },
+      {
+        "command": "extension.sfccexplorer.objectattributegroup.addgroup",
+        "title": "Add new attribute group...",
+        "description": "Add a new attribute group to the system object."
       }
     ],
     "menus": {
@@ -83,6 +88,10 @@
         {
           "command": "extension.sfccexplorer.systemobjectattribute.addtogroup",
           "when": "view == systemObjectDefinitionsView && viewItem == attribute"
+        },
+        {
+          "command": "extension.sfccexplorer.objectattributegroup.addgroup",
+          "when": "view == systemObjectDefinitionsView && viewItem == definition"
         }
       ]
     },

@@ -98,6 +98,31 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds the handler for the context menu command to set the default value of
+   * a system object attribute.
+   *
+   * @listens extension.sfccexpllorer.objectattributegroup.addgroup
+   */
+  const addGroupDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.objectattributegroup.addgroup',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .addAttributeGroup(metaNode)
+        .then(data => {
+          /**
+           * @todo : Implement the helper method to set the default value of
+           *    system object attributes.
+           */
+        })
+        .catch(err => {
+          window.showErrorMessage('Unable to set default value: {0}', err);
+          console.log(err);
+        });
+    }
+  );
+
+  context.subscriptions.push(addGroupDisposable);
   context.subscriptions.push(assignToGroupDisposable);
   context.subscriptions.push(setDefaultDisposable);
   context.subscriptions.push(addAttributeDisposable);

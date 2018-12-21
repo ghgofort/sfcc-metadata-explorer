@@ -1,16 +1,17 @@
-import ObjectAttributeDefinition from './ObjectAttributeDefinition';
-
 /**
  * @file ObjectAttributeGroup.ts
  * @fileoverview - Exports the ObjectAttributeGroup class which is a model for the OCAPI
  * document representing an attribute group of a system or custom object.
  */
 
+import IAPIDocument from '../interfaces/IAPIDocument';
+import ObjectAttributeDefinition from './ObjectAttributeDefinition';
+
 /**
  * @class
  * @classdesc - Used for handling the OCAPI document: ObjectAttributeGroup.
  */
-export default class ObjectAttributeGroup {
+export default class ObjectAttributeGroup implements IAPIDocument {
   // Class Member Fields
   public attributeDefinitions: ObjectAttributeDefinition[] = [];
   public attributeDefinitionsCount: number = 0;
@@ -21,6 +22,12 @@ export default class ObjectAttributeGroup {
   public link: string = '';
   public position: number = 0;
 
+  public readonly MEMBER_MAP = {
+    attributeDefinitions: 'attribute_definitions',
+    attributeDefinitionsCount: 'attribute_definitions_count',
+    displayName: 'display_name'
+  };
+
   /**
    * @param {Object} args - The raw JSON object document returned from a call to
    *    SFCC OCAPI.
@@ -30,7 +37,7 @@ export default class ObjectAttributeGroup {
     if (args) {
       if (args.attribute_definitions) {
         this.attributeDefinitions = args.attribute_definitions.map(def =>
-            new ObjectAttributeDefinition({def}));
+            new ObjectAttributeDefinition(def));
       }
       if (args.attribute_definitions_count) {
         this.attributeDefinitionsCount = args.attribute_definitions_count;
@@ -54,5 +61,11 @@ export default class ObjectAttributeGroup {
         this.position = args.position;
       }
     }
+  }
+
+  public getDocument(includeFields: string[] = []): Object {
+    /** @todo */
+
+    return {};
   }
 }
