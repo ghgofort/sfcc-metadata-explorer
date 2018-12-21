@@ -21,6 +21,7 @@ export default class ObjectAttributeGroup implements IAPIDocument {
   public internal: boolean = false;
   public link: string = '';
   public position: number = 0;
+  public includedFields: string[] = [];
 
   public readonly MEMBER_MAP = {
     attributeDefinitions: 'attribute_definitions',
@@ -64,8 +65,65 @@ export default class ObjectAttributeGroup implements IAPIDocument {
   }
 
   public getDocument(includeFields: string[] = []): Object {
-    /** @todo */
+    const documentObj = {};
+    let memberNames = Object.keys(this).filter(
+      key =>
+        typeof key !== 'function' &&
+        key !== 'MEMBER_MAP' &&
+        key !== 'includedFields'
+    );
 
-    return {};
+    // If the fields to return were specified, then filter the array of
+    // properties to assign to the new object literal.
+    if (includeFields && includeFields.length) {
+      memberNames = memberNames.filter(
+        name => includeFields.indexOf(name) > -1
+      );
+    } else if (this.includedFields.length) {
+      memberNames = memberNames.filter(
+        name => this.includedFields.indexOf(name) > -1
+      );
+    }
+
+    // Create a property on the results object.
+    memberNames.forEach(localPropName => {
+      const docPropName: string = localPropName in this.MEMBER_MAP ?
+        this.MEMBER_MAP[localPropName] : localPropName;
+      let localPropVal: any;
+
+      if (typeof this[localPropName] !== 'undefined') {
+        localPropVal = this[localPropName];
+        const isComplexType =
+          typeof localPropVal !== 'number' &&
+          typeof localPropVal !== 'string' &&
+          typeof localPropVal !== 'boolean';
+
+        if (!isComplexType) {
+          documentObj[docPropName] = localPropVal;
+        } else {
+          if (localPropVal instanceof ObjectAttributeDefinition) {
+            // ==> ObjectAttributeValueDefinition - this.defaultValue
+            documentObj[docPropName] = localPropVal.getDocument();
+          } else if (Array.isArray(localPropVal)) {
+            // ==> Array<ObjectAttributeValueDefinition> - this.valueDefinitions
+            documentObj[docPropName] = localPropVal.length
+              ? localPropVal.map(arrayMember => {
+                  // valueDefinitions is the only instance property that is an
+                  // Array type.
+                  if (arrayMember instanceof ObjectAttributeDefinition) {
+                    return arrayMember.getDocument();
+                  }
+                })
+              : [];
+          } else {
+            // ==> IOCAPITypes.ILocalizedString - this.description,
+            // this.displayName, & this.unit
+            documentObj[docPropName] = localPropVal;
+          }
+        }
+      }
+    });
+
+    return documentObj;
   }
 }
