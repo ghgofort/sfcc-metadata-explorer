@@ -51,7 +51,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public includedFields: string[];
 
   // members that need to be renamed when sending the doc.
-  readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP = {
     defaultValue: 'default_value',
     displayName: 'display_name',
     effectiveId: 'effective_id',
@@ -133,7 +133,6 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    */
   public getDocument(includeFields: string[] = []): Object {
     const documentObj = {};
-    const mmNames = Object.keys(this.MEMBER_MAP);
     let memberNames = Object.keys(this).filter(
       key =>
         typeof key !== 'function' &&

@@ -91,7 +91,8 @@ export class OCAPIService {
       setupResult.endpoint += apiConfig.version + '/';
     } else {
       setupResult.setupError = true;
-      setupResult.setupErrMsg += '\nNo API version is specified in the apiConfig';
+      setupResult.setupErrMsg +=
+        '\nNo API version is specified in the apiConfig';
     }
 
     // Check if the call name is configured for the specified resource.
@@ -148,7 +149,9 @@ export class OCAPIService {
             setupResult.endpoint.indexOf(replaceMe) > -1
           ) {
             setupResult.endpoint = setupResult.endpoint.replace(
-                replaceMe, callData[param.id]);
+              replaceMe,
+              callData[param.id]
+            );
           } else if (param.use === 'QUERY_PARAMETER') {
             // Check if this is the first query string parameter, or an
             // additional parameter being added to the list.
@@ -160,8 +163,9 @@ export class OCAPIService {
               '=' +
               encodeURIComponent(callData[param.id]);
           } else {
-            // If it is not a query string parameter, and not a part of the call
-            // path, then include the argument as part of the request body.
+            // If the request supports a call body, then any parameter data
+            // that is not specified as a parameter in the config will be
+            // added to the body of the request.
             setupResult.body[param.id] = callData[param.id];
           }
 
@@ -181,7 +185,27 @@ export class OCAPIService {
       }
 
       // Remove any already added data properties.
-      const dataKeys = Object.keys(callData).filter(k => usedParams.indexOf(k));
+      const dataKeys = Object.keys(callData).filter(k =>
+          usedParams.indexOf(k) === -1);
+
+      if (dataKeys.length) {
+        // Loop through any keys that are not in the API config and add them to
+        // the request in either the URI or the Body of the request, based on the
+        // HTTP method used.
+        dataKeys.forEach(function (optionalParam) {
+          // Add any remaining parameters to the request.
+          if (setupResult.method === HTTP_VERB.get) {
+            setupResult.endpoint +=
+            setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
+            setupResult.endpoint +=
+              encodeURIComponent(optionalParam) +
+              '=' +
+              encodeURIComponent(callData[optionalParam]);
+          } else {
+            setupResult.body[optionalParam] = callData[optionalParam];
+          }
+        });
+      }
     }
 
     // If the call setup was complete, then get the sandbox configuration.
@@ -306,21 +330,23 @@ export class OCAPIService {
       };
     }
 
-    console.log('params: ', params);
-    console.log('endpoint: ', callSetup.endpoint);
+    console.log('Params: ', params);
+    console.log('Endpoint: ', callSetup.endpoint);
+    console.log('Body: ', callSetup.body || 'None');
 
     return await fetch(callSetup.endpoint, params)
-    .then(resp => {
-      if (resp.ok) {
-        return resp.json();
-      } else {
-        const errMsg = resp.statusText + ' :: Code ' + resp.status;
-        console.error(errMsg);
-        return { error: true, errorMessage: errMsg };
-      }
-    }).catch(err => {
-      console.log(err);
-    });
+      .then(resp => {
+        if (resp.ok) {
+          return resp.json();
+        } else {
+          const errMsg = resp.statusText + ' :: Code ' + resp.status;
+          console.error(errMsg);
+          return { error: true, errorMessage: errMsg };
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   /**
@@ -354,7 +380,8 @@ export class OCAPIService {
 
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
-      const workspaceFolders: WorkspaceFolder[] = workspace.workspaceFolders || [];
+      const workspaceFolders: WorkspaceFolder[] =
+        workspace.workspaceFolders || [];
       const dwConfigFiles = await Promise.all(
         workspaceFolders.map(wf =>
           workspace.findFiles(

@@ -17,6 +17,7 @@ import {
   InputBoxOptions
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
+import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 
 /**
  * @class OCAPIHelper
@@ -116,6 +117,54 @@ export default class OCAPIHelper {
     return Promise.resolve(_callResult);
   }
 
+  /**
+   * Makes a call to the OCAPIService class to add a new attribute group to the
+   * currently selected system object in the view.
+   *
+   * @param {string} objectType - The Id of the system object to that the
+   *    new aattribute group will be added to.
+   * @param {ObjectAttributeGroup} attributeGroup - An attribute group document.
+   * @returns {Promise<Object>} - Returns a promise that resoves to an Object.
+   *    The object is the JSON result reutrned form the service call.
+   */
+  private async addAttributeGroupDefiniton(
+    objectType: string,
+    attributeGroup: ObjectAttributeGroup
+  ): Promise<any> {
+    let includeFields = [
+      'displayName',
+      'key',
+      'localizable',
+      'mandatory',
+      'searchable',
+      'siteSpecific',
+      'valueType',
+      'visible'
+    ];
+
+    const docObj = attributeGroup.getDocument(includeFields);
+    let _callSetup: ICallSetup = null;
+    let _callResult: any;
+    const callData: any = {
+      body: JSON.stringify(docObj),
+      objectType: objectType,
+      id: attributeGroup.id
+    };
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'createAttribute',
+        callData
+      );
+
+      _callResult = await this.service.makeCall(_callSetup);
+    } catch (e) {
+      console.log(e);
+    }
+
+    return Promise.resolve(_callResult);
+  }
 
   /**
    * Presents the user with a selection box to choose which attribute group to
@@ -301,6 +350,22 @@ export default class OCAPIHelper {
         errorObject: e
       });
     }
+  }
+
+  /**
+   * Uses a 'wizard' like approach to get the needed information for creating a
+   * new attribute group.
+   *  - Input boxes are displayed, one-by-one, to get the group properties.
+   *  - A call is made to OCAPI to create the attribute definition.
+   *  - The tree view is refreshed to show the new attribute in the view.
+   *
+   * @param {string} objectType - The ID of the System Object Type that the new
+   *    attribute should be added to.
+   * @returns {Promise<any>} - Returns a Promise that resolves to a results
+   *    object from the API call.
+   */
+  public async addAttributeGroup(node: MetadataNode): Promise<any> {
+    /** @todo: Implement -> OCAPIHelpers.addAttributeToGroup function */
   }
 
   /**
