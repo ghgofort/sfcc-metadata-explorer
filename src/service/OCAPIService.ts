@@ -135,12 +135,22 @@ export class OCAPIService {
     if (callConfig && callConfig.params && callConfig.params.length) {
       const usedParams = [];
 
+      // If an explicit body was included, then append it to the seutp object.
+      if ('body' in callData) {
+        if (typeof callData.body === 'string') {
+          setupResult.body = encodeURIComponent(setupResult.body);
+        }
+        setupResult.body = callData.body;
+        usedParams.push('body');
+      }
+
       callConfig.params.forEach(param => {
         const replaceMe = '{' + param.id + '}';
         if (
           callData[param.id] &&
           typeof callData[param.id] === param.type &&
-          typeof param.use === 'string'
+          typeof param.use === 'string' &&
+          usedParams.indexOf(param.id) === -1
         ) {
           // Determine where the parameter needs to be included in the
           // call and add it to the call setup object.
@@ -178,11 +188,6 @@ export class OCAPIService {
           setupResult.setupErrMsg += '\n- Call type: ' + callName;
         }
       });
-
-      // If an explicit body was included, then append it to the seutp object.
-      if ('body' in callData) {
-        setupResult.body = callData.body;
-      }
 
       // Remove any already added data properties.
       const dataKeys = Object.keys(callData).filter(k =>

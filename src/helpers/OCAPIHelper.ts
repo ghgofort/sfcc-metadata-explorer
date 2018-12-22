@@ -133,14 +133,12 @@ export default class OCAPIHelper {
   ): Promise<any> {
     let includeFields = [
       'displayName',
-      'key',
-      'localizable',
-      'mandatory',
-      'searchable',
-      'siteSpecific',
-      'valueType',
-      'visible'
+      'description',
+      'id',
+      'position'
     ];
+
+    attributeGroup.position = 1.0;
 
     const docObj = attributeGroup.getDocument(includeFields);
     let _callSetup: ICallSetup = null;
@@ -154,7 +152,7 @@ export default class OCAPIHelper {
     try {
       _callSetup = await this.service.getCallSetup(
         'systemObjectDefinitions',
-        'createAttribute',
+        'createAttributeGroup',
         callData
       );
 
@@ -365,7 +363,78 @@ export default class OCAPIHelper {
    *    object from the API call.
    */
   public async addAttributeGroup(node: MetadataNode): Promise<any> {
-    /** @todo: Implement -> OCAPIHelpers.addAttributeToGroup function */
+    // Create a cancelation token instance to cancel the request when needed.
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelAddGroupToken: CancellationToken = tokenSource.token;
+    const attributeGroup: ObjectAttributeGroup = new ObjectAttributeGroup({});
+    const objectType = node.objectTypeDefinition.objectType;
+
+    const getIdOptions: InputBoxOptions = {
+      prompt: 'Group Id: ',
+      validateInput: this.validateAttributeId
+    };
+    const getDisplayNameOptions: InputBoxOptions = {
+      prompt: 'Display Name: '
+    };
+    const getDescriptionOptions: InputBoxOptions = {
+      prompt: 'Group Description: '
+    };
+
+    /* ======================================================================
+     * Begin Form Wizard
+     * ====================================================================== */
+    try {
+      // Get ID
+      const attrGroupId: string = await window.showInputBox(
+        getIdOptions,
+        cancelAddGroupToken
+      );
+
+      // Handle user cancellation
+      if (typeof attrGroupId === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+      // Assign the new attribute to the OCAPI request document.
+      attributeGroup.id = attrGroupId;
+
+      // Get Attribute Group display name
+      const attrGroupDisplayName = await window.showInputBox(
+        getDisplayNameOptions,
+        cancelAddGroupToken
+      );
+
+      // Handle User Cancellation
+      if (typeof attrGroupDisplayName === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+      // Assign to new attribute group instance.
+      attributeGroup.displayName = attrGroupDisplayName;
+
+      // Get Attribute Group display name
+      const attrGroupDescription = await window.showInputBox(
+        getDescriptionOptions,
+        cancelAddGroupToken
+      );
+
+      // Handle User Cancellation
+      if (typeof attrGroupDescription === 'undefined') {
+        return Promise.reject({ error: false, cancelled: true });
+      }
+
+      // Assign to new attribute group instance.
+      attributeGroup.description = attrGroupDescription;
+
+      /* ====================================================================
+       * End Form Wizard
+       * ==================================================================== */
+
+      return this.addAttributeGroupDefiniton(objectType, attributeGroup);
+    } catch (e) {
+      console.log(e);
+      Promise.reject({ error: true, cancelled: false, errorObject: e });
+    }
   }
 
   /**
@@ -414,12 +483,12 @@ export default class OCAPIHelper {
         );
 
         return await this.service.makeCall(_callSetup);
-
-      } else if (!_callResult.error &&
+      } else if (
+        !_callResult.error &&
         typeof _callResult.count !== 'undefined' &&
         _callResult.count === 0
       ) {
-        Promise.reject('There are no attribute groups.')
+        Promise.reject('There are no attribute groups.');
       }
     } catch (e) {
       console.log('ERROR: Unable to assign attribute to group: ', e);
