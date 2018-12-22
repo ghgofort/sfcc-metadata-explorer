@@ -104,25 +104,15 @@ export default class ObjectAttributeGroup implements IAPIDocument {
           if (localPropVal instanceof ObjectAttributeDefinition) {
             // ==> ObjectAttributeValueDefinition - this.defaultValue
             documentObj[docPropName] = localPropVal.getDocument();
-          } else if (Array.isArray(localPropVal)) {
-            // ==> Array<ObjectAttributeValueDefinition> - this.valueDefinitions
-            documentObj[docPropName] = localPropVal.length
-              ? localPropVal.map(arrayMember => {
-                  // valueDefinitions is the only instance property that is an
-                  // Array type.
-                  if (arrayMember instanceof ObjectAttributeDefinition) {
-                    return arrayMember.getDocument();
-                  }
-                })
-              : [];
           } else {
-            // ==> IOCAPITypes.ILocalizedString - this.description,
-            // this.displayName, & this.unit
+            // ==> ILocalizedString - this.description & this.displayName
             documentObj[docPropName] = localPropVal;
           }
         }
       }
     });
+
+    documentObj['_v'] = '18.8';
 
     return documentObj;
   }

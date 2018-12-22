@@ -86,10 +86,7 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .setDefaultAttributeValue(metaNode)
         .then(data => {
-          /**
-           * @todo : Implement the helper method to set the default value of
-           *    system object attributes.
-           */
+          metaView.currentProvider.refresh();
         })
         .catch(err => {
           window.showErrorMessage('Unable to set default value: {0}', err);
@@ -110,13 +107,17 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .addAttributeGroup(metaNode)
         .then(data => {
-          /**
-           * @todo : Implement the helper method to set the default value of
-           *    system object attributes.
-           */
+          metaView.currentProvider.refresh();
         })
         .catch(err => {
-          window.showErrorMessage('Unable to set default value: {0}', err);
+          // If the user canceled the action, then don't show an error.
+          if (typeof err.error === 'boolean' &&
+            err.error === false
+          ) {
+            return;
+          }
+
+          window.showErrorMessage('Could not create attribute group: {0}', err);
           console.log(err);
         });
     }

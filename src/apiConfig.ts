@@ -102,6 +102,31 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
 
+        // Get a list of the system object attributes for the specified system
+        // object type.
+        createAttributeGroup: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dw-validate-existing': true,
+            'Accept': 'application/json'
+          },
+          method: 'PUT',
+          params: [
+            {
+              id: 'id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_groups/{id}'
+        },
+
         // Get the attribute groups
         getAttributeGroups: {
           authorization: 'BM_USER',

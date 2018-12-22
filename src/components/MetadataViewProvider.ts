@@ -104,9 +104,6 @@ export class MetadataViewProvider
           return [];
         }
       }
-
-      // If the call did not recieve data show a message.
-      /** @todo - Display message if items not found */
     } catch (e) {
       console.error(e);
       return Promise.reject(e);
