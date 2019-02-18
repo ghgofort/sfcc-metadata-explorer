@@ -40,6 +40,28 @@ export function activate(context: ExtensionContext) {
   );
 
   /**
+   * Binds the handler function for the event. The command has been defined in
+   * the package.json file.
+   *
+   * @listens extension.sfccexplorer.systemobject.addattribute
+   */
+  const deleteAttributeDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.systemobject.deleteattribute',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .deleteAttributeDefinition(metaNode)
+        .then(data => {
+          console.log(data);
+          metaView.currentProvider.refresh();
+        })
+        .catch(err => {
+          window.showErrorMessage('Unable to add attribute: {0}', err);
+          console.log(err);
+        });
+    }
+  );
+
+  /**
    * Binds the handler for the TreeViewProvider refresh action to its handler
    * function.
    *
@@ -99,7 +121,7 @@ export function activate(context: ExtensionContext) {
    * Binds the handler for the context menu command to set the default value of
    * a system object attribute.
    *
-   * @listens extension.sfccexpllorer.objectattributegroup.addgroup
+   * @listens extension.sfccexplorer.objectattributegroup.addgroup
    */
   const addGroupDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.objectattributegroup.addgroup',

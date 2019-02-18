@@ -77,8 +77,7 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_definitions'
         },
 
-        // Get a list of the system object attributes for the specified system
-        // object type.
+        // Create a new attribute definition.
         createAttribute: {
           authorization: 'BM_USER',
           headers: {
@@ -104,6 +103,30 @@ export const apiConfig = {
 
         // Get a list of the system object attributes for the specified system
         // object type.
+        deleteAttribute: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dw-validate-existing': true,
+            'Accept': 'application/json'
+          },
+          method: 'DELETE',
+          params: [
+            {
+              id: 'id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
+        },
+
+        // Create an attribute group for a specified system object definition.
         createAttributeGroup: {
           authorization: 'BM_USER',
           headers: {

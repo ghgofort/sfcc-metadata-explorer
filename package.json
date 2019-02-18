@@ -59,6 +59,11 @@
         "description": "Adds a system object attribute definition to a system object attribute group."
       },
       {
+        "command": "extension.sfccexplorer.systemobject.deleteattribute",
+        "title": "Delete attribute from system object",
+        "description": "Deletes a system object attribute definition."
+      },
+      {
         "command": "extension.sfccexplorer.refresh",
         "title": "Refresh",
         "icon": {
@@ -84,6 +89,10 @@
         {
           "command": "extension.sfccexplorer.systemobject.addattribute",
           "when": "view == systemObjectDefinitionsView && viewItem == definition"
+        },
+        {
+          "command": "extension.sfccexplorer.systemobject.deleteattribute",
+          "when": "view == systemObjectDefinitionsView && viewItem == attribute"
         },
         {
           "command": "extension.sfccexplorer.systemobjectattribute.addtogroup",
