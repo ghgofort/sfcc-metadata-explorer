@@ -133,6 +133,7 @@ export class MetadataViewProvider
           'getAttributes',
           {
             select: '(**)',
+            count: 200,
             objectType: objectType
           }
         );

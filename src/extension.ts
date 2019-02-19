@@ -34,7 +34,7 @@ export function activate(context: ExtensionContext) {
         })
         .catch(err => {
           window.showErrorMessage('Unable to add attribute: {0}', err);
-          console.log(err);
+          console.error(err);
         });
     }
   );
@@ -51,6 +51,7 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .deleteAttributeDefinition(metaNode)
         .then(data => {
+          window.showInformationMessage('Attribute Deleted Successfully');
           console.log(data);
           metaView.currentProvider.refresh();
         })
