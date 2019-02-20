@@ -54,7 +54,7 @@ _Because this extension is still in the initial development, additional issues w
 
 ## Release Notes
 
-Release of a Beta version of this extension will be in the near future.
+Preparing for an initial release with the current feature set.
 
 ### Updates since last release
 
@@ -65,6 +65,9 @@ Release of a Beta version of this extension will be in the near future.
 - Display of the object attributes has been added.
 - Display of the object attribute values has been added.
 - The TreeView provider has been added.
+- Added context menu option to assign a System Object Attribute to an attribute group.
+- Added context menu option to delete a custom attribute from a System Object.
+- Added a view menu command to refresh the tree data.
 
 The beta release for the extension is still in the works. Visit this page for updates on the progress.
 
