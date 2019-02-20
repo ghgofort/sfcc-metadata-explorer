@@ -41,22 +41,20 @@ A VSCode configuration option to use specific credentials will be added in the f
 _Example OCAPI Access Config_
 ```json
 {
-  "_v":"19.1",
-  "clients":
-  [
-    {
-      "client_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "resources":
-      [
-        {
-          "resource_id":"/**",
-          "methods":["get","put","post","patch","delete"],
-          "read_attributes":"(**)",
-          "write_attributes":"(**)"
-        }
-      ]
-    }
-  ]
+   "_v":"19.1",
+   "clients": [
+      {
+         "client_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "resources": [
+            {
+               "resource_id":"/**",
+               "methods":["get","put","post","patch","delete"],
+               "read_attributes":"(**)",
+               "write_attributes":"(**)"
+            }
+         ]
+      }
+   ]
 }
 ```
 
@@ -66,7 +64,7 @@ SFCC Metadata Explorer requires that you have a _dw.json_ file in the root of yo
 
 _Example dw.json Config_
 ```json
-   {
+{
     "code-version": "version1",
     "hostname": "<Your Sandbox URL (example: dev01-na01-domain.demandware.net)>",
     "username": "<Your Sandbox User Name>",
