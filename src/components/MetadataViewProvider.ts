@@ -259,12 +259,10 @@ export class MetadataViewProvider
     if (_callResult.data && Array.isArray(_callResult.data)) {
       // Add the display name to the custom objects so that they can be
       // easily identified as custom.
-      return _callResult.data.map(sysObj => {
-        let name =
-          sysObj.object_type === 'CustomObject' &&
-          typeof sysObj.display_name !== 'undefined'
-            ? sysObj.display_name.default + ' (CustomObject)'
-            : sysObj.object_type;
+      return _callResult.data.filter(obj => {
+        return obj.object_type !== 'CustomObject';
+      }).map(sysObj => {
+        let name = sysObj.object_type;
 
         // Create a MetaDataNode instance which implements the TreeItem
         // interface and holds the data of the document type that it
