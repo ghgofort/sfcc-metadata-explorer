@@ -2,7 +2,7 @@
   "name": "sfcc-metadata-explorer",
   "displayName": "SFCC Metadata Explorer",
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "ghgofort",
   "repository": {
     "type": "git",
