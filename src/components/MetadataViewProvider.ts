@@ -249,8 +249,7 @@ export class MetadataViewProvider
       'getAll',
       {
         count: 200,
-        select: '(**)',
-        object_type: 'SystemObject'
+        select: '(**)'
       }
     );
 
