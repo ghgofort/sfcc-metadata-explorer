@@ -103,12 +103,20 @@ _Because this extension is still in the initial development, additional issues w
 
 ## Release Notes
 
-Preparing for an initial release with the current feature set.
+Currently looking for bugs and issues with the initial Beta release, and will be pushing fixes as minor versions over the next few weeks.
 
 ### Updates since last release
 
+### 0.1.1
 
-### 0.0.1
+Beta - Patch - Updates to READEME.md
+
+- Added example configurations for OCAPI settings & dw.json files, and added information about setup requirements to the README.md.
+- Updated license field in package.json to avoid npm warning.
+- Fixed typo in directory name for example configuration file.
+- Updated the change log & bumped the version.
+
+### 0.1.0
 
 Initial Beta Release
 
