@@ -131,12 +131,7 @@ export default class OCAPIHelper {
     objectType: string,
     attributeGroup: ObjectAttributeGroup
   ): Promise<any> {
-    let includeFields = [
-      'displayName',
-      'description',
-      'id',
-      'position'
-    ];
+    let includeFields = ['displayName', 'description', 'id', 'position'];
 
     attributeGroup.position = 1.0;
 
@@ -498,6 +493,37 @@ export default class OCAPIHelper {
   }
 
   /**
+   * Deletes the selected attribute definition from the system object.
+   *
+   * @param {MetadataNode} node - The selected tree node instance.
+   * @returns {Promise<any>} - Returns a Promise that resolves to a results
+   *    object from the API call.
+   */
+  public async deleteAttributeDefinition(node: MetadataNode): Promise<any> {
+    const path = node.parentId.split('.');
+    const objectType = path[path.length - 2];
+    const attributeId = node.objectAttributeDefinition.id;
+    let _callSetup: ICallSetup;
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'deleteAttribute',
+        {
+          objectType: objectType,
+          id: attributeId
+        }
+      );
+
+      return await this.service.makeCall(_callSetup);
+    } catch (e) {
+      console.log(e);
+      // If there was an error, return the error message for display.
+      return Promise.reject('ERROR occured while deleting the attribute.');
+    }
+  }
+
+  /**
    * Makes an OCAPI call to set the default value of a system object attribute
    * if this operation is supported on the attribute/object type combination.
    *
@@ -512,10 +538,8 @@ export default class OCAPIHelper {
       'OrganizationPreferences'
     ];
     const ALLOWED_ATTRIBUTE_TYPES = ['string', 'number', 'boolean'];
-
     const attributeDefinition: ObjectAttributeDefinition =
       node.objectAttributeDefinition;
-
     let isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
       type => 'root.systemObjectDefinitions.' + type === node.parentId
     );
