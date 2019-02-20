@@ -40,7 +40,7 @@ A VSCode configuration option to use specific credentials will be added in the f
 
 _Example OCAPI Access Config_
 ```json
-   {
+{
   "_v":"19.1",
   "clients":
   [
