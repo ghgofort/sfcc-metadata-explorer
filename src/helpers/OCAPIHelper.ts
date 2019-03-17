@@ -153,6 +153,7 @@ export default class OCAPIHelper {
 
       _callResult = await this.service.makeCall(_callSetup);
     } catch (e) {
+      window.showErrorMessage('ERROR: Unable to add new attribute group', e.toString());
       console.log(e);
     }
 
