@@ -5,9 +5,9 @@
  * and delete attribute definitions.
  */
 
-import { ICallSetup } from '../service/ICallSetup';
+import { ICallSetup } from '../services/ICallSetup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
-import { OCAPIService } from '../service/OCAPIService';
+import { OCAPIService } from '../services/OCAPIService';
 import { MetadataView } from '../components/MetadataView';
 import {
   window,
