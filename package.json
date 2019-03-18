@@ -145,8 +145,9 @@
     "vscode": "^1.1.26"
   },
   "dependencies": {
-    "libxmljs": "^0.19.5",
+    "@types/xmlbuilder": "0.0.34",
     "node-fetch": "^2.3.0",
-    "vscode-uri": "^1.0.6"
+    "vscode-uri": "^1.0.6",
+    "xmlbuilder": "^11.0.0"
   }
 }
