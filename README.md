@@ -105,6 +105,11 @@ Currently looking for bugs and issues with the initial Beta release, and will be
 
 ### Updates since last release
 
+### 0.1.2
+Beta - Patch - Updates to README.md
+
+- Fixed issues with code alignment in example config for dw.json & OCAPI settings.
+
 ### 0.1.1
 
 Beta - Patch - Updates to READEME.md

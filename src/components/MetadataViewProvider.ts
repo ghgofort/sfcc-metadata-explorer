@@ -11,12 +11,11 @@ import {
   EventEmitter,
   TreeDataProvider,
   TreeItemCollapsibleState,
-  window,
   WorkspaceConfiguration,
   workspace
 } from 'vscode';
-import { OCAPIService } from '../service/OCAPIService';
-import { ICallSetup } from '../service/ICallSetup';
+import { OCAPIService } from '../services/OCAPIService';
+import { ICallSetup } from '../services/ICallSetup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
