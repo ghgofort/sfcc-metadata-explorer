@@ -109,7 +109,7 @@
         },
         {
           "command": "extension.sfccexplorer.systemobjectattribute.getxml",
-          "when": "view == systemObjectDefinitionsView && viewItem == definition"
+          "when": "view == systemObjectDefinitionsView && viewItem == attribute"
         }
       ]
     },

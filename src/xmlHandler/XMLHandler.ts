@@ -1,5 +1,5 @@
 import { MetadataNode } from '../components/MetadataNode';
-import { window, workspace, Uri, TextDocument, TextEditor } from 'vscode';
+import { commands, window, workspace, Uri, TextDocument, TextEditor } from 'vscode';
 
 /**
  * @file XMLHandler.ts
@@ -35,16 +35,15 @@ export default class XMLHandler {
    * @returns {Promise<TextEditor>} - Returns a promise that resolves to the
    *    TextDocument instance.
    */
-  public async getXMLFromNode(metaNode: MetadataNode): Promise<TextEditor> {
+  public async getXMLFromNode(metaNode: MetadataNode) {
     // Create the XML document in memory for modification.
-    const xmlBuilder = new this.xmlLib.create();
-    const parentType = metaNode.parentId;
+    const rootNode = new this.xmlLib.create('metadata', { 'xmlns': XMLHandler.NAMESPACE_STRING });
+    const parentType = metaNode.parentId.split('.').pop();
 
     if (metaNode.nodeType === 'objectAttributeDefinition') {
       const attr = metaNode.objectAttributeDefinition;
 
       // Create the XML tree.
-      const rootNode = xmlBuilder.ele('metadata', {'xmlns': XMLHandler.NAMESPACE_STRING});
       const attrDefsNode = rootNode
         .ele('type-extension', { 'type-id': parentType })
         .ele('custom-attribute-definitions');
@@ -54,8 +53,8 @@ export default class XMLHandler {
         'attribute-definition', { 'attribute-id': attr.id });
 
       // Define the attribute properties.
-      attrDefNode.ele('display-name', {'xml:lang': 'x-default'}, attr.displayName);
-      attrDefNode.ele('description', {'xml:lang': 'x-default'}, attr.description);
+      attrDefNode.ele('display-name', {'xml:lang': 'x-default'}, attr.displayName.default);
+      attrDefNode.ele('description', {'xml:lang': 'x-default'}, attr.description.default);
       attrDefNode.ele('type', attr.valueType);
       attrDefNode.ele('mandatory-flag', attr.mandatory);
       attrDefNode.ele('externally-managed-flag', attr.externallyManaged);
@@ -67,11 +66,11 @@ export default class XMLHandler {
     }
 
     // Create the text document and show in the editor.
-    return workspace.openTextDocument({
+    workspace.openTextDocument({
       'language': 'xml',
-      'content': xmlBuilder.toString()
+      'content': rootNode.end({ allowEmpty: false })
     }).then((doc) => {
-      return window.showTextDocument(doc);
+      window.showTextDocument(doc);
     });
   }
 }

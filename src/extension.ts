@@ -157,7 +157,7 @@ export function activate(context: ExtensionContext) {
   const getAttributeXMLDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjectattribute.getxml',
     (metaNode: MetadataNode) => {
-
+      xmlHandler.getXMLFromNode(metaNode);
     }
   );
 

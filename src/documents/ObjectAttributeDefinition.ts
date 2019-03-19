@@ -99,7 +99,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
     this.localizable = args.localizable || false;
     this.mandatory = args.mandatory || false;
     this.maxValue = args.max_value || null;
-    this.minLength = args.min_length || -1;
+    this.minLength = args.min_length || 0;
     this.minValue = args.min_value || null;
     this.multiValueType = args.multi_value_type || false;
     this.orderRequired = args.order_required || false;
