@@ -68,7 +68,7 @@ export default class XMLHandler {
     // Create the text document and show in the editor.
     workspace.openTextDocument({
       'language': 'xml',
-      'content': rootNode.end({ allowEmpty: false })
+      'content': rootNode.end({ allowEmpty: false, pretty: true })
     }).then((doc) => {
       window.showTextDocument(doc);
     });
