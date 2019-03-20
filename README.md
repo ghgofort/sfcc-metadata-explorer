@@ -1,10 +1,10 @@
 # sfcc-metadata-explorer README
 
-This extension consists of a tree view in the explorer to navigate through your sandbox metadata. There are several actions that can be applied to any given piece of metadata in order to modify the metadata in your sandbox.
+This extension consists of a tree view in the explorer to navigate through your sandbox metadata. There are several actions that can be applied to any given piece of metadata in order to read & modify the metadata in your sandbox.
 
 ## Features
 
-This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases, and has not been released to the VSCode marketplace yet. If you choose to download the source code and manually build the extension, the functionality is currently limited to the following 'finished features'.
+This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases and is a bit rough around the edges. If you find bugs, please log them to the github repository and I will do my best to fix. ![Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
 ### Finished Work
 * #### View System Object Definitions
@@ -21,9 +21,13 @@ This extension provides Sales Force Comerce Cloud (SFCC) developers with an alte
        * ![Example - add system object attribute definition step 1](/resources/markdown_resources/example_add_definition_step1.png)
 
        * ![Example - add system object attribute definition step 2](/resources/marddown_resources/example_add_definition_step2.png)
+* #### Add Attribute Definition to Group
+* #### Delete Attribute Definition
+* #### Remove Attribute From Group
+* #### Get Attribute XML
+   * Populates a blank editor with the XML from the selected system object attribute.
 
 ## Requirements
-
 - A Sales Force Commerce Cloud (SFCC) sandbox instance is required. Obvious, I know!
 - A __dw.json__ configuration file is required to setup the connection to your SFCC sandbox isntance(s). This is in a format also used by the Prophet Debugger VSCode extension [1], and dwupload [2]
 - You must configure your Open Commerce API settings to allow access for the API calls that are needed.
@@ -104,6 +108,15 @@ _Because this extension is still in the initial development, additional issues w
 Currently looking for bugs and issues with the initial Beta release, and will be pushing fixes as minor versions over the next few weeks.
 
 ### Updates since last release
+
+### 0.2.0
+Beta - V2
+
+- Added context menu action to get the XML from a system object attribute in the explorer tree.
+- Removed debug logging.
+- Fixed issue keeping error messages from showing for the user when an API call fails.
+- Updated the README.md & CHANGELOG.md to keep up-to-date w/changes made.
+- Added link to the issues page and removed the disclaimer about not being released to the marketplace.
 
 ### 0.1.2
 Beta - Patch - Updates to README.md

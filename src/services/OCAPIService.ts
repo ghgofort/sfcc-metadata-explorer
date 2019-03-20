@@ -346,12 +346,12 @@ export class OCAPIService {
         }
       })
       .catch(err => {
-        // Show an error message to the user.
-        window.showErrorMessage('There was an error making the Open Commerce' +
-          ' API call: ' + err.name + '\n' + 'Message: ' + err.message);
-
         // Log the entire error to the console for debugging.
         console.error(err);
+        const errMsg = 'There was an error making the Open Commerce' +
+        ' API call: ' + err.name + '\n' + 'Message: ' + err.message
+
+        return { error: true, errorMessage: errMsg };
       });
   }
 

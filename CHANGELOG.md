@@ -2,9 +2,15 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## [Unreleased]
+## Unreleased
 
-## 0.0.1
+## 0.2.0
+
+- Added context menu action to get the XML from a system object attribute in the explorer tree.
+- Removed debug logging.
+- Fixed issue keeping error messages from showing for the user when an API call fails.
+
+## 0.1.0
 ### Initial Beta Release
 
 - Viewing of system object attribute groups is now supported.
