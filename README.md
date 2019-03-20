@@ -4,7 +4,7 @@ This extension consists of a tree view in the explorer to navigate through your 
 
 ## Features
 
-This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases and is a bit rough around the edges. If you find bugs, please log them to the github repository and I will do my best to fix. ![Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
+This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases and is a bit rough around the edges. If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
 ### Finished Work
 * #### View System Object Definitions
