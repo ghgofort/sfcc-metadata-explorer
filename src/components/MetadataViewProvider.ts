@@ -138,6 +138,7 @@ export class MetadataViewProvider
         );
 
         _callResult = await this.service.makeCall(_callSetup);
+        console.log(_callResult);
       } catch (e) {
         console.error(e);
         throw new Error(e.toString());

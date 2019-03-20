@@ -2,7 +2,7 @@
   "name": "sfcc-metadata-explorer",
   "displayName": "SFCC Metadata Explorer",
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "publisher": "ghgofort",
   "repository": {
     "type": "git",
@@ -109,7 +109,7 @@
         },
         {
           "command": "extension.sfccexplorer.systemobjectattribute.getxml",
-          "when": "view == systemObjectDefinitionsView && viewItem == definition"
+          "when": "view == systemObjectDefinitionsView && viewItem == attribute"
         }
       ]
     },
@@ -145,8 +145,9 @@
     "vscode": "^1.1.26"
   },
   "dependencies": {
-    "libxmljs": "^0.19.5",
+    "@types/xmlbuilder": "0.0.34",
     "node-fetch": "^2.3.0",
-    "vscode-uri": "^1.0.6"
+    "vscode-uri": "^1.0.6",
+    "xmlbuilder": "^11.0.0"
   }
 }
