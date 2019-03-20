@@ -335,10 +335,6 @@ export class OCAPIService {
       };
     }
 
-    console.log('Params: ', params);
-    console.log('Endpoint: ', callSetup.endpoint);
-    console.log('Body: ', callSetup.body || 'None');
-
     return await fetch(callSetup.endpoint, params)
       .then(resp => {
         if (resp.ok) {
@@ -350,7 +346,12 @@ export class OCAPIService {
         }
       })
       .catch(err => {
-        console.log(err);
+        // Show an error message to the user.
+        window.showErrorMessage('There was an error making the Open Commerce' +
+          ' API call: ' + err.name + '\n' + 'Message: ' + err.message);
+
+        // Log the entire error to the console for debugging.
+        console.error(err);
       });
   }
 

@@ -1,5 +1,6 @@
 import { MetadataNode } from '../components/MetadataNode';
-import { commands, window, workspace, Uri, TextDocument, TextEditor } from 'vscode';
+import { window, workspace } from 'vscode';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 
 /**
  * @file XMLHandler.ts
@@ -17,7 +18,8 @@ export default class XMLHandler {
   xmlLib = require('xmlbuilder');
 
   /* Instance members */
-  public static NAMESPACE_STRING: String = 'http://www.demandware.com/xml/impex/metadata/2006-10-31';
+  public static NAMESPACE_STRING: String =
+    'http://www.demandware.com/xml/impex/metadata/2006-10-31';
 
   /**
    * @constructor
@@ -25,6 +27,97 @@ export default class XMLHandler {
   constructor() {
     /** @todo: Setup Instance */
   }
+
+  /* ========================================================================
+   * Private Helper Functions
+   * ======================================================================== */
+
+  /**
+   * Gets the XML node for an ObjectAttributeDefinition class instance.
+   *
+   * @private
+   * @param {Object} rootNode - The root node that can be used for building the
+   *    necessary child XML.
+   * @param {string} systemObjectType - The system object that the attribute
+   *    will be added to.
+   * @param {ObjectAttributeDefinition} attribute - The ObjectAttributeDefinition
+   *    class instance to derive the XML data from.
+   */
+  private getObjectAttributeXML(rootNode: any,
+    systemObjectType: string,
+    attribute: ObjectAttributeDefinition
+  ) {
+    const valType = attribute.valueType.toLocaleLowerCase();
+
+    // Create the XML tree.
+    const attrDefsNode = rootNode
+      .ele('type-extension', { 'type-id': systemObjectType })
+      .ele('custom-attribute-definitions');
+
+    // Create the attribute definition node.
+    const attrDefNode = attrDefsNode.ele('attribute-definition', {
+      'attribute-id': attribute.id
+    });
+
+    // Define the attribute properties.
+    attrDefNode.ele(
+      'display-name',
+      { 'xml:lang': 'x-default' },
+      attribute.displayName.default
+    );
+    attrDefNode.ele(
+      'description',
+      { 'xml:lang': 'x-default' },
+      attribute.description.default
+    );
+    attrDefNode.ele('type', attribute.valueType);
+    attrDefNode.ele('mandatory-flag', attribute.mandatory);
+    attrDefNode.ele('externally-managed-flag', attribute.externallyManaged);
+
+    /**
+     * Define properties that are specific to certain value types.
+     */
+    if (valType === 'string') {
+      // Default type is 'string'
+      attrDefNode.ele({ 'min-length': attribute.minLength });
+    } else if (valType.indexOf('enum') > -1 &&
+      attribute.valueDefinitions.length
+    ) {
+      const valDefs = attrDefNode.ele('value-definitions');
+      // Add any value-definitions that are configured for the attribute.
+      attribute.valueDefinitions.forEach(function (valDef) {
+          if (valDef.displayValue && valDef.value) {
+            const valDefXML = valDefs.ele('value-definition');
+            valDefXML.ele('display',
+              { 'xml:lang': 'x-default' },
+              valDef.displayValue.default
+            );
+
+            valDefXML.ele('value', valDef.value.toString());
+          }
+      });
+    }
+
+    /**
+     * Define properties specific to system object types
+     */
+    switch (systemObjectType) {
+      case 'Product':
+        attrDefNode.ele('localizable-flag', attribute.localizable);
+        attrDefNode.ele('site-specific-flag', attribute.siteSpecific);
+        attrDefNode.ele('visible-flag', attribute.visible);
+        attrDefNode.ele('order-required-flag', attribute.orderRequired);
+        attrDefNode.ele('externally-defined-flag', attribute.externallyDefined);
+        break;
+
+      default:
+        break;
+    }
+  }
+
+  /* ========================================================================
+   * Public Exported Methods
+   * ======================================================================== */
 
   /**
    * Gets the XML representation of the Metanode, creates a blank file, and
@@ -36,41 +129,26 @@ export default class XMLHandler {
    *    TextDocument instance.
    */
   public async getXMLFromNode(metaNode: MetadataNode) {
+    const systemObjectType = metaNode.parentId.split('.').pop();
+
     // Create the XML document in memory for modification.
-    const rootNode = new this.xmlLib.create('metadata', { 'xmlns': XMLHandler.NAMESPACE_STRING });
-    const parentType = metaNode.parentId.split('.').pop();
+    const rootNode = new this.xmlLib.create('metadata', {
+      xmlns: XMLHandler.NAMESPACE_STRING
+    });
 
     if (metaNode.nodeType === 'objectAttributeDefinition') {
-      const attr = metaNode.objectAttributeDefinition;
-
-      // Create the XML tree.
-      const attrDefsNode = rootNode
-        .ele('type-extension', { 'type-id': parentType })
-        .ele('custom-attribute-definitions');
-
-      // Create the attribute definition node.
-      const attrDefNode = attrDefsNode.ele(
-        'attribute-definition', { 'attribute-id': attr.id });
-
-      // Define the attribute properties.
-      attrDefNode.ele('display-name', {'xml:lang': 'x-default'}, attr.displayName.default);
-      attrDefNode.ele('description', {'xml:lang': 'x-default'}, attr.description.default);
-      attrDefNode.ele('type', attr.valueType);
-      attrDefNode.ele('mandatory-flag', attr.mandatory);
-      attrDefNode.ele('externally-managed-flag', attr.externallyManaged);
-
-      // Define properties that are specific to certain data types.
-      if (attr.valueType === 'string') {
-        attrDefNode.ele({ 'min-length': attr.minLength });
-      }
+      const attribute = metaNode.objectAttributeDefinition;
+      this.getObjectAttributeXML(rootNode, systemObjectType, attribute);
     }
 
     // Create the text document and show in the editor.
-    workspace.openTextDocument({
-      'language': 'xml',
-      'content': rootNode.end({ allowEmpty: false, pretty: true })
-    }).then((doc) => {
-      window.showTextDocument(doc);
-    });
+    workspace
+      .openTextDocument({
+        language: 'xml',
+        content: rootNode.end({ allowEmpty: false, pretty: true })
+      })
+      .then(doc => {
+        window.showTextDocument(doc);
+      });
   }
 }
