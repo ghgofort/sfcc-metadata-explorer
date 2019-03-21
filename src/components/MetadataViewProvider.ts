@@ -104,8 +104,7 @@ export class MetadataViewProvider
         }
       }
     } catch (e) {
-      console.error(e);
-      return Promise.reject(e);
+      return Promise.reject(e.message);
     }
   }
 
@@ -138,9 +137,7 @@ export class MetadataViewProvider
         );
 
         _callResult = await this.service.makeCall(_callSetup);
-        console.log(_callResult);
       } catch (e) {
-        console.error(e);
         throw new Error(e.toString());
       }
 
