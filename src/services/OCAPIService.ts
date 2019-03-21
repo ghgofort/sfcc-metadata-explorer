@@ -341,16 +341,14 @@ export class OCAPIService {
           return resp.json();
         } else {
           const errMsg = resp.statusText + ' :: Code ' + resp.status;
-          console.error(errMsg);
+          window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
           return { error: true, errorMessage: errMsg };
         }
       })
       .catch(err => {
-        // Log the entire error to the console for debugging.
-        console.error(err);
         const errMsg = 'There was an error making the Open Commerce' +
         ' API call: ' + err.name + '\n' + 'Message: ' + err.message
-
+        window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
         return { error: true, errorMessage: errMsg };
       });
   }

@@ -29,6 +29,11 @@ export default class OCAPIHelper {
   private metadataView: MetadataView;
   private service: OCAPIService = new OCAPIService();
 
+  /**
+   * Expected values in OCAPI call are:
+   *  - image, boolean, money, quantity,
+   *    password, set_of_string, set_of_int, set_of_double, unknown
+   */
   public static readonly ATTRIBUTE_TYPES = [
     'Boolean',
     'Date',
@@ -47,6 +52,17 @@ export default class OCAPIHelper {
     'String',
     'Text'
   ];
+
+  public static readonly ATTRIBUTE_MAP = {
+    'integer': 'int',
+    'number': 'double',
+    'date + time': 'datetime',
+    'enum of integers': 'enum_of_int',
+    'enum of strings': 'enum_of_string',
+    'set of integers': 'set_of_int',
+    'set of numbers': 'set_of_double',
+    'set of strings': 'set_of_string'
+  };
 
   /**
    * @param {MetadataView} metaView - The MetadataView class instance that can
@@ -111,7 +127,7 @@ export default class OCAPIHelper {
 
       _callResult = await this.service.makeCall(_callSetup);
     } catch (e) {
-      console.log(e);
+      window.showErrorMessage('ERROR making call to OCAPI: ' + e.message);
     }
 
     return Promise.resolve(_callResult);
@@ -153,8 +169,7 @@ export default class OCAPIHelper {
 
       _callResult = await this.service.makeCall(_callSetup);
     } catch (e) {
-      window.showErrorMessage('ERROR: Unable to add new attribute group', e.toString());
-      console.log(e);
+      window.showErrorMessage('ERROR: Unable to add new attribute group', e.message);
     }
 
     return Promise.resolve(_callResult);
@@ -184,7 +199,6 @@ export default class OCAPIHelper {
         cancelAddAttributeToken
       );
     } catch (e) {
-      console.log(e);
       return Promise.reject('User Cancled Action');
     }
 
@@ -295,7 +309,7 @@ export default class OCAPIHelper {
       }
 
       // Show a select option box to choose what type the new attribute will be.
-      const attributeType = await window.showQuickPick(
+      let attributeType = await window.showQuickPick(
         OCAPIHelper.ATTRIBUTE_TYPES,
         qpOptions,
         cancelAddAttributeToken
@@ -304,6 +318,11 @@ export default class OCAPIHelper {
       // If the user cancels, then exit the wizard.
       if (typeof attributeType === 'undefined') {
         return Promise.reject({ error: false, cancelled: true });
+      }
+
+      if (OCAPIHelper.ATTRIBUTE_MAP[attributeType.toLowerCase()]) {
+        attributeType = OCAPIHelper.ATTRIBUTE_MAP[
+          attributeType.toLowerCase()];
       }
 
       const displayName = await window.showInputBox(
@@ -487,7 +506,7 @@ export default class OCAPIHelper {
         Promise.reject('There are no attribute groups.');
       }
     } catch (e) {
-      console.log('ERROR: Unable to assign attribute to group: ', e);
+      console.log('ERROR: Unable to assign attribute to group: ' + e.message);
     }
 
     return Promise.reject('ERROR: Unable to assign attribute to group.');

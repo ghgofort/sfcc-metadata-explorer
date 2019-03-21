@@ -31,7 +31,6 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .addAttributeNode(metaNode)
         .then(data => {
-          console.log(data);
           metaView.currentProvider.refresh();
         })
         .catch(err => {
