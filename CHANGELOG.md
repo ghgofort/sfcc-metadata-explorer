@@ -4,7 +4,24 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 
 ## Unreleased
 
+### 0.2.4
+#### Patch Release
+- Patch fixes for missing XML namespace on xml output and missing encoding type.
+
+### 0.2.3
+#### Patch Release
+- Patch fixes for removing console logging and displaying error messages to the user instead.
+
+### 0.2.2
+#### Patch Release
+- Patch fixes.
+
+### 0.2.1
+#### Patch Release
+- Patch fixes for bad call to create system attributes of certain data types.
+
 ## 0.2.0
+### Beta Release - V2
 
 - Added context menu action to get the XML from a system object attribute in the explorer tree.
 - Removed debug logging.

@@ -105,9 +105,21 @@ _Because this extension is still in the initial development, additional issues w
 
 ## Release Notes
 
-Currently looking for bugs and issues with the initial Beta release, and will be pushing fixes as minor versions over the next few weeks.
+Currently looking for bugs and issues with the 2nd Beta release, and will be pushing fixes as patch versions over the next few weeks.
 
 ### Updates since last release
+
+### 0.2.4
+- Patch fixes for missing XML namespace on xml output and missing encoding type.
+
+### 0.2.3
+- Patch fixes for removing console logging and displaying error messages to the user instead.
+
+### 0.2.2
+- Patch fixes.
+
+### 0.2.1
+- Patch fixes for bad call to create system attributes of certain data types.
 
 ### 0.2.0
 Beta - V2
