@@ -133,8 +133,8 @@ export default class XMLHandler {
 
     // Create the XML document in memory for modification.
     const rootNode = new this.xmlLib.create('metadata', {
-      xmlns: XMLHandler.NAMESPACE_STRING
-    });
+      encoding: 'utf-8'
+    }).att('xmlns', XMLHandler.NAMESPACE_STRING);
 
     if (metaNode.nodeType === 'objectAttributeDefinition') {
       const attribute = metaNode.objectAttributeDefinition;
