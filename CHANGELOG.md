@@ -3,6 +3,9 @@
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
 ## Unreleased
+- Added api configuration seciton for custom object definition calls.
+- Added VSCode configuration option to enable/disable the custom object defintions node in the metadata tree.
+- Added code to MetadataViewProvider.ts tree data provider class to show the custom object defintion base node if the option is endabled.
 
 ### 0.2.4
 #### Patch Release
