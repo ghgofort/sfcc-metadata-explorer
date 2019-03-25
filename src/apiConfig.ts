@@ -9,10 +9,10 @@ export const apiConfig = {
   clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {
 
-    /**
+    /***************************************************************************
      * OCAPI : Data API
      * Resource : CustomObjectDefinitions
-     */
+     **************************************************************************/
     customObjectDefinitions: {
       api: 'data',
       availableCalls: {
@@ -37,6 +37,23 @@ export const apiConfig = {
           // Use the system_object_definition endpoint with the filter to only
           // get the custom object tyeps.
           path: 'system_object_definitions',
+        },
+
+        /* ==================================================================
+         * GET A CUSTOM OBJECT DEFINITION & ATTRIBUTES
+         * ================================================================== */
+        get: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: '/custom_object_definitions/{objectType}/attribute_definitions',
         }
       }
 
@@ -50,7 +67,7 @@ export const apiConfig = {
       api: 'data',
       availableCalls: {
         /* ==================================================================
-         * GET ATTRIBUTE DEFINITION
+         * GET SYSTEM OBJECT DEFINITION & ATTRIBUTES
          * ================================================================== */
         get: {
           authorization: 'BM_USER',
