@@ -229,9 +229,7 @@ export const apiConfig = {
          * ================================================================== */
         assignAttributeToGroup: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'PUT',
           params: [
             {
