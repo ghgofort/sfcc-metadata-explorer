@@ -53,6 +53,9 @@ export class MetadataViewProvider
    * Public Instance Methods
    * ======================================================================== */
 
+  /**
+   * Refreshes the TreeView.
+   */
   public refresh(): void {
     this.eventEmitter.fire();
   }

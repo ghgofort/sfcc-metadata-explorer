@@ -57,7 +57,7 @@ export function activate(context: ExtensionContext) {
           metaView.currentProvider.refresh();
         })
         .catch(err => {
-          window.showErrorMessage('Unable to add attribute: {0}', err);
+          window.showErrorMessage('Unable to delete attribute: {0}', err);
           console.log(err);
         });
     }
@@ -88,7 +88,8 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .assignAttributesToGroup(metaNode)
         .then(data => {
-          console.log(data);
+          window.showInformationMessage(
+            'Attribute successfully added to group.');
           metaView.currentProvider.refresh();
         })
         .catch(err => {
@@ -166,6 +167,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(setDefaultDisposable);
   context.subscriptions.push(addAttributeDisposable);
   context.subscriptions.push(refreshTreeDisposable);
+  context.subscriptions.push(deleteAttributeDisposable);
 }
 
 // this method is called when your extension is deactivated

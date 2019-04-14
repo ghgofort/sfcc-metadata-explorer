@@ -503,10 +503,15 @@ export default class OCAPIHelper {
         typeof _callResult.count !== 'undefined' &&
         _callResult.count === 0
       ) {
-        Promise.reject('There are no attribute groups.');
+        const errMsg = 'There are no attribute groups.';
+        window.showErrorMessage(errMsg);
+        Promise.reject(errMsg);
       }
     } catch (e) {
-      console.log('ERROR: Unable to assign attribute to group: ' + e.message);
+      const errMsg = 'Unable to assign attribute to group: ';
+      console.log(errMsg + e.message);
+      window.showErrorMessage('Unable to assign attribute to group.');
+      return Promise.reject()
     }
 
     return Promise.reject('ERROR: Unable to assign attribute to group.');

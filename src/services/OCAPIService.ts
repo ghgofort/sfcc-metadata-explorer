@@ -345,7 +345,9 @@ export class OCAPIService {
 
     return await fetch(callSetup.endpoint, params)
       .then(resp => {
-        if (resp.ok) {
+        if (resp.ok && resp.statusText.toLowerCase() === 'no content') {
+          return {};
+        } else if (resp.ok) {
           return resp.json();
         } else {
           const errMsg = resp.statusText + ' :: Code ' + resp.status;
