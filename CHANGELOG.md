@@ -2,7 +2,10 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## Unreleased
+### 0.2.5
+#### Patch Release
+- Fixed bug causing error on calls to 'assign an attribute to a group'.
+- Added base node with expandable attribute & group count for custom obj. defs. The full display is on hold until there is a proper way found to do this with the OCAPI APIs.
 - Added api configuration seciton for custom object definition calls.
 - Added VSCode configuration option to enable/disable the custom object defintions node in the metadata tree.
 - Added code to MetadataViewProvider.ts tree data provider class to show the custom object defintion base node if the option is endabled.
