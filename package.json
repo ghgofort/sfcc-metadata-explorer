@@ -2,7 +2,7 @@
   "name": "sfcc-metadata-explorer",
   "displayName": "SFCC Metadata Explorer",
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "publisher": "ghgofort",
   "repository": {
     "type": "git",
@@ -29,6 +29,12 @@
           "type": "boolean",
           "default": true,
           "description": "Enable the system objects tree",
+          "scope": "window"
+        },
+        "extension.sfccmetadata.explorer.customobjects": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the display of custom objects in the meta-explorer tree view",
           "scope": "window"
         }
       }

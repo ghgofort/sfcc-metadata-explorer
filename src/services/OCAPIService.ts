@@ -320,6 +320,14 @@ export class OCAPIService {
     }
   }
 
+  /**
+   * Makes a call to the SFCC Open Commerce API using node-fetch.
+   * @param {ICallSetup} callSetup - The OCAPI call setup object that implements
+   *    the interface ICallSetup.
+   * @return {Promise<any>} - Returns a promise that resolves to the returned &
+   *    formatted data from the API call or an error message if there was an
+   *    exception durring the execution of the API call.
+   */
   public async makeCall(callSetup: ICallSetup): Promise<any> {
     let params;
     if (callSetup.body && Object.keys(callSetup.body).length > 0) {
@@ -337,7 +345,9 @@ export class OCAPIService {
 
     return await fetch(callSetup.endpoint, params)
       .then(resp => {
-        if (resp.ok) {
+        if (resp.ok && resp.statusText.toLowerCase() === 'no content') {
+          return {};
+        } else if (resp.ok) {
           return resp.json();
         } else {
           const errMsg = resp.statusText + ' :: Code ' + resp.status;

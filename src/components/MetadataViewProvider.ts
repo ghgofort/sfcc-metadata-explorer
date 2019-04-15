@@ -53,6 +53,9 @@ export class MetadataViewProvider
    * Public Instance Methods
    * ======================================================================== */
 
+  /**
+   * Refreshes the TreeView.
+   */
   public refresh(): void {
     this.eventEmitter.fire();
   }
@@ -83,19 +86,21 @@ export class MetadataViewProvider
       } else {
         // Get children of expandable node types
         if (element.expandable) {
-          if (element.nodeType === 'baseNodeName') {
+          const nodeType = element.nodeType;
+          const parent = element.parentId.split('.').pop();
+          if (nodeType === 'baseNodeName') {
             return this.getBaseNodeChildren(element);
-          } else if (element.nodeType === 'objectTypeDefinition') {
-            return this.getSystemObjectChildren(element);
-          } else if (element.nodeType === 'parentContainer') {
+          } else if (nodeType === 'objectTypeDefinition') {
+            return this.getObjectDefinitionChildren(element);
+          } else if (nodeType === 'parentContainer') {
             return this.getAttributeOrGroupContainerChildren(element);
-          } else if (element.nodeType === 'objectAttributeDefinition') {
+          } else if (nodeType === 'objectAttributeDefinition') {
             return this.getAttributeDefinitionChildren(element);
-          } else if (element.nodeType === 'objectAttributeGroup') {
+          } else if (nodeType === 'objectAttributeGroup') {
             return this.getAttributeGroupChildren(element);
-          } else if (element.nodeType === 'objectAttributeValueDefinition') {
+          } else if (nodeType === 'objectAttributeValueDefinition') {
             return this.getAttributeValueDefinitionChildren(element);
-          } else if (element.nodeType === 'stringList') {
+          } else if (nodeType === 'stringList') {
             return this.getStringListChildren(element);
           }
         } else {
@@ -109,15 +114,20 @@ export class MetadataViewProvider
   }
 
   /**
-   * Gets the children elements of AttributeValueDefinition type nodes.
+   * Gets the children elements of parent container type nodes. This
+   * method calls OCAPI to get attribute definitions or the attribute groups
+   * depending on which node was expanded. This method is used for both custom &
+   * system type object definitions.
    * @param {MetadataNode} element - The MetadataNode instance.
-   * @return {Promise<MetadataNode[]>}
+   * @return {Promise<MetadataNode[]>} - Returns a promise that will resolve to
+   *    the child MetadataNodes array.
    */
   private async getAttributeOrGroupContainerChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
     const path = element.parentId.split('.');
     const objectType = path.pop();
+    const parentType = path.pop();
     const isAttribute = element.name !== 'Attribute Groups';
     let _callSetup: ICallSetup = null;
     let _callResult: any;
@@ -127,7 +137,7 @@ export class MetadataViewProvider
       // Get the System/Custom Object attributes.// Make the call to the OCAPI Service.
       try {
         _callSetup = await this.service.getCallSetup(
-          'systemObjectDefinitions',
+          parentType,
           'getAttributes',
           {
             select: '(**)',
@@ -236,13 +246,21 @@ export class MetadataViewProvider
   /**
    * Gets the children elements of base tree nodes.
    * @param {MetadataNode} element - The MetadataNode instance.
-   * @return {Promise<MetadataNode[]>}
+   * @return {Promise<MetadataNode[]>} - Returns a promise that will resolve to
+   *    the child MetadataNodes array.
    */
   private async getBaseNodeChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
+    const baseName = element.baseNodeName;
+
+    /**
+     * @todo: REFACTOR: Use OCAPI system_object_definition_search call to filter
+     *    results for only system or custom object definitions on the server
+     *    before returning results.
+     */
     const _callSetup: ICallSetup = await this.service.getCallSetup(
-      element.baseNodeName,
+      baseName,
       'getAll',
       {
         count: 200,
@@ -250,6 +268,7 @@ export class MetadataViewProvider
       }
     );
 
+    // Call the OCAPI service.
     const _callResult = await this.service.makeCall(_callSetup);
 
     // If the API call returns data create a tree.
@@ -257,16 +276,24 @@ export class MetadataViewProvider
       // Add the display name to the custom objects so that they can be
       // easily identified as custom.
       return _callResult.data.filter(obj => {
-        return obj.object_type !== 'CustomObject';
-      }).map(sysObj => {
-        let name = sysObj.object_type;
+        return baseName === 'systemObjectDefinitions' ?
+          (obj.object_type !== 'CustomObject') :
+          (obj.object_type === 'CustomObject' && obj.display_name);
+      }).map(filterdObj => {
+        // Get the display name for the tree node.
+        let name = '';
+        if (baseName === 'systemObjectDefinitions') {
+          name = filterdObj.object_type;
+        } else if (baseName === 'customObjectDefinitions') {
+          name = filterdObj.display_name.default;
+        }
 
         // Create a MetaDataNode instance which implements the TreeItem
         // interface and holds the data of the document type that it
         // represents.
         return new MetadataNode(name, TreeItemCollapsibleState.Collapsed, {
-          parentId: 'root.systemObjectDefinitions',
-          objectTypeDefinition: new ObjectTypeDefinition(sysObj),
+          parentId: 'root.' + baseName,
+          objectTypeDefinition: new ObjectTypeDefinition(filterdObj),
           displayDescription: ' '
         });
       });
@@ -274,9 +301,10 @@ export class MetadataViewProvider
   }
 
   /**
-   * Gets the children the root element.
+   * Gets the base nodes of the tree that can be expanded for viewing data types.
    * @param {MetadataNode} element - The MetadataNode instance.
-   * @return {Promise<MetadataNode[]>}
+   * @return {Promise<MetadataNode[]>} - Returns a promise that will resolve to
+   *    the child MetadataNodes array.
    */
   private async getRootChildren(
     element: MetadataNode
@@ -290,8 +318,14 @@ export class MetadataViewProvider
     );
 
     // Get the VSCode settings for display of each base tree node.
+    // - Show System Object Definitions
     const showSystemObjects: boolean = Boolean(
       workspaceConfig.get('explorer.systemobjects')
+    );
+
+    // - Show Custom Object Definitions
+    const showCustomObjects: boolean = Boolean(
+      workspaceConfig.get('explorer.customobjects')
     );
 
     // If the user config is enabled, then show the option.
@@ -308,15 +342,29 @@ export class MetadataViewProvider
       );
     }
 
+    // If display of Custom Object Definitions is enabled, add node to tree.
+    if (showCustomObjects) {
+      metaNodes.push(
+        new MetadataNode(
+          'Custom Object Definitions',
+          TreeItemCollapsibleState.Collapsed,
+          {
+            parentId: 'root',
+            baseNodeName: 'customObjectDefinitions'
+          }
+        )
+      );
+    }
+
     return Promise.resolve(metaNodes);
   }
 
   /**
-   * Gets the children elements of AttributeValueDefinition type nodes.
+   * Gets the children elements of System & Custom object type nodes.
    * @param {MetadataNode} element - The MetadataNode instance.
    * @return {Promise<MetadataNode[]>}
    */
-  private async getSystemObjectChildren(
+  private async getObjectDefinitionChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
     const displayTextMap = {
@@ -329,7 +377,9 @@ export class MetadataViewProvider
     return Object.keys(displayTextMap).map(ctnrName => {
       const metaNode = new MetadataNode(
         displayTextMap[ctnrName],
-        TreeItemCollapsibleState.Collapsed,
+        element.parentId.indexOf('customObjectDefinitions') ?
+          TreeItemCollapsibleState.None :
+          TreeItemCollapsibleState.Collapsed,
         {
           displayDescription:
             ctnrName === 'objectAttributeDefinitions'

@@ -9,19 +9,90 @@ export const apiConfig = {
   clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {
 
-    /**
+    /***************************************************************************
+     * OCAPI : Data API
+     * Resource : CustomObjectDefinitions
+     **************************************************************************/
+    customObjectDefinitions: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+         * GET ALL CUSTOM OBJECT DEFINITIONS
+         * ================================================================== */
+        getAll: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            }, {
+              id: 'count',
+              type: 'number',
+              use: 'QUERY_PARAMETER'
+            }
+          ],
+          // Use the system_object_definition endpoint with the filter to only
+          // get the custom object tyeps.
+          path: 'system_object_definitions',
+        },
+
+        /* ==================================================================
+         * GET A CUSTOM OBJECT DEFINITION & ATTRIBUTES
+         * ================================================================== */
+        get: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: '/custom_object_definitions/{objectType}/attribute_definitions',
+        },
+
+        /* ==================================================================
+         * GET CUSTOM OBJECT ATTRIBUTES
+         * ================================================================== */
+        getAttributes: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: 'custom_object_definitions/{objectType}/attribute_definitions'
+        }
+      }
+    },
+
+
+    /***************************************************************************
      * OCAPI : Data API
      * Resource : SystemObjectDefinitions
-     */
+     **************************************************************************/
     systemObjectDefinitions: {
       api: 'data',
       availableCalls: {
-        // Gets a single system object definition.
+        /* ==================================================================
+         * GET SYSTEM OBJECT DEFINITION & ATTRIBUTES
+         * ================================================================== */
         get: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'GET',
           params: [
             {
@@ -33,13 +104,12 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}'
         },
 
-        // Get a list of the system object definitions filtered by the included
-        // query parameters.
+        /* ==================================================================
+         * GET ALL SYSTEM OBJECT DEFINITIONS
+         * ================================================================== */
         getAll: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'GET',
           params: [
             {
@@ -55,13 +125,12 @@ export const apiConfig = {
           path: 'system_object_definitions',
         },
 
-        // Get a list of the system object attributes for the specified system
-        // object type.
+        /* ==================================================================
+         * GET SYSTEM OBJECT ATTRIBUTES
+         * ================================================================== */
         getAttributes: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'GET',
           params: [
             {
@@ -77,7 +146,9 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_definitions'
         },
 
-        // Create a new attribute definition.
+        /* ==================================================================
+         * CREATE NEW ATTRIBUTE DEFINITION
+         * ================================================================== */
         createAttribute: {
           authorization: 'BM_USER',
           headers: {
@@ -101,8 +172,9 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
 
-        // Get a list of the system object attributes for the specified system
-        // object type.
+        /* ==================================================================
+         * DELETE ATTRIBUTE DEFINITION
+         * ================================================================== */
         deleteAttribute: {
           authorization: 'BM_USER',
           headers: {
@@ -126,7 +198,9 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
 
-        // Create an attribute group for a specified system object definition.
+        /* ==================================================================
+         * CREATE ATTRIBUTE GROUP
+         * ================================================================== */
         createAttributeGroup: {
           authorization: 'BM_USER',
           headers: {
@@ -150,12 +224,12 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_groups/{id}'
         },
 
-        // Get the attribute groups
+        /* ==================================================================
+         * GET ATTRIBUTE GROUPS
+         * ================================================================== */
         getAttributeGroups: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'GET',
           params: [
             {
@@ -171,12 +245,12 @@ export const apiConfig = {
           path: 'system_object_definitions/{objectType}/attribute_groups'
         },
 
-        // Assign attribute to attribute group.
+        /* ==================================================================
+         * ADD ATTRIBUTE DEFINITION TO ATTRIBUTE GROUP
+         * ================================================================== */
         assignAttributeToGroup: {
           authorization: 'BM_USER',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           method: 'PUT',
           params: [
             {
