@@ -54,10 +54,31 @@ export const apiConfig = {
             }
           ],
           path: '/custom_object_definitions/{objectType}/attribute_definitions',
+        },
+
+        /* ==================================================================
+         * GET CUSTOM OBJECT ATTRIBUTES
+         * ================================================================== */
+        getAttributes: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'select',
+              type: 'string',
+              use: 'QUERY_PARAMETER'
+            },{
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: 'custom_object_definitions/{objectType}/attribute_definitions'
         }
       }
-
     },
+
 
     /***************************************************************************
      * OCAPI : Data API
