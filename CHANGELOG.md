@@ -2,6 +2,13 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+### 0.2.17
+#### Patch Release
+- Updates to README.md & CHANGELOG.md.
+- Added view of Custom Object Definitions as a base node of the tree. The functionality of these is limited to viewing the actual object names & attribute groups/definitions count. This is a limitation of the current OCAPI functionality.
+- Fixed bug keeping System Object Definitions from being expandable.
+- Fixed some error messaging bugs.
+
 ### 0.2.5
 #### Patch Release
 - Fixed bug causing error on calls to 'assign an attribute to a group'.
