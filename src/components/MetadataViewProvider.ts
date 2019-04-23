@@ -377,7 +377,7 @@ export class MetadataViewProvider
     return Object.keys(displayTextMap).map(ctnrName => {
       const metaNode = new MetadataNode(
         displayTextMap[ctnrName],
-        element.parentId.indexOf('customObjectDefinitions') ?
+        element.parentId.indexOf('customObjectDefinitions') > -1 ?
           TreeItemCollapsibleState.None :
           TreeItemCollapsibleState.Collapsed,
         {
