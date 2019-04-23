@@ -2,6 +2,12 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+### Unreleased Changes
+- Added webpack for bundling extension before publishing.
+- Added avj as dev dependency to satisfy peer dependencies.
+- Added ts-loader as dev dependency for bundling the TypeScript.
+- Updated CHANGELOG.md.
+
 ### 0.2.17
 #### Patch Release
 - Updates to README.md & CHANGELOG.md.
