@@ -2,6 +2,12 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+### 0.3.1 (4/24/19)
+#### Patch Release
+- Changed `main` field in package.json to reflect new directory for compiled extension after adding webpack for bundling.
+- Updated CHANGELOG.md
+
+
 ## 0.3.0
 ### Beta Release - V3
 - Added webpack for bundling extension before publishing.
