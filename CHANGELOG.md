@@ -2,7 +2,8 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-### Unreleased Changes
+## 0.3.0
+### Beta Release - V3
 - Added webpack for bundling extension before publishing.
 - Added avj as dev dependency to satisfy peer dependencies.
 - Added ts-loader as dev dependency for bundling the TypeScript.
@@ -43,14 +44,12 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 
 ## 0.2.0
 ### Beta Release - V2
-
 - Added context menu action to get the XML from a system object attribute in the explorer tree.
 - Removed debug logging.
 - Fixed issue keeping error messages from showing for the user when an API call fails.
 
 ## 0.1.0
 ### Initial Beta Release
-
 - Viewing of system object attribute groups is now supported.
 - Context menu action has been added to the system objects for adding a new system object attribute.
   - The attribute details are collected through a wizard that gets the value of each field, and then makes a single call to the Open Commerce API to create the new system object attribute definition.
