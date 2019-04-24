@@ -6,6 +6,8 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 - Added webpack for bundling extension before publishing.
 - Added avj as dev dependency to satisfy peer dependencies.
 - Added ts-loader as dev dependency for bundling the TypeScript.
+- Added uglifyjs-webpack-plugin as dev dependency in package.json
+- Updated the .vscodeignore file to ensure that all un-needed files are excluded from the extension package.
 - Updated CHANGELOG.md.
 
 ### 0.2.17
