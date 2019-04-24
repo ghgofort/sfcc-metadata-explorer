@@ -20,7 +20,7 @@
     "onCommand:extension.sfccexplorer.getobjects",
     "onView:systemObjectDefinitionsView"
   ],
-  "main": "./out/extension",
+  "main": "./dist/extension",
   "contributes": {
     "configuration": {
       "title": "SFCC Metadata Explorer Configuration",
