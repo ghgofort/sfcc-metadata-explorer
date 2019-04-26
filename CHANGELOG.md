@@ -2,7 +2,8 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## Unreleased Changes
+## 0.3.2 (4/26/19)
+### Patch Release
 - Updates to README.md to make it more concise and up-to-date.
 - Addded logo icon for extension and listed it under the icon field in the package.json file.
 - Changed maximum attribute count to 500 to avoid not getting full attribute list.
