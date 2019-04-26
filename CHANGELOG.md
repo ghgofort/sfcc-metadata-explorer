@@ -2,6 +2,18 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.3.2 (4/26/19)
+### Patch Release
+- Updates to README.md to make it more concise and up-to-date.
+- Addded logo icon for extension and listed it under the icon field in the package.json file.
+- Changed maximum attribute count to 500 to avoid not getting full attribute list.
+- Updated CHANGELOG.md.
+
+## 0.3.1 (4/24/19)
+### Patch Release
+- Changed `main` field in package.json to reflect new directory for compiled extension after adding webpack for bundling.
+- Updated CHANGELOG.md
+
 ## 0.3.0
 ### Beta Release - V3
 - Added webpack for bundling extension before publishing.
@@ -11,35 +23,35 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 - Updated the .vscodeignore file to ensure that all un-needed files are excluded from the extension package.
 - Updated CHANGELOG.md.
 
-### 0.2.17
-#### Patch Release
+## 0.2.17
+### Patch Release
 - Updates to README.md & CHANGELOG.md.
 - Added view of Custom Object Definitions as a base node of the tree. The functionality of these is limited to viewing the actual object names & attribute groups/definitions count. This is a limitation of the current OCAPI functionality.
 - Fixed bug keeping System Object Definitions from being expandable.
 - Fixed some error messaging bugs.
 
-### 0.2.5
-#### Patch Release
+## 0.2.5
+### Patch Release
 - Fixed bug causing error on calls to 'assign an attribute to a group'.
 - Added base node with expandable attribute & group count for custom obj. defs. The full display is on hold until there is a proper way found to do this with the OCAPI APIs.
 - Added api configuration seciton for custom object definition calls.
 - Added VSCode configuration option to enable/disable the custom object defintions node in the metadata tree.
 - Added code to MetadataViewProvider.ts tree data provider class to show the custom object defintion base node if the option is endabled.
 
-### 0.2.4
-#### Patch Release
+## 0.2.4
+### Patch Release
 - Patch fixes for missing XML namespace on xml output and missing encoding type.
 
-### 0.2.3
-#### Patch Release
+## 0.2.3
+### Patch Release
 - Patch fixes for removing console logging and displaying error messages to the user instead.
 
-### 0.2.2
-#### Patch Release
+## 0.2.2
+### Patch Release
 - Patch fixes.
 
-### 0.2.1
-#### Patch Release
+## 0.2.1
+### Patch Release
 - Patch fixes for bad call to create system attributes of certain data types.
 
 ## 0.2.0

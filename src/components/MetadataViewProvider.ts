@@ -141,7 +141,7 @@ export class MetadataViewProvider
           'getAttributes',
           {
             select: '(**)',
-            count: 200,
+            count: 500,
             objectType: objectType
           }
         );
@@ -263,7 +263,7 @@ export class MetadataViewProvider
       baseName,
       'getAll',
       {
-        count: 200,
+        count: 500,
         select: '(**)'
       }
     );

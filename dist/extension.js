@@ -461,7 +461,7 @@ class MetadataViewProvider {
                 try {
                     _callSetup = yield this.service.getCallSetup(parentType, 'getAttributes', {
                         select: '(**)',
-                        count: 200,
+                        count: 500,
                         objectType: objectType
                     });
                     _callResult = yield this.service.makeCall(_callSetup);
@@ -550,7 +550,7 @@ class MetadataViewProvider {
              *    before returning results.
              */
             const _callSetup = yield this.service.getCallSetup(baseName, 'getAll', {
-                count: 200,
+                count: 500,
                 select: '(**)'
             });
             // Call the OCAPI service.
