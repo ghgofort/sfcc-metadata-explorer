@@ -4,9 +4,56 @@ This extension consists of a tree view in the explorer to navigate through your 
 
 This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases and is a bit rough around the edges. If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
+## Requirements for Use
+- A Sales Force Commerce Cloud (SFCC) sandbox instance is required. Obvious, I know!
+- A __dw.json__ configuration file is required to setup the connection to your SFCC sandbox isntance(s). This is in a format also used by the Prophet Debugger VSCode extension [1], and dwupload [2]
+- You must configure your Open Commerce API settings to allow access for the API calls that are needed.
+
 ## VSCode Settings
-* extension.sfccmetadata.explorer.systemobjects - Enable/disable the view of system object definitions in the explorer view.
-* extension.sfccmetadata.explorer.customobjects - Enable/disable the view of custom object definitions in the explorer view.
+* extension.sfccmetadata.explorer.systemobjects - Enable/disable the view of system object definitions in the explorer view. __default: true__
+* extension.sfccmetadata.explorer.customobjects - Enable/disable the view of custom object definitions in the explorer view. __default: true__
+
+### Open Commerce API Access Setup
+In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed.
+
+_Example OCAPI Access Config_
+```json
+{
+   "_v":"19.1",
+   "clients": [
+      {
+         "client_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+         "resources": [
+            {
+               "resource_id":"/**",
+               "methods":["get","put","post","patch","delete"],
+               "read_attributes":"(**)",
+               "write_attributes":"(**)"
+            }
+         ]
+      }
+   ]
+}
+```
+
+### dw.json Configuration File
+SFCC Metadata Explorer requires that you have a _dw.json_ file in the root of your SFCC workspace wich contains the connection information for your sandbox.
+
+_Example dw.json Config_
+```json
+{
+    "code-version": "version1",
+    "hostname": "<Your Sandbox URL (example: dev01-na01-domain.demandware.net)>",
+    "username": "<Your Sandbox User Name>",
+    "password": "<Your Sandbox User Password>"
+}
+```
+
+The extension is currently setup to use the default OCAPI application ID & password:
+   - Default Application ID: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+   - Default Application Password: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+
+A configuration option to use specific credentials could be added in the future.
 
 ## Features
 * #### View System Object Definitions
@@ -34,58 +81,10 @@ This extension provides Sales Force Comerce Cloud (SFCC) developers with an alte
 * #### Get Attribute XML
    * Populates a blank editor with the XML from the selected system object attribute.
 
-## Requirements
-- A Sales Force Commerce Cloud (SFCC) sandbox instance is required. Obvious, I know!
-- A __dw.json__ configuration file is required to setup the connection to your SFCC sandbox isntance(s). This is in a format also used by the Prophet Debugger VSCode extension [1], and dwupload [2]
-- You must configure your Open Commerce API settings to allow access for the API calls that are needed.
-
-
-### Open Commerce API Access Setup
-In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed (I will include this as an example at a later time).
-
-The extension is currently setup to use the default OCAPI application ID & password:
-   - Default Application ID: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-   - Default Application Password: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
-A VSCode configuration option to use specific credentials will be added in the future.
-
-_Example OCAPI Access Config_
-```json
-{
-   "_v":"19.1",
-   "clients": [
-      {
-         "client_id":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-         "resources": [
-            {
-               "resource_id":"/**",
-               "methods":["get","put","post","patch","delete"],
-               "read_attributes":"(**)",
-               "write_attributes":"(**)"
-            }
-         ]
-      }
-   ]
-}
-```
-
-
-### dw.json Configuration File
-SFCC Metadata Explorer requires that you have a _dw.json_ file in the root of your SFCC workspace wich contains the connection information for your sandbox.
-
-_Example dw.json Config_
-```json
-{
-    "code-version": "version1",
-    "hostname": "<Your Sandbox URL (example: dev01-na01-domain.demandware.net)>",
-    "username": "<Your Sandbox User Name>",
-    "password": "<Your Sandbox User Password>"
-}
-```
-
 These are the only fields required for use of this extension, but many users are likely using the Prophet debugger which requires additional information. The additional fields will be ignored and will not cause any issue with the SFCC Metadata Explorer.
 
 ### References:
+
 [1] __Prophet Debugger:__ A VSCode extension for debugging SFCC JavaScript code, watching for code changes and uploading code, as well as viewing log files.
 
 - [**VSCode Marketplace**](https://marketplace.visualstudio.com/items?itemName=SqrTT.prophet)
@@ -96,75 +95,15 @@ These are the only fields required for use of this extension, but many users are
 - [**npm Package**](https://www.npmjs.com/package/dwupload)
 - [**Bitbucket Repository**](https://bitbucket.org/demandware/dwupload)
 
-## Extension Settings
-
-The application ID configured for making OCAPI calls must be added to the APIConfig.ts file. This will need to be moved to a more accessible location (not part of the extension's code base) before release of the extension.
+- The Icon for this extension is taken from the the Wikimedia Commons page here: [**File:Pictograms-nps-misc-scenic viewpoint.svg**](https://commons.wikimedia.org/wiki/File:Pictograms-nps-misc-scenic_viewpoint.svg)
+- **Attribution:** NPS Graphics, converted by User:ZyMOS [Public domain]
 
 ## Known Issues
 This is a list of known issues that are results of incompatabilities, or limited scope of work. Issues / Bugs relating to the expected functionality of the extension can be foundon the [**github repository issues page**](https://github.com/ghgofort/sfcc-metadata-explorer/issues).
 
-1. The call to get all system object definitions returns all of the system and all of the custom object definitions.
-   * This is curerntly handled by adding the string: '(Custom Object)' to the end of the Object ID in order to be able to diferentiate between the two.
-   * If time permits, I would like to sort the two into separate base items by using the select parameter to only return the attribute definitions that are needed, or to return them all and simply cache the others until needed.
+# The maximum number of attribute that will be fetched is 500. If a system object has more than 500 attributes...whoah?
+# The call to get all system object definitions returns all of the system and all of the custom object definitions, but there is not currently an OCAPI call to get a list custom object definitions. When getting the custom objects from the `SystemObjectDefinitions` OCAPI resource, the `object_type` field is listed as *CustomObject* and the `link` field is also a call to get the system object definition for the *CustomObject* type. This leaves no way to get enumerate the custom object definitions because the further details because the ID is needed to make the individual calls to the ocapi CustomObjectDefinitions resource.
 
-
-_Because this extension is still in the initial development, additional issues with compatability or limits to functionality could still be found._
-
-## Release Notes
-
-Currently looking for bugs and issues with the 2nd Beta release, and will be pushing fixes as patch versions over the next few weeks.
-
-### Updates since last release
-
-### 0.2.4
-- Patch fixes for missing XML namespace on xml output and missing encoding type.
-
-### 0.2.3
-- Patch fixes for removing console logging and displaying error messages to the user instead.
-
-### 0.2.2
-- Patch fixes.
-
-### 0.2.1
-- Patch fixes for bad call to create system attributes of certain data types.
-
-### 0.2.0
-Beta - V2
-
-- Added context menu action to get the XML from a system object attribute in the explorer tree.
-- Removed debug logging.
-- Fixed issue keeping error messages from showing for the user when an API call fails.
-- Updated the README.md & CHANGELOG.md to keep up-to-date w/changes made.
-- Added link to the issues page and removed the disclaimer about not being released to the marketplace.
-
-### 0.1.2
-Beta - Patch - Updates to README.md
-
-- Fixed issues with code alignment in example config for dw.json & OCAPI settings.
-
-### 0.1.1
-
-Beta - Patch - Updates to READEME.md
-
-- Added example configurations for OCAPI settings & dw.json files, and added information about setup requirements to the README.md.
-- Updated license field in package.json to avoid npm warning.
-- Fixed typo in directory name for example configuration file.
-- Updated the change log & bumped the version.
-
-### 0.1.0
-
-Initial Beta Release
-
-- Viewing of system object attribute groups is now supported.
-- Context menu action has been added to the system objects for adding a new system object attribute.
-  - The attribute details are collected through a wizard that gets the value of each field, and then makes a single call to the Open Commerce API to create the new system object attribute definition.
-- Display of the system & custom objects has been added.
-- Display of the object attributes has been added.
-- Display of the object attribute values has been added.
-- The TreeView provider has been added.
-- Added context menu option to assign a System Object Attribute to an attribute group.
-- Added context menu option to delete a custom attribute from a System Object.
-- Added a view menu command to refresh the tree data.
 -----------------------------------------------------------------------------------------------------------
 
 **Enjoy!**

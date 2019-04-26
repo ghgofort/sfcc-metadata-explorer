@@ -9,6 +9,7 @@
     "url": "https://github.com/ghgofort/sfcc-metadata-explorer"
   },
   "license": "MIT",
+  "icon": "resources/meta_explorer_logo.png",
   "engines": {
     "vscode": "^1.21.0",
     "node": "^8.12.0"
