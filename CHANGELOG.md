@@ -2,6 +2,10 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.4.0 (4/27/19)
+### Minor Release
+- Added command to get the XML for an attribute group.
+
 ## 0.3.2 (4/26/19)
 ### Patch Release
 - Updates to README.md to make it more concise and up-to-date.

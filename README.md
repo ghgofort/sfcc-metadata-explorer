@@ -61,7 +61,7 @@ A configuration option to use specific credentials could be added in the future.
    * Each system object is expandable to view the attributes that define each object instance.
    * Each attribute is in turn expandable to view information about the attribute, including attribute type, id, display name, etc.
 * #### View Custom Object Definitions.
-   * Custom objects are currently displayed within the list of System Objects with the qualifyer '(Custom Object)' printed after the CustomObjectDefinition's Id (see screen capture below).
+   * Custom objects are currently displayed with a count of the number of attributes, but the OCAPI calls to get additional information on the Object Definitions are not available.
 * #### View Attribute Definitions of System Object
    * Each System Object definition node has a child node listing the attribute definitions.
 * #### View Attribute Groups of a System Object
@@ -80,6 +80,8 @@ A configuration option to use specific credentials could be added in the future.
    * Removes a system object attribute from the specified attribute group. This can be done from the 'Attribute Groups' sub-tree context menu for each attribute name.
 * #### Get Attribute XML
    * Populates a blank editor with the XML from the selected system object attribute.
+* #### Get Attribute Group XML
+   * Populates a blank editor with the XML for an attribute group and it's member attribute definitions.
 
 These are the only fields required for use of this extension, but many users are likely using the Prophet debugger which requires additional information. The additional fields will be ignored and will not cause any issue with the SFCC Metadata Explorer.
 
