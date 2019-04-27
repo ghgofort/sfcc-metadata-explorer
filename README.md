@@ -101,8 +101,8 @@ These are the only fields required for use of this extension, but many users are
 ## Known Issues
 This is a list of known issues that are results of incompatabilities, or limited scope of work. Issues / Bugs relating to the expected functionality of the extension can be foundon the [**github repository issues page**](https://github.com/ghgofort/sfcc-metadata-explorer/issues).
 
-# The maximum number of attribute that will be fetched is 500. If a system object has more than 500 attributes...whoah?
-# The call to get all system object definitions returns all of the system and all of the custom object definitions, but there is not currently an OCAPI call to get a list custom object definitions. When getting the custom objects from the `SystemObjectDefinitions` OCAPI resource, the `object_type` field is listed as *CustomObject* and the `link` field is also a call to get the system object definition for the *CustomObject* type. This leaves no way to get enumerate the custom object definitions because the further details because the ID is needed to make the individual calls to the ocapi CustomObjectDefinitions resource.
+* The maximum number of attribute that will be fetched is 500. If a system object has more than 500 attributes...whoah?
+* The call to get all system object definitions returns all of the system and all of the custom object definitions, but there is not currently an OCAPI call to get a list custom object definitions. When getting the custom objects from the `SystemObjectDefinitions` OCAPI resource, the `object_type` field is listed as *CustomObject* and the `link` field is also a call to get the system object definition for the *CustomObject* type. This leaves no way to get enumerate the custom object definitions because the further details because the ID is needed to make the individual calls to the ocapi CustomObjectDefinitions resource.
 
 -----------------------------------------------------------------------------------------------------------
 
