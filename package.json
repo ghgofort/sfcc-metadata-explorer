@@ -86,7 +86,12 @@
       {
         "command": "extension.sfccexplorer.systemobjectattribute.getxml",
         "title": "Get attribute XML",
-        "description": "Gets XML for the attribute to import & export via SFCC."
+        "description": "Get XML for the attribute to import & export via SFCC."
+      },
+      {
+        "command": "extension.sfccexplorer.objectattributegroup.getxml",
+        "title": "Get attribute group XML",
+        "description": "Gets XML for the attribute group to use in a import / export file for SFCC."
       }
     ],
     "menus": {
@@ -117,6 +122,10 @@
         {
           "command": "extension.sfccexplorer.systemobjectattribute.getxml",
           "when": "view == systemObjectDefinitionsView && viewItem == attribute"
+        },
+        {
+          "command": "extension.sfccexplorer.objectattributegroup.getxml",
+          "when": "view == systemObjectDefinitionsView && viewItem == group"
         }
       ]
     },
