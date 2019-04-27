@@ -4250,6 +4250,9 @@ class XMLHandler {
         attrDefNode.ele('type', attribute.valueType);
         attrDefNode.ele('mandatory-flag', attribute.mandatory);
         attrDefNode.ele('externally-managed-flag', attribute.externallyManaged);
+        if (attribute.defaultValue) {
+            attrDefNode.ele('default-value', attribute.defaultValue.value);
+        }
         /**
          * Define properties that are specific to certain value types.
          */
