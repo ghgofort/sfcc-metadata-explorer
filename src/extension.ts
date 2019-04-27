@@ -161,7 +161,21 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds the handler to the context menu action to get the XML from a system
+   * object attribute group.
+   *
+   * @listens extension.sfccexplorer.objectattributegroup.getxml
+   */
+  const getAttributeGroupXMLDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.objectattributegroup.getxml',
+    (metaNode: MetadataNode) => {
+      xmlHandler.getXMLFromNode(metaNode);
+    }
+  );
+
   context.subscriptions.push(getAttributeXMLDisposable);
+  context.subscriptions.push(getAttributeGroupXMLDisposable);
   context.subscriptions.push(addGroupDisposable);
   context.subscriptions.push(assignToGroupDisposable);
   context.subscriptions.push(setDefaultDisposable);

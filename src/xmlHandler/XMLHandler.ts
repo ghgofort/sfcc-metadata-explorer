@@ -1,6 +1,7 @@
 import { MetadataNode } from '../components/MetadataNode';
 import { window, workspace } from 'vscode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
+import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 
 /**
  * @file XMLHandler.ts
@@ -31,6 +32,35 @@ export default class XMLHandler {
   /* ========================================================================
    * Private Helper Functions
    * ======================================================================== */
+
+  private getObjectGroupXML(rootNode: any,
+    systemObjectType: string,
+    objectAttributeGroup: ObjectAttributeGroup
+  ) {
+    // Create the XML tree.
+    const groupDefinitionsNode = rootNode
+      .ele('type-extension', { 'type-id': systemObjectType })
+      .ele('group-definitions');
+
+    // Create the group-definition node.
+    const groupNode = groupDefinitionsNode.ele('attribute-group',{
+      'group-id': objectAttributeGroup.id
+    });
+
+    // Add the display-name node.
+    groupNode.ele(
+      'display-name',
+      { 'xml:lang': 'x-default' },
+      objectAttributeGroup.displayName
+    );
+
+    // Loop through the attributes in the group and create a node for each.
+    if (objectAttributeGroup.attributeDefinitions.length) {
+      objectAttributeGroup.attributeDefinitions.forEach(attr => {
+        groupNode.ele('attribute', { 'attribute-id': attr.id });
+      });
+    }
+  }
 
   /**
    * Gets the XML node for an ObjectAttributeDefinition class instance.
@@ -74,10 +104,6 @@ export default class XMLHandler {
     attrDefNode.ele('mandatory-flag', attribute.mandatory);
     attrDefNode.ele('externally-managed-flag', attribute.externallyManaged);
 
-    if (attribute.defaultValue) {
-      attrDefNode.ele('default-value', attribute.defaultValue.value);
-    }
-
     /**
      * Define properties that are specific to certain value types.
      */
@@ -90,15 +116,15 @@ export default class XMLHandler {
       const valDefs = attrDefNode.ele('value-definitions');
       // Add any value-definitions that are configured for the attribute.
       attribute.valueDefinitions.forEach(function (valDef) {
-          if (valDef.displayValue && valDef.value) {
-            const valDefXML = valDefs.ele('value-definition');
-            valDefXML.ele('display',
-              { 'xml:lang': 'x-default' },
-              valDef.displayValue.default
-            );
+        if (valDef.displayValue && valDef.value) {
+          const valDefXML = valDefs.ele('value-definition');
+          valDefXML.ele('display',
+            { 'xml:lang': 'x-default' },
+            valDef.displayValue.default
+          );
 
-            valDefXML.ele('value', valDef.value.toString());
-          }
+          valDefXML.ele('value', valDef.value.toString());
+        }
       });
     }
 
@@ -112,8 +138,17 @@ export default class XMLHandler {
         attrDefNode.ele('visible-flag', attribute.visible);
         attrDefNode.ele('order-required-flag', attribute.orderRequired);
         attrDefNode.ele('externally-defined-flag', attribute.externallyDefined);
-        break;
 
+        if (attribute.defaultValue) {
+          attrDefNode.ele('default-value', attribute.defaultValue.value);
+        }
+
+        break;
+      case 'SitePreferences':
+        if (attribute.defaultValue) {
+          attrDefNode.ele('default-value', attribute.defaultValue.value);
+        }
+        break;
       default:
         break;
     }
@@ -143,6 +178,9 @@ export default class XMLHandler {
     if (metaNode.nodeType === 'objectAttributeDefinition') {
       const attribute = metaNode.objectAttributeDefinition;
       this.getObjectAttributeXML(rootNode, systemObjectType, attribute);
+    } else if (metaNode.nodeType === 'objectAttributeGroup') {
+      this.getObjectGroupXML(rootNode, systemObjectType,
+          metaNode.objectAttributeGroup);
     }
 
     // Create the text document and show in the editor.
