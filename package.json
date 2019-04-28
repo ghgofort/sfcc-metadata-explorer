@@ -92,6 +92,11 @@
         "command": "extension.sfccexplorer.objectattributegroup.getxml",
         "title": "Get attribute group XML",
         "description": "Gets XML for the attribute group to use in a import / export file for SFCC."
+      },
+      {
+        "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
+        "title": "Remove attribute from attribute group",
+        "description": "Removes the selected attribute from the attribute group."
       }
     ],
     "menus": {
@@ -126,6 +131,10 @@
         {
           "command": "extension.sfccexplorer.objectattributegroup.getxml",
           "when": "view == systemObjectDefinitionsView && viewItem == group"
+        },
+        {
+          "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
+          "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
         }
       ]
     },

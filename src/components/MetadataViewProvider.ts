@@ -452,7 +452,7 @@ export class MetadataViewProvider
 
       childNodes.push(
         new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
-          parentId: element.parentId + '.' + element.id,
+          parentId: element.parentId + '.' + attrGroup.id,
           stringList: attrDefTitles,
           displayDescription: attrGroup.attributeDefinitionsCount.toString()
         })
@@ -565,7 +565,8 @@ export class MetadataViewProvider
     return element.stringList.map(
       str =>
         new MetadataNode(str, TreeItemCollapsibleState.None, {
-          parentId: element.parentId + '.' + element.name
+          parentId: element.parentId + '.' + element.name,
+          groupAttribute: element.parentId.split('.').pop()
         })
     );
   }

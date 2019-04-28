@@ -31,6 +31,8 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .addAttributeNode(metaNode)
         .then(data => {
+          window.showInformationMessage(
+            'Attribute successfully added.');
           metaView.currentProvider.refresh();
         })
         .catch(err => {
@@ -53,7 +55,6 @@ export function activate(context: ExtensionContext) {
         .deleteAttributeDefinition(metaNode)
         .then(data => {
           window.showInformationMessage('Attribute Deleted Successfully');
-          console.log(data);
           metaView.currentProvider.refresh();
         })
         .catch(err => {
@@ -111,6 +112,8 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .setDefaultAttributeValue(metaNode)
         .then(data => {
+          window.showInformationMessage(
+            'Attribute default value sucessfully set.');
           metaView.currentProvider.refresh();
         })
         .catch(err => {
@@ -132,6 +135,38 @@ export function activate(context: ExtensionContext) {
       ocapiHelper
         .addAttributeGroup(metaNode)
         .then(data => {
+          window.showInformationMessage(
+            'Attribute group added successfully.');
+          metaView.currentProvider.refresh();
+        })
+        .catch(err => {
+          // If the user canceled the action, then don't show an error.
+          if (typeof err.error === 'boolean' &&
+            err.error === false
+          ) {
+            return;
+          }
+
+          window.showErrorMessage('Could not create attribute group: {0}', err);
+          console.log(err);
+        });
+    }
+  );
+
+  /**
+   * Binds the handler for the context menu command to set the default value of
+   * a system object attribute.
+   *
+   * @listens extension.sfccexplorer.groupattributedefinition.removefromgroup
+   */
+  const removeFromGroupDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.groupattributedefinition.removefromgroup',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .removeAttributeFromGroup(metaNode)
+        .then(data => {
+          window.showInformationMessage(
+            'Attribute removed from group successfully.');
           metaView.currentProvider.refresh();
         })
         .catch(err => {
@@ -182,6 +217,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(addAttributeDisposable);
   context.subscriptions.push(refreshTreeDisposable);
   context.subscriptions.push(deleteAttributeDisposable);
+  context.subscriptions.push(removeFromGroupDisposable);
 }
 
 // this method is called when your extension is deactivated
