@@ -1,15 +1,18 @@
 # sfcc-metadata-explorer README
 
+## Summary
 This extension consists of a tree view in the explorer to navigate through your sandbox metadata. There are several actions that can be applied to any given piece of metadata in order to read & modify the metadata in your sandbox.
 
-This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system and custom objects defined on a SFCC instance. While there are several features in the works, this is still in the early development phases and is a bit rough around the edges. If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
+This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system objects defined on a SFCC instance. There are several additional features in the works at this time, but this extension is still a bit rough around the edges.
+
+If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
 ## Requirements for Use
 - A Sales Force Commerce Cloud (SFCC) sandbox instance is required. Obvious, I know!
 - A __dw.json__ configuration file is required to setup the connection to your SFCC sandbox isntance(s). This is in a format also used by the Prophet Debugger VSCode extension [1], and dwupload [2]
 - You must configure your Open Commerce API settings to allow access for the API calls that are needed.
 
-## VSCode Settings
+### VSCode Settings
 * extension.sfccmetadata.explorer.systemobjects - Enable/disable the view of system object definitions in the explorer view. __default: true__
 * extension.sfccmetadata.explorer.customobjects - Enable/disable the view of custom object definitions in the explorer view. __default: true__
 
@@ -36,7 +39,7 @@ _Example OCAPI Access Config_
 }
 ```
 
-### dw.json Configuration File
+### Sandbox Connection Setup
 SFCC Metadata Explorer requires that you have a _dw.json_ file in the root of your SFCC workspace wich contains the connection information for your sandbox.
 
 _Example dw.json Config_
@@ -50,40 +53,27 @@ _Example dw.json Config_
 ```
 
 The extension is currently setup to use the default OCAPI application ID & password:
-   - Default Application ID: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-   - Default Application Password: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+   - Default Application ID: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
+   - Default Application Password: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
 
 A configuration option to use specific credentials could be added in the future.
 
 ## Features
+### Basic Tree View - View System Object Information
 * #### View System Object Definitions
-   * View the system object definitions within an SFCC instance.
-   * Each system object is expandable to view the attributes that define each object instance.
-   * Each attribute is in turn expandable to view information about the attribute, including attribute type, id, display name, etc.
-* #### View Custom Object Definitions.
-   * Custom objects are currently displayed with a count of the number of attributes, but the OCAPI calls to get additional information on the Object Definitions are not available.
+* #### View a list of Custom Object Definitions.
 * #### View Attribute Definitions of System Object
-   * Each System Object definition node has a child node listing the attribute definitions.
 * #### View Attribute Groups of a System Object
-   * Each System Object Definition node has a child node listing the attribute groups.
+
+### Context Menu : System Object : Implemented CRUD Operations
 * #### Add Attribute Definition to System Object
-   * Each system object attribute has a context menu (right click or CMD+click) with a command to create a new attribute definition.
-   * Several inputs are shown to gather information about the new attribute definition:
-       * ![Example - add system object attribute definition step 1](/resources/markdown_resources/example_add_definition_step1.png)
-
-       * ![Example - add system object attribute definition step 2](/resources/marddown_resources/example_add_definition_step2.png)
 * #### Add Attribute Definition to Group
-   * Adds an attribute to the specified attribute group. The user is prompted with a list of the existing attribute groups to select from.
 * #### Delete Attribute Definition
-   * Removes an attribute definition from a system object definition.
 * #### Remove Attribute From Group
-   * Removes a system object attribute from the specified attribute group. This can be done from the 'Attribute Groups' sub-tree context menu for each attribute name.
-* #### Get Attribute XML
-   * Populates a blank editor with the XML from the selected system object attribute.
-* #### Get Attribute Group XML
-   * Populates a blank editor with the XML for an attribute group and it's member attribute definitions.
 
-These are the only fields required for use of this extension, but many users are likely using the Prophet debugger which requires additional information. The additional fields will be ignored and will not cause any issue with the SFCC Metadata Explorer.
+### Context Menu : System Object : Implemented XML Operations
+* #### Get Attribute XML
+* #### Get Attribute Group XML
 
 ### References:
 

@@ -15,14 +15,15 @@ import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDef
 
 /** @interface INodeData */
 export default interface INodeData {
-    parentId: string;
-    objectAttributeDefinition?: ObjectAttributeDefinition;
-    objectAttributeGroup?: ObjectAttributeGroup;
-    objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
-    objectTypeDefinition?: ObjectTypeDefinition;
-    stringList?: string[];
-    parentContainer?: string;
-    baseNodeName?: string;
-    nodeValue?: string|number;
-    displayDescription?: string;
+  parentId: string;
+  groupAttribute?: string;
+  objectAttributeDefinition?: ObjectAttributeDefinition;
+  objectAttributeGroup?: ObjectAttributeGroup;
+  objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
+  objectTypeDefinition?: ObjectTypeDefinition;
+  stringList?: string[];
+  parentContainer?: string;
+  baseNodeName?: string;
+  nodeValue?: string | number;
+  displayDescription?: string;
 }

@@ -268,6 +268,31 @@ export const apiConfig = {
             }
           ],
           path: 'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
+        },
+
+        /* ==================================================================
+         * REMOVE ATTRIBUTE DEFINITION FROM ATTRIBUTE GROUP
+         * ================================================================== */
+        removeAttributeFromGroup: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'DELETE',
+          params: [
+            {
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }, {
+              id: 'groupId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }, {
+              id: 'attributeId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
         }
       }
     }

@@ -47,7 +47,8 @@ export class MetadataNode extends TreeItem {
     attributeValue: 'objectAttributeValueDefinition',
     group: 'objectAttributeGroup',
     stringList: 'stringList',
-    value: 'value'
+    value: 'value',
+    groupAttribute: 'groupAttribute'
   }
 
   /**

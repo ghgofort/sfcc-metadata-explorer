@@ -549,6 +549,42 @@ export default class OCAPIHelper {
   }
 
   /**
+   * Makes an OCAPI call to remove the specified attribute from the system
+   * group that has been expanded in the explorer to reach the attribute.
+   *
+   * @param {MetadataNode} node - The node object for the attribute that needs
+   *    to be removed from the attribute group.
+   * @return {Promise<any>} - Returns a promise that resolves to the results of
+   *    the remove from group call.
+   */
+  public async removeAttributeFromGroup(node: MetadataNode): Promise<any> {
+    const path = node.parentId.split('.');
+    const objectType = path[path.length - 4];
+    const groupId = path[path.length -2];
+    const attributeId = node.name;
+    let _callSetup: ICallSetup;
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'removeAttributeFromGroup',
+        {
+          objectType: objectType,
+          groupId: groupId,
+          attributeId: attributeId
+        }
+      );
+
+      return await this.service.makeCall(_callSetup);
+    } catch (e) {
+      console.log(e);
+      // If there was an error, return the error message for display.
+      return Promise.reject('ERROR occured while removing the attribute from ' +
+        'the attribute group.');
+    }
+  }
+
+  /**
    * Makes an OCAPI call to set the default value of a system object attribute
    * if this operation is supported on the attribute/object type combination.
    *
