@@ -22,6 +22,15 @@ export default class XMLHandler {
   public static NAMESPACE_STRING: String =
     'http://www.demandware.com/xml/impex/metadata/2006-10-31';
 
+  /** A list of System Objects that support the site-specific flag on attributes. */
+  public static FIELD_ATTRIBUTE_MAP: Object = {
+    'order-required-flag': ['Product'],
+    'site-specific-flag': [
+      'Product', 'Catalog', 'SitePreferences'
+    ],
+    'visible-flag': ['Product']
+  };
+
   /**
    * @constructor
    */
@@ -43,7 +52,7 @@ export default class XMLHandler {
       .ele('group-definitions');
 
     // Create the group-definition node.
-    const groupNode = groupDefinitionsNode.ele('attribute-group',{
+    const groupNode = groupDefinitionsNode.ele('attribute-group', {
       'group-id': objectAttributeGroup.id
     });
 
@@ -89,7 +98,10 @@ export default class XMLHandler {
       'attribute-id': attribute.id
     });
 
-    // Define the attribute properties.
+    /* ======================================================================
+     * Define Attribute Properties - Dependent on Order
+     * ====================================================================== */
+
     attrDefNode.ele(
       'display-name',
       { 'xml:lang': 'x-default' },
@@ -101,20 +113,48 @@ export default class XMLHandler {
       attribute.description.default
     );
     attrDefNode.ele('type', attribute.valueType);
+    attrDefNode.ele('localizable-flag', attribute.localizable);
+
+    if (XMLHandler.FIELD_ATTRIBUTE_MAP['site-specific-flag']
+      .indexOf(systemObjectType) > -1
+    ) {
+      attrDefNode.ele('site-specific-flag',
+        attribute.siteSpecific && !attribute.localizable);
+    }
+
+    /** @todo: Add the searchable flag to the XML output. */
+
     attrDefNode.ele('mandatory-flag', attribute.mandatory);
+
+    if (XMLHandler.FIELD_ATTRIBUTE_MAP['visible-flag']
+      .indexOf(systemObjectType) > -1
+    ) {
+      attrDefNode.ele('visible-flag', attribute.visible);
+    }
+
     attrDefNode.ele('externally-managed-flag', attribute.externallyManaged);
+
+    if (XMLHandler.FIELD_ATTRIBUTE_MAP['order-required-flag']
+      .indexOf(systemObjectType) > -1
+    ) {
+      attrDefNode.ele('order-required-flag', attribute.orderRequired);
+    }
+
+    attrDefNode.ele('externally-defined-flag', attribute.externallyDefined);
+
+
 
     /**
      * Define properties that are specific to certain value types.
      */
-    if (valType === 'string') {
-      // Default type is 'string'
+    if (valType.toLowerCase() === 'string') {
+      // Set min-length for String attributes.
       attrDefNode.ele({ 'min-length': attribute.minLength });
     } else if (valType.indexOf('enum') > -1 &&
       attribute.valueDefinitions.length
     ) {
-      const valDefs = attrDefNode.ele('value-definitions');
       // Add any value-definitions that are configured for the attribute.
+      const valDefs = attrDefNode.ele('value-definitions');
       attribute.valueDefinitions.forEach(function (valDef) {
         if (valDef.displayValue && valDef.value) {
           const valDefXML = valDefs.ele('value-definition');
@@ -128,32 +168,13 @@ export default class XMLHandler {
       });
     }
 
-    /**
-     * Define properties specific to system object types
-     */
-    switch (systemObjectType) {
-      case 'Product':
-        attrDefNode.ele('localizable-flag', attribute.localizable);
-        attrDefNode.ele('site-specific-flag', attribute.siteSpecific);
-        attrDefNode.ele('visible-flag', attribute.visible);
-        attrDefNode.ele('order-required-flag', attribute.orderRequired);
-        attrDefNode.ele('externally-defined-flag', attribute.externallyDefined);
-
-        if (attribute.defaultValue) {
-          attrDefNode.ele('default-value', attribute.defaultValue.value);
-        }
-
-        break;
-      case 'SitePreferences':
-        if (attribute.defaultValue) {
-          attrDefNode.ele('default-value', attribute.defaultValue.value);
-        }
-        break;
-      default:
-        break;
+    if (typeof attribute.defaultValue !== undefined &&
+      attribute.defaultValue.value
+    ) {
+        attrDefNode.ele('default-value', attribute.defaultValue.value);
     }
   }
-
+s
   /* ========================================================================
    * Public Exported Methods
    * ======================================================================== */
@@ -180,7 +201,7 @@ export default class XMLHandler {
       this.getObjectAttributeXML(rootNode, systemObjectType, attribute);
     } else if (metaNode.nodeType === 'objectAttributeGroup') {
       this.getObjectGroupXML(rootNode, systemObjectType,
-          metaNode.objectAttributeGroup);
+        metaNode.objectAttributeGroup);
     }
 
     // Create the text document and show in the editor.
