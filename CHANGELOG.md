@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.5.1 (4/30/19)
+### Patch Release
+- Fixed the ordering of the custom attribute properties in order to make the XML validate when using the getXML commands.
+- Updated README.md & CHANGELOG.md files.
+
 ## 0.5.0 (4/28/19)
 ### Minor Release
 - Added command `extension.sfccexplorer.groupattributedefinition.removefromgroup` to remove an attribute from an attribute group to the package.json.
