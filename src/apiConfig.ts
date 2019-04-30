@@ -37,48 +37,17 @@ export const apiConfig = {
           // Use the system_object_definition endpoint with the filter to only
           // get the custom object tyeps.
           path: 'system_object_definitions',
-        },
-
-        /* ==================================================================
-         * GET A CUSTOM OBJECT DEFINITION & ATTRIBUTES
-         * ================================================================== */
-        get: {
-          authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
-          method: 'GET',
-          params: [
-            {
-              id: 'objectType',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            }
-          ],
-          path: '/custom_object_definitions/{objectType}/attribute_definitions',
-        },
-
-        /* ==================================================================
-         * GET CUSTOM OBJECT ATTRIBUTES
-         * ================================================================== */
-        getAttributes: {
-          authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
-          method: 'GET',
-          params: [
-            {
-              id: 'select',
-              type: 'string',
-              use: 'QUERY_PARAMETER'
-            },{
-              id: 'objectType',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            }
-          ],
-          path: 'custom_object_definitions/{objectType}/attribute_definitions'
         }
       }
     },
 
+    /***************************************************************************
+     * OCAPI : Data Sho
+     * Resource : OrderSearch
+     **************************************************************************/
+    orderSearch: {
+      /** @todo: START HERE */
+    },
 
     /***************************************************************************
      * OCAPI : Data API

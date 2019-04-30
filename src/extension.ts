@@ -183,6 +183,10 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /* ========================================================================
+   * XML VSCode Commands
+   * ======================================================================== */
+
   /**
    * Binds the handler to the context menu action to get the XML from a system
    * object attribute definition.
