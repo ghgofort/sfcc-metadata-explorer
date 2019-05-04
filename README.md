@@ -75,7 +75,7 @@ A configuration option to use specific credentials could be added in the future.
 * #### Get Attribute XML
 * #### Get Attribute Group XML
 
-### References:
+## References:
 
 [1] __Prophet Debugger:__ A VSCode extension for debugging SFCC JavaScript code, watching for code changes and uploading code, as well as viewing log files.
 
@@ -87,7 +87,8 @@ A configuration option to use specific credentials could be added in the future.
 - [**npm Package**](https://www.npmjs.com/package/dwupload)
 - [**Bitbucket Repository**](https://bitbucket.org/demandware/dwupload)
 
-- The Icon for this extension is taken from the the Wikimedia Commons page here: [**File:Pictograms-nps-misc-scenic viewpoint.svg**](https://commons.wikimedia.org/wiki/File:Pictograms-nps-misc-scenic_viewpoint.svg)
+## Attribution:
+The Icon for this extension is taken from the the Wikimedia Commons page here: [**File:Pictograms-nps-misc-scenic viewpoint.svg**](https://commons.wikimedia.org/wiki/File:Pictograms-nps-misc-scenic_viewpoint.svg)
 - **Attribution:** NPS Graphics, converted by User:ZyMOS [Public domain]
 
 ## Known Issues
