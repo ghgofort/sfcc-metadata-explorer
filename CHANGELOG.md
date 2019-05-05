@@ -2,6 +2,9 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## Unreleased Changes
+- Added the call to makel a search for SystemObjectDefinitions to the apiConfig.ts configuration file.
+
 ## 0.5.1 (4/30/19)
 ### Patch Release
 - Fixed the ordering of the custom attribute properties in order to make the XML validate when using the getXML commands.

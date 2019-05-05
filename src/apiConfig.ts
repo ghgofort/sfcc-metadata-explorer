@@ -2,6 +2,14 @@
  * @file apiConfig.ts
  * @fileoverview - Exports an object literal with configuration information for
  *    the available OCAPI calls.
+ *
+ *  _NOTES:_
+ *  - Supported values for `params.use`:
+ *    * PATH_PARAMETER
+ *    * QUERY_PARAMETER
+ *  - If the `params.use` field is left empty, the data will be added to the
+ *    body of the request for PUT, POST, & DELETE requests, and as HTTP query
+ *    parameters for GET requests.
  */
 
 export const apiConfig = {
@@ -42,7 +50,7 @@ export const apiConfig = {
     },
 
     /***************************************************************************
-     * OCAPI : Data Sho
+     * OCAPI : Shop API
      * Resource : OrderSearch
      **************************************************************************/
     orderSearch: {
@@ -263,6 +271,26 @@ export const apiConfig = {
           ],
           path: 'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
         }
+      }
+    },
+
+    /*************************************************************************
+    * OCAPI : Data API
+    * Resource : SystemObjectDefinitionSearch
+    **************************************************************************/
+    systemObjectDefinitionSearch: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+        * SEARCH FOR SYSTEM OBJECT DEFINITIONS
+        * ================================================================== */
+        search: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          params: [],
+          path: 'system_object_definition_search'
+        },
       }
     }
   },

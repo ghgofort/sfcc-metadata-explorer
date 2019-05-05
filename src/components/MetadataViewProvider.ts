@@ -14,6 +14,7 @@ import {
   WorkspaceConfiguration,
   workspace
 } from 'vscode';
+import CustomObjectHelper from '../helpers/CustomObjectHelper';
 import { OCAPIService } from '../services/OCAPIService';
 import { ICallSetup } from '../services/ICallSetup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
@@ -133,7 +134,7 @@ export class MetadataViewProvider
     let _callResult: any;
 
     // If this is the node for attribute definitions.
-    if (isAttribute) {
+    if (isAttribute && objectType !== 'CustomObjectDefinition') {
       // Get the System/Custom Object attributes.// Make the call to the OCAPI Service.
       try {
         _callSetup = await this.service.getCallSetup(
@@ -181,7 +182,7 @@ export class MetadataViewProvider
           parentId: 'root.systemObjectDefinitions.' + objectType
         })
       ];
-    } else {
+    } else if (objectType !== 'CustomObjectDefinition') {
       // Make the call to the OCAPI Service to get the attribute groups.
       // Tree branch for attribute groups.
       _callSetup = await this.service.getCallSetup(
@@ -240,6 +241,13 @@ export class MetadataViewProvider
           parentId: element.parentId + '.' + objectType
         })
       ];
+    } else if (isAttribute) {
+      /** @todo: Get object definition from the system_object_type_search */
+    } else {
+      /**
+       * @todo: START HERE - Get attribute groups for definition based off id
+       *    from attribute lookup call.
+       */
     }
   }
 
@@ -377,9 +385,7 @@ export class MetadataViewProvider
     return Object.keys(displayTextMap).map(ctnrName => {
       const metaNode = new MetadataNode(
         displayTextMap[ctnrName],
-        element.parentId.indexOf('customObjectDefinitions') > -1 ?
-          TreeItemCollapsibleState.None :
-          TreeItemCollapsibleState.Collapsed,
+        TreeItemCollapsibleState.Collapsed,
         {
           displayDescription:
             ctnrName === 'objectAttributeDefinitions'
