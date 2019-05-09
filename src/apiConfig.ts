@@ -54,7 +54,7 @@ export const apiConfig = {
      * Resource : OrderSearch
      **************************************************************************/
     orderSearch: {
-      /** @todo: START HERE */
+      /** @todo: Implement Order Search */
     },
 
     /***************************************************************************

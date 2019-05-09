@@ -14,4 +14,25 @@ export namespace IOCAPITypes {
     [index: string]: string;
     default: string;
   }
+
+  /** @interface IMatchAllQuery - Represents a MatchAllQuery OCAPI document. */
+  export interface IMatchAllQuery {
+
+  }
+
+  /** @interface ISort - A sort parameter to sort results from an OCAPI query */
+  export interface ISort {
+    field: string;
+    sortOrder: SortOrderType;
+  }
+
+  /* ========================================================================
+   * Namespace Enum Objects
+   * ======================================================================== */
+
+   /** @enum {SortOrderType} */
+  export enum SortOrderType {
+    'asc',
+    'desc'
+  };
 }
