@@ -71,8 +71,8 @@ export namespace IOCAPITypes {
    * OCAPI Query Document types
    * ======================================================================== */
 
-  /** @interface IQuery - OCAPI Data Document: Query */
-  export interface IQuery {
+  /** @interface IQueryParams - Parameters for constructor of the Query class */
+  export interface IQueryParams {
     boolean_query?: IBoolQuery;
     filtered_query?: IFilteredQuery;
     match_all_query?: IMatchAllQuery;

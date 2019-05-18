@@ -4,12 +4,11 @@
  * sorting searches.
  */
 
-export default class Query {
-  public textQuery: 
+export default class Sort {
   /**
    * @param {Object} [args]
    */
   constructor(args) {
-
+    /** @todo */
   }
 }
