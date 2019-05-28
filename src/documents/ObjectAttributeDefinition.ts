@@ -5,6 +5,7 @@
  * custom object.
  */
 
+import { apiConfig } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
@@ -128,7 +129,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    *    because it will overwrite values for attribute properties that were
    *    previously set with the class defaults. In this case, specify only the
    *    fields that you are updating.
-   * @return {string} - Returns a stringified JSON object representation of the
+   * @return {string} - Returns a JS Object literal representation of the
    *    OCAPI document class that can be submitted to the API methods.
    */
   public getDocument(includeFields: string[] = []): Object {
@@ -190,6 +191,9 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
         }
       }
     });
+
+    // Add the OCAPI document version.
+    documentObj['_v'] = apiConfig.version.replace('_', '.').substring(1);
 
     return documentObj;
   }

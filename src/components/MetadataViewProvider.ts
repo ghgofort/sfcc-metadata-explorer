@@ -21,6 +21,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import Query from '../documents/Query';
 
 /**
  * @class MetadataViewProvider
@@ -134,7 +135,7 @@ export class MetadataViewProvider
     let _callResult: any;
 
     // If this is the node for attribute definitions.
-    if (isAttribute && objectType !== 'CustomObjectDefinition') {
+    if (isAttribute && objectType !== 'CustomObject') {
       // Get the System/Custom Object attributes.// Make the call to the OCAPI Service.
       try {
         _callSetup = await this.service.getCallSetup(
@@ -182,7 +183,7 @@ export class MetadataViewProvider
           parentId: 'root.systemObjectDefinitions.' + objectType
         })
       ];
-    } else if (objectType !== 'CustomObjectDefinition') {
+    } else if (!isAttribute && objectType !== 'CustomObject') {
       // Make the call to the OCAPI Service to get the attribute groups.
       // Tree branch for attribute groups.
       _callSetup = await this.service.getCallSetup(
@@ -242,7 +243,23 @@ export class MetadataViewProvider
         })
       ];
     } else if (isAttribute) {
-      /** @todo: Get object definition from the system_object_type_search */
+      try {
+        var query = new Query({
+          text_query: {
+            fields: ['display_name'],
+            search_phrase: ''
+          }
+        });
+        _callSetup = await this.service.getCallSetup(
+          'systemObjectDefinitionSearch',
+          'search',
+          { body: query.getDocument(), select: '(**)' }
+        );
+
+        _callResult = await this.service.makeCall(_callSetup);
+      } catch (e) {
+        throw new Error(e.toString());
+      }
     } else {
       /**
        * @todo: START HERE - Get attribute groups for definition based off id

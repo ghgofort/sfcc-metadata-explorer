@@ -32,8 +32,10 @@ export class SearchRequest {
    *    beginning of the results list. This is specifically for paging.string
    * @param {string[]} [args.expand] - An optional expand array that defines
    *    what OCAPI expand parametersshould be included in the request.
-   * @param {Query}
-   *
+   * @param {Query} args.query - The query to determine what results to return.
+   * @param {string} args.select - The properties that should be returned by the
+   *    query for the matching result objects. Use `(**)` to return all of
+   *    the objects properties.
    */
   constructor(args) {
     this.count = args && args.count ? args.count : '';

@@ -4,6 +4,7 @@
  * document representing an attribute group of a system or custom object.
  */
 
+import { apiConfig } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
 import ObjectAttributeDefinition from './ObjectAttributeDefinition';
 
@@ -64,6 +65,17 @@ export default class ObjectAttributeGroup implements IAPIDocument {
     }
   }
 
+  /**
+   *
+   * @param {string[]} [includeFields = []] - An optional argument to specify
+   *    class properties to include in the JSON string result. If empty, all of
+   *    the class properties will be included. This is not ideal when updating
+   *    because it will overwrite values for attribute properties that were
+   *    previously set with the class defaults. In this case, specify only the
+   *    fields that you are updating.
+   * @return {Object} - Returns the JS object definition for using the
+   *    document in a call to the Open Commerce API.
+   */
   public getDocument(includeFields: string[] = []): Object {
     const documentObj = {};
     let memberNames = Object.keys(this).filter(
@@ -112,7 +124,8 @@ export default class ObjectAttributeGroup implements IAPIDocument {
       }
     });
 
-    documentObj['_v'] = '18.8';
+    // Add the OCAPI document version.
+    documentObj['_v'] = apiConfig.version.replace('_', '.').substring(1);
 
     return documentObj;
   }

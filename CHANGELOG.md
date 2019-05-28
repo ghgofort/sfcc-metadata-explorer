@@ -3,7 +3,9 @@
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
 ## Unreleased Changes
-- Added the call to makel a search for SystemObjectDefinitions to the apiConfig.ts configuration file.
+- Added the call to make a search for SystemObjectDefinitions to the apiConfig.ts configuration file.
+- Added interface definitions for the Query & Sort sub-types.
+- Added Class modules for the Sort & Query OCAPI document definitions.
 
 ## 0.5.1 (4/30/19)
 ### Patch Release
