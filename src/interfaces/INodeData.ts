@@ -12,6 +12,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import { ITreeData } from './ITreeData';
 
 /** @interface INodeData */
 export default interface INodeData {
@@ -22,7 +23,10 @@ export default interface INodeData {
   objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
   objectTypeDefinition?: ObjectTypeDefinition;
   stringList?: string[];
+  /** @desc - Container Node for System Object Definitions */
   parentContainer?: string;
+  /** @desc - Container Node for Custom Object Definitions */
+  customParentContainer?: ITreeData.ICustomParentContainer;
   baseNodeName?: string;
   nodeValue?: string | number;
   displayDescription?: string;

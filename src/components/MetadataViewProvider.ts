@@ -22,6 +22,7 @@ import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 import Query from '../documents/Query';
+import INodeData from '../interfaces/INodeData';
 
 /**
  * @class MetadataViewProvider
@@ -36,6 +37,7 @@ export class MetadataViewProvider
   public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
   private service: OCAPIService = new OCAPIService();
+  private customObjectHelper: CustomObjectHelper = new CustomObjectHelper();
 
   /**
    *
@@ -96,6 +98,8 @@ export class MetadataViewProvider
             return this.getObjectDefinitionChildren(element);
           } else if (nodeType === 'parentContainer') {
             return this.getAttributeOrGroupContainerChildren(element);
+          } else if (nodeType === 'customParentContainer') {
+            return this.customObjectHelper.getCustomContainerChildren(element);
           } else if (nodeType === 'objectAttributeDefinition') {
             return this.getAttributeDefinitionChildren(element);
           } else if (nodeType === 'objectAttributeGroup') {
@@ -384,21 +388,9 @@ export class MetadataViewProvider
     return Promise.resolve(metaNodes);
   }
 
-  /**
-   * Gets the children elements of System & Custom object type nodes.
-   * @param {MetadataNode} element - The MetadataNode instance.
-   * @return {Promise<MetadataNode[]>}
-   */
-  private async getObjectDefinitionChildren(
+  private async getAttributeDefinitions(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    const displayTextMap = {
-      objectAttributeDefinitions: 'Attribute Definitions',
-      objectAttributeGroups: 'Attribute Groups'
-    };
-
-    // Setup parent nodes for the attribute definition & the attribute
-    // Group nodes to be added to.
     return Object.keys(displayTextMap).map(ctnrName => {
       const metaNode = new MetadataNode(
         displayTextMap[ctnrName],
@@ -412,6 +404,48 @@ export class MetadataViewProvider
           parentId:
             element.parentId + '.' + element.objectTypeDefinition.objectType
         }
+      );
+
+      return metaNode;
+    });
+  }
+
+  /**
+   * Gets the children elements of System & Custom object type nodes.
+   * @param {MetadataNode} element - The MetadataNode instance.
+   * @return {Promise<MetadataNode[]>}
+   */
+  private async getObjectDefinitionChildren(
+    element: MetadataNode
+  ): Promise<MetadataNode[]> {
+    const objType = element.objectTypeDefinition.objectType;
+    const displayTextMap = {
+      objectAttributeDefinitions: 'Attribute Definitions',
+      objectAttributeGroups: 'Attribute Groups'
+    };
+
+    // Setup parent nodes for the attribute definition & the attribute
+    // Group nodes to be added to.
+    return Object.keys(displayTextMap).map(ctnrName => {
+      let nodeData: INodeData = {
+        displayDescription:
+          ctnrName === 'objectAttributeDefinitions'
+            ? element.objectTypeDefinition.attributeDefinitionCount.toString()
+            : element.objectTypeDefinition.attributeGroupCount.toString(),
+        parentId: element.parentId + '.' + objType
+      };
+
+      // Separates the handling of attribute lookup for Custom & System Objs.
+      if (objType === 'CustomObject') {
+        nodeData.customParentContainer = ctnrName;
+      } else {
+        nodeData.parentContainer = ctnrName;
+      }
+
+      const metaNode = new MetadataNode(
+        displayTextMap[ctnrName],
+        TreeItemCollapsibleState.Collapsed,
+        nodeData
       );
 
       return metaNode;
