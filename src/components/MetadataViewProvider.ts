@@ -37,7 +37,7 @@ export class MetadataViewProvider
   public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
   private service: OCAPIService = new OCAPIService();
-  private customObjectHelper: CustomObjectHelper = new CustomObjectHelper();
+  private customObjectHelper: CustomObjectHelper = new CustomObjectHelper(this.service);
 
   /**
    *
@@ -437,7 +437,10 @@ export class MetadataViewProvider
 
       // Separates the handling of attribute lookup for Custom & System Objs.
       if (objType === 'CustomObject') {
-        nodeData.customParentContainer = ctnrName;
+        nodeData.customParentContainer = {
+          parentContainer: ctnrName,
+          objectDisplayName: element.objectTypeDefinition.
+        };
       } else {
         nodeData.parentContainer = ctnrName;
       }
