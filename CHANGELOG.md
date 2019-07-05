@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.5.2 (6/5/19)
+### Patch Release
+- Fixed package vulnerability for dependency package.
+- Add Mocha to dependencies in package.json.
+
 ## 0.5.1 (4/30/19)
 ### Patch Release
 - Fixed the ordering of the custom attribute properties in order to make the XML validate when using the getXML commands.
