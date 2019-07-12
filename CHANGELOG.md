@@ -7,13 +7,18 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 - Added interface definitions for the Query & Sort sub-types.
 - Added Class modules for the Sort & Query OCAPI document definitions.
 
-## 0.5.1 (4/30/19)
+## 0.5.0 (6/5/19)
+### Minor Release
+- Fixed package vulnerability for dependency package.
+- Add Mocha to dependencies in package.json.
+
+## 0.4.3 (4/30/19)
 ### Patch Release
 - Fixed the ordering of the custom attribute properties in order to make the XML validate when using the getXML commands.
 - Updated README.md & CHANGELOG.md files.
 
-## 0.5.0 (4/28/19)
-### Minor Release
+## 0.4.2 (4/28/19)
+### Patch Release
 - Added command `extension.sfccexplorer.groupattributedefinition.removefromgroup` to remove an attribute from an attribute group to the package.json.
 - Added new context type `groupAttribute` for MetadataNode to identify when an attribute child of an attribute group is in scope in the explorer for sub-menu commands.
 - Added listener for new command to the extension.ts file which calls the helper in the  OCAPIHelper class to make an API call.
