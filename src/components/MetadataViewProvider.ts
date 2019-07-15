@@ -120,10 +120,10 @@ export class MetadataViewProvider
   }
 
   /**
-   * Gets the children elements of parent container type nodes. This
-   * method calls OCAPI to get attribute definitions or the attribute groups
-   * depending on which node was expanded. This method is used for both custom &
-   * system type object definitions.
+   * Gets the children elements of parent container type nodes for system object
+   * definition nodes. This method calls OCAPI to get attribute definitions or
+   * the attribute groups depending on which node was expanded.
+   *
    * @param {MetadataNode} element - The MetadataNode instance.
    * @return {Promise<MetadataNode[]>} - Returns a promise that will resolve to
    *    the child MetadataNodes array.
@@ -138,56 +138,10 @@ export class MetadataViewProvider
     let _callSetup: ICallSetup = null;
     let _callResult: any;
 
-    // If this is the node for attribute definitions.
-    if (isAttribute && objectType !== 'CustomObject') {
-      // Get the System/Custom Object attributes.// Make the call to the OCAPI Service.
-      try {
-        _callSetup = await this.service.getCallSetup(
-          parentType,
-          'getAttributes',
-          {
-            select: '(**)',
-            count: 500,
-            objectType: objectType
-          }
-        );
-
-        _callResult = await this.service.makeCall(_callSetup);
-      } catch (e) {
-        throw new Error(e.toString());
-      }
-
-      // If the API call returns data create the first level of a tree.
-      if (
-        !_callResult.error &&
-        typeof _callResult.data !== 'undefined' &&
-        Array.isArray(_callResult.data)
-      ) {
-        return _callResult.data.map(resultObj => {
-          return new MetadataNode(
-            resultObj.id,
-            TreeItemCollapsibleState.Collapsed,
-            {
-              parentId: element.parentId + '.' + objectType,
-              objectAttributeDefinition: new ObjectAttributeDefinition(
-                resultObj
-              ),
-              displayDescription: resultObj.display_name
-                ? resultObj.display_name.default
-                : ''
-            }
-          );
-        });
-      }
-
-      // If there is an error display a single node indicating that there
-      // was a failure to load the object definitions.
-      return [
-        new MetadataNode('Unable to load...', TreeItemCollapsibleState.None, {
-          parentId: 'root.systemObjectDefinitions.' + objectType
-        })
-      ];
-    } else if (!isAttribute && objectType !== 'CustomObject') {
+    // Attribute Definitions Expand
+    if (isAttribute) {
+      return await this.getAttributeDefinitions(element);
+    } else {
       // Make the call to the OCAPI Service to get the attribute groups.
       // Tree branch for attribute groups.
       _callSetup = await this.service.getCallSetup(
@@ -246,29 +200,6 @@ export class MetadataViewProvider
           parentId: element.parentId + '.' + objectType
         })
       ];
-    } else if (isAttribute) {
-      try {
-        var query = new Query({
-          text_query: {
-            fields: ['display_name'],
-            search_phrase: ''
-          }
-        });
-        _callSetup = await this.service.getCallSetup(
-          'systemObjectDefinitionSearch',
-          'search',
-          { body: query.getDocument(), select: '(**)' }
-        );
-
-        _callResult = await this.service.makeCall(_callSetup);
-      } catch (e) {
-        throw new Error(e.toString());
-      }
-    } else {
-      /**
-       * @todo: START HERE - Get attribute groups for definition based off id
-       *    from attribute lookup call.
-       */
     }
   }
 
@@ -391,23 +322,58 @@ export class MetadataViewProvider
   private async getAttributeDefinitions(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    return Object.keys(displayTextMap).map(ctnrName => {
-      const metaNode = new MetadataNode(
-        displayTextMap[ctnrName],
-        TreeItemCollapsibleState.Collapsed,
+    const path = element.parentId.split('.');
+    const objectType = path.pop();
+    const parentType = path.pop();
+    let _callSetup: ICallSetup = null;
+    let _callResult: any;
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        parentType,
+        'getAttributes',
         {
-          displayDescription:
-            ctnrName === 'objectAttributeDefinitions'
-              ? element.objectTypeDefinition.attributeDefinitionCount.toString()
-              : element.objectTypeDefinition.attributeGroupCount.toString(),
-          parentContainer: ctnrName,
-          parentId:
-            element.parentId + '.' + element.objectTypeDefinition.objectType
+          select: '(**)',
+          count: 500,
+          objectType: objectType
         }
       );
 
-      return metaNode;
-    });
+      _callResult = await this.service.makeCall(_callSetup);
+    } catch (e) {
+      throw new Error(e.toString());
+    }
+
+    // If the API call returns data create the first level of a tree.
+    if (
+      !_callResult.error &&
+      typeof _callResult.data !== 'undefined' &&
+      Array.isArray(_callResult.data)
+    ) {
+      return _callResult.data.map(resultObj => {
+        return new MetadataNode(
+          resultObj.id,
+          TreeItemCollapsibleState.Collapsed,
+          {
+            parentId: element.parentId + '.' + objectType,
+            objectAttributeDefinition: new ObjectAttributeDefinition(
+              resultObj
+            ),
+            displayDescription: resultObj.display_name
+              ? resultObj.display_name.default
+              : ''
+          }
+        );
+      });
+    }
+
+    // If there is an error display a single node indicating that there
+    // was a failure to load the object definitions.
+    return [
+      new MetadataNode('Unable to load...', TreeItemCollapsibleState.None, {
+        parentId: 'root.systemObjectDefinitions.' + objectType
+      })
+    ];
   }
 
   /**
@@ -439,7 +405,7 @@ export class MetadataViewProvider
       if (objType === 'CustomObject') {
         nodeData.customParentContainer = {
           parentContainer: ctnrName,
-          objectDisplayName: element.objectTypeDefinition.
+          objectDisplayName: element.objectTypeDefinition.displayName
         };
       } else {
         nodeData.parentContainer = ctnrName;

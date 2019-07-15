@@ -46,7 +46,7 @@ export function activate(context: ExtensionContext) {
    * Binds the handler function for the event. The command has been defined in
    * the package.json file.
    *
-   * @listens extension.sfccexplorer.systemobject.addattribute
+   * @listens extension.sfccexplorer.systemobject.deleteattribute
    */
   const deleteAttributeDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobject.deleteattribute',

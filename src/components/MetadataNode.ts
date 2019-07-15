@@ -10,6 +10,7 @@ import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import { ITreeData } from '../interfaces/ITreeData';
 
 /**
  * @class MetadataNode
@@ -27,7 +28,7 @@ export class MetadataNode extends TreeItem {
   public objectAttributeGroup: ObjectAttributeGroup;
   public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
   public objectTypeDefinition: ObjectTypeDefinition;
-  public customParentContainer: string;
+  public customParentContainer: ITreeData.ICustomParentContainer;
   public parentContainer: string;
   public parentId: string;
   public stringList: string[];
