@@ -86,7 +86,7 @@ export default class XMLHandler {
     systemObjectType: string,
     attribute: ObjectAttributeDefinition
   ) {
-    const valType = attribute.valueType.toLocaleLowerCase();
+    let valType = attribute.valueType.toLocaleLowerCase();
 
     // Create the XML tree.
     const attrDefsNode = rootNode
@@ -112,7 +112,7 @@ export default class XMLHandler {
       { 'xml:lang': 'x-default' },
       attribute.description.default
     );
-    attrDefNode.ele('type', attribute.valueType);
+    attrDefNode.ele('type', attribute.valueType.replace(/[_]/g, '-'));
     attrDefNode.ele('localizable-flag', attribute.localizable);
 
     if (XMLHandler.FIELD_ATTRIBUTE_MAP['site-specific-flag']
