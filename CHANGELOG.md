@@ -2,8 +2,9 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## 0.5.1 (7/15/19)
+## 0.6.0 (7/15/19)
 ### Patch Release
+- Fix for improper lexical versioning due to publishing from the wrong branch on multiple occassions.
 - Fix for enum value type formatting when getting the XML for an attribute.
 - Fix for package vulnerability by updating the version of lodash.
 
