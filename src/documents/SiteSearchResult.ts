@@ -5,6 +5,7 @@
  */
 
 import Query from './Query';
+import ResultPage from './ResultPage';
 import Sort from './Sort';
 
 export default class SiteSearchResult {

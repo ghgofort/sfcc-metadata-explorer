@@ -4,6 +4,8 @@
  * object_type_definition document type.
  */
 
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
+
 /**
  * @class ObjectTypeDefinition
  * @classdesc - Provides a data class for working with the OCAPI Data API
@@ -15,7 +17,7 @@ export default class ObjectTypeDefinition {
   public attributeGroupCount: number = 0;
   public contentObject: boolean = false;
   public description: string = '';
-  public displayName: string = '';
+  public displayName: IOCAPITypes.ILocalizedString = { default: '' };
   public link: string = '';
   public objectType: string = '';
   public queryable: boolean = true;
@@ -35,7 +37,7 @@ export default class ObjectTypeDefinition {
    *    is marked as a content object
    * @param {string} [args.description] - The user entered description for the
    *    type (localizable)
-   * @param {string} [args.display_name] - The user entered display name
+   * @param {IOCAPITypes.ILocalizedString} [args.display_name] - The user entered display name
    *    (localizable).
    * @param {string} [args.link] - URL that is used to get this instance. This
    *    is a computed attribute and cannot be changed.

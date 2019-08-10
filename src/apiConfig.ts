@@ -286,7 +286,10 @@ export const apiConfig = {
         * ================================================================== */
         search: {
           authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
           method: 'POST',
           params: [],
           path: 'system_object_definition_search'
@@ -301,5 +304,5 @@ export const apiConfig = {
    * assigned in your sandboxes OCAPI Configuration and should be in the same
    * format as it is in an OCAPI URL (i.e.: v18_8).
    */
-  version: 'v18_8'
+  version: 'v19_5'
 };

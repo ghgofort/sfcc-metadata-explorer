@@ -23,7 +23,7 @@ export default class Query implements IAPIDocument {
    * @description - A list of field Ids that can be set to include only
    *    properties that need to be set when sending the document definition in
    *    an Open Commerce API call.*/
-  public includedFields: string[];
+  public includedFields: string[] = [];
 
   /**
    * @constant MEMBER_MAP - Maps any local property names to their OCAPI
@@ -34,7 +34,7 @@ export default class Query implements IAPIDocument {
     filteredQuery: 'filtered_query',
     matchAllQuery: 'match_all_query',
     termQuery: 'term_query',
-    text_query: 'text_query'
+    textQuery: 'text_query'
   };
 
   /**
@@ -108,20 +108,17 @@ export default class Query implements IAPIDocument {
           typeof localPropVal !== 'boolean';
 
         if (!isComplexType || [
-            'bool_query',
-            'filtered_query',
-            'match_all_query',
-            'term_query',
-            'text_query'
+            'boolQuery',
+            'filteredQuery',
+            'matchAllQuery',
+            'termQuery',
+            'textQuery'
           ].indexOf(localPropName) > -1
         ) {
           documentObj[docPropName] = localPropVal;
         }
       }
     });
-
-    // Add the OCAPI document version.
-    documentObj['_v'] = apiConfig.version.replace('_', '.').substring(1);
 
     return documentObj;
   }

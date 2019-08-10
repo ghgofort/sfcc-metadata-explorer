@@ -4,6 +4,7 @@
  *    call operations for managing custom object definitions.
  */
 
+import { apiConfig } from '../apiConfig';
 import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import { ICallSetup } from '../services/ICallSetup';
@@ -12,6 +13,7 @@ import Query from '../documents/Query';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import { SearchRequest } from '../documents/SearchRequest';
 
 export default class CustomObjectHelper {
   private service: OCAPIService;
@@ -36,29 +38,38 @@ export default class CustomObjectHelper {
         }
       });
 
+      var searchRequest = new SearchRequest({
+        query: query,
+        select: '(**)'
+      });
+
       // Look up the Object definition to get the ID for fetching the
       // CustomObjectDefinition attributes.
       _callSetup = await this.service.getCallSetup(
         'systemObjectDefinitionSearch',
         'search',
-        { body: query.getDocument(), select: '(**)' }
+        {body: searchRequest.getDocument()}
       );
 
       _callResult = await this.service.makeCall(_callSetup);
+      console.log(_callResult);
 
       // There should only be 1 object returned.
       if (
         !_callResult.error &&
-        typeof _callResult.count !== 'undefined' &&
-        _callResult.count === 1 &&
-        typeof _callResult.hits !== 'undefined' &&
-        Array.isArray(_callResult.hits)
+        typeof _callResult.data !== 'undefined' &&
+        Array.isArray(_callResult.data)
       ) {
+        console.log(_callResult.data);
         const obj = new ObjectTypeDefinition(_callResult.hits[0]);
         return obj.objectType;
       }
     } catch (e) {
-      throw new Error(e.toString());
+      let errMsg = 'Error in CustomeObjectHelpers.getCustomObjectId() method:';
+      errMsg += Object.keys(e).map(function (key) {
+        return '\n\t' + key + ': ' + [key];
+      }).join();
+      throw new Error(errMsg);
     }
   }
 
@@ -157,6 +168,7 @@ export default class CustomObjectHelper {
     );
 
     _callResult = await this.service.makeCall(_callSetup);
+    console.log(_callResult);
 
     // If the API call returns data create the first level of a tree.
     if (

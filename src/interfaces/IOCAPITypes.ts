@@ -31,7 +31,7 @@ export namespace IOCAPITypes {
 
   /** @interface ITermFilter - OCAPI Data Document: TermFilter */
   export interface ITermFilter {
-    field: string;
+    fields: string[];
     operator: TermOperatorType;
     values?: Object[];
   };
@@ -104,7 +104,7 @@ export namespace IOCAPITypes {
 
   /** @interface ITermQuery - OCAPI Data Document: TermQuery */
   export interface ITermQuery {
-    fields: string[];
+    field: string[];
     operator: TermOperatorType;
     values?: Object[];
   };

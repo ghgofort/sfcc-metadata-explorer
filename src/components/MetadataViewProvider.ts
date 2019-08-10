@@ -405,7 +405,7 @@ export class MetadataViewProvider
       if (objType === 'CustomObject') {
         nodeData.customParentContainer = {
           parentContainer: ctnrName,
-          objectDisplayName: element.objectTypeDefinition.displayName
+          objectDisplayName: element.objectTypeDefinition.displayName.default
         };
       } else {
         nodeData.parentContainer = ctnrName;

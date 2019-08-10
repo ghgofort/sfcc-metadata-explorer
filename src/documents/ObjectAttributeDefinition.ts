@@ -155,8 +155,8 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
 
     // Create a property on the results object.
     memberNames.forEach(localPropName => {
-      const docPropName: string = localPropName in this.MEMBER_MAP ?
-        this.MEMBER_MAP[localPropName] : localPropName;
+      const docPropName: string = typeof this.MEMBER_MAP[localPropName] !==
+        'undefined' ? this.MEMBER_MAP[localPropName] : localPropName;
       let localPropVal: any;
 
       if (typeof this[localPropName] !== 'undefined') {

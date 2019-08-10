@@ -131,18 +131,38 @@ export class OCAPIService {
       setupResult.method = callConfig.method;
     }
 
+    // If an explicit body was included, then append it to the seutp object.
+    if ('body' in callData) {
+      // Create recursive function to get encoded key/val pairs.
+      const getEncodedKeyVals = obj => {
+        let b = {};
+        if (typeof obj === 'object') {
+          if (Array.isArray(obj)) {
+            return obj.map(val => { return getEncodedKeyVals(val) });
+          }
+
+          Object.keys(obj).forEach(function(key) {
+            b[key] = getEncodedKeyVals(obj[key]);
+          });
+          return b;
+        } else {
+          return obj;
+          //return encodeURIComponent(obj);
+        }
+      };
+
+
+      if (typeof callData.body === 'object') {
+        var body = getEncodedKeyVals(callData.body);
+        setupResult.body = JSON.stringify(body);
+      } else {
+        setupResult.body = callData.body;
+      }
+    }
+
     // Check that any required parameters are included in the callData.
     if (callConfig && callConfig.params && callConfig.params.length) {
-      const usedParams = [];
-
-      // If an explicit body was included, then append it to the seutp object.
-      if ('body' in callData) {
-        if (typeof callData.body === 'string') {
-          setupResult.body = encodeURIComponent(setupResult.body);
-        }
-        setupResult.body = callData.body;
-        usedParams.push('body');
-      }
+      const usedParams = setupResult.body ? ['body'] : [];
 
       callConfig.params.forEach(param => {
         const replaceMe = '{' + param.id + '}';
@@ -190,18 +210,19 @@ export class OCAPIService {
       });
 
       // Remove any already added data properties.
-      const dataKeys = Object.keys(callData).filter(k =>
-          usedParams.indexOf(k) === -1);
+      const dataKeys = Object.keys(callData).filter(
+        k => usedParams.indexOf(k) === -1
+      );
 
       if (dataKeys.length) {
         // Loop through any keys that are not in the API config and add them to
         // the request in either the URI or the Body of the request, based on the
         // HTTP method used.
-        dataKeys.forEach(function (optionalParam) {
+        dataKeys.forEach(function(optionalParam) {
           // Add any remaining parameters to the request.
           if (setupResult.method === HTTP_VERB.get) {
             setupResult.endpoint +=
-            setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
+              setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
             setupResult.endpoint +=
               encodeURIComponent(optionalParam) +
               '=' +
@@ -356,8 +377,13 @@ export class OCAPIService {
         }
       })
       .catch(err => {
-        const errMsg = 'There was an error making the Open Commerce' +
-        ' API call: ' + err.name + '\n' + 'Message: ' + err.message
+        const errMsg =
+          'There was an error making the Open Commerce' +
+          ' API call: ' +
+          err.name +
+          '\n' +
+          'Message: ' +
+          err.message;
         window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
         return { error: true, errorMessage: errMsg };
       });
