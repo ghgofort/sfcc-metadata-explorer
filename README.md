@@ -15,6 +15,7 @@ If you find bugs, please log them to the github repository and I will do my best
 ### VSCode Settings
 * extension.sfccmetadata.explorer.systemobjects - Enable/disable the view of system object definitions in the explorer view. __default: true__
 * extension.sfccmetadata.explorer.customobjects - Enable/disable the view of custom object definitions in the explorer view. __default: true__
+* extension.sfccmetadata.explorer.sitepreferences - Enable/disable the view of Site Preferences in the explorer view. __default: true__
 
 ### Open Commerce API Access Setup
 In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed.

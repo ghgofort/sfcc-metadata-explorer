@@ -20,6 +20,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
 
 /**
  * @class MetadataViewProvider
@@ -254,6 +255,16 @@ export class MetadataViewProvider
   ): Promise<MetadataNode[]> {
     const baseName = element.baseNodeName;
 
+    let callDataObj =  {
+      count: 500,
+      select: '(**)'
+    };
+
+    if (baseName === 'sitePreferences') {
+      const spHelper = new SitePreferencesHelper(this.service);
+      return await spHelper.getAllPreferences();
+    }
+
     /**
      * @todo: REFACTOR: Use OCAPI system_object_definition_search call to filter
      *    results for only system or custom object definitions on the server
@@ -262,10 +273,7 @@ export class MetadataViewProvider
     const _callSetup: ICallSetup = await this.service.getCallSetup(
       baseName,
       'getAll',
-      {
-        count: 500,
-        select: '(**)'
-      }
+      callDataObj
     );
 
     // Call the OCAPI service.
@@ -328,6 +336,11 @@ export class MetadataViewProvider
       workspaceConfig.get('explorer.customobjects')
     );
 
+    // - Show Custom Object Definitions
+    const showPreferences: boolean = Boolean(
+      workspaceConfig.get('explorer.sitepreferences')
+    );
+
     // If the user config is enabled, then show the option.
     if (showSystemObjects) {
       metaNodes.push(
@@ -351,6 +364,20 @@ export class MetadataViewProvider
           {
             parentId: 'root',
             baseNodeName: 'customObjectDefinitions'
+          }
+        )
+      );
+    }
+
+    // If display of Site Preferences is enabled, add node to tree.
+    if (showPreferences) {
+      metaNodes.push(
+        new MetadataNode(
+          'Site Preferences',
+          TreeItemCollapsibleState.Collapsed,
+          {
+            parentId: 'root',
+            baseNodeName: 'sitePreferences'
           }
         )
       );

@@ -37,6 +37,12 @@
           "default": true,
           "description": "Enable the display of custom objects in the meta-explorer tree view",
           "scope": "window"
+        },
+        "extension.sfccmetadata.explorer.sitepreferences": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable the display of Site Preferences in the meta-explorer tree view",
+          "scope": "window"
         }
       }
     },
