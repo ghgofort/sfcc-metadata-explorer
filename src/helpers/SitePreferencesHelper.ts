@@ -78,7 +78,29 @@ export default class SitePreferencesHelper {
         )
       ];
     }
+  }
 
+  public async getPreferencesInGroup(element: MetadataNode): Promise<MetadataNode[]> {
+    const childNodes: MetadataNode[] = [];
+    const attrGroup = element.objectAttributeGroup;
+    const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
+
+    // Attribute Definitions
+    if (hasAttributes) {
+      const attrDefTitles = attrGroup.attributeDefinitions.map(
+        attrDef => attrDef.id
+      );
+
+      childNodes.push(
+        new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
+          parentId: element.parentId + '.' + attrGroup.id,
+          stringList: attrDefTitles,
+          displayDescription: attrGroup.attributeDefinitionsCount.toString()
+        })
+      );
+    }
+
+    return Promise.resolve(childNodes);
   }
 
   public async getSitePreference(preferenceId): Promise<MetadataNode[]> {

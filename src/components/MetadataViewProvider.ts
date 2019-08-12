@@ -80,6 +80,7 @@ export class MetadataViewProvider
    * @return {Promise<MetadataNode[]>}
    */
   public async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
+    const spHelper = new SitePreferencesHelper(this.service);
     try {
       if (!element) {
         // Get the base nodes of the tree.
@@ -98,7 +99,11 @@ export class MetadataViewProvider
           } else if (nodeType === 'objectAttributeDefinition') {
             return this.getAttributeDefinitionChildren(element);
           } else if (nodeType === 'objectAttributeGroup') {
-            return this.getAttributeGroupChildren(element);
+            // If getting the site preferences, then use helper, otherwise call
+            // local class instance method.
+            return element.parentId === 'sitePreferences' ?
+              spHelper.getPreferencesInGroup(element) :
+              this.getAttributeGroupChildren(element);
           } else if (nodeType === 'objectAttributeValueDefinition') {
             return this.getAttributeValueDefinitionChildren(element);
           } else if (nodeType === 'stringList') {
