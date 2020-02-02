@@ -354,7 +354,7 @@ export default class OCAPIHelper {
       // const selected = metadataView.currentProvider.;
 
       // Return the reuslt of the API call.
-      return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition);
+      return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition, true);
     } catch (e) {
       console.log(e);
       return Promise.reject({
