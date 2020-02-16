@@ -272,6 +272,8 @@ export default class OCAPIHelper {
       {}
     );
 
+    let includeDescription = false;
+
     /**
      * @todo: Get display strings from a resource bundle.
      */
@@ -340,12 +342,13 @@ export default class OCAPIHelper {
         cancelAddAttributeToken
       );
 
-      // If the user cancels, then exit the wizard.
-      if (typeof description === 'undefined') {
+      // If the user doesn't cancel the Description input then add.
+      if (typeof description !== 'undefined') {
+        // Assign attribute values to the request document object.
+        objAttributeDefinition.description.default = description;
+        includeDescription = true;
       }
 
-      // Assign attribute values to the request document object.
-      objAttributeDefinition.description.default = description;
       objAttributeDefinition.displayName.default = displayName;
       objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
       objAttributeDefinition.id = attributeId;
@@ -354,7 +357,7 @@ export default class OCAPIHelper {
       // const selected = metadataView.currentProvider.;
 
       // Return the reuslt of the API call.
-      return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition);
+      return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition, includeDescription);
     } catch (e) {
       console.log(e);
       return Promise.reject({

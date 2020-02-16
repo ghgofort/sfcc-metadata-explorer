@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.6.1 (2/1/20)
+### Patch Release
+- Fixed GH issue #61 to ensure that the description field is included in new attributes.
+- Updated the changelog.
+
 ## 0.6.0 (7/15/19)
 ### Patch Release
 - Fix for improper lexical versioning due to publishing from the wrong branch on multiple occassions.
