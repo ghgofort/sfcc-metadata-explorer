@@ -6,6 +6,8 @@
  */
 
 import { TreeItemCollapsibleState, TreeItem } from 'vscode';
+import { MetadataNode } from './MetadataNode';
+import INodeData from '../interfaces/INodeData';
 
 /**
  * @class
@@ -13,12 +15,37 @@ import { TreeItemCollapsibleState, TreeItem } from 'vscode';
  *    attributes when displayed by group under the `Site Preferences` base tree
  *    node.
  */
-export default class SitePreferencesNode extends TreeItem {
+export class SitePreferencesNode extends MetadataNode {
+  private _type: string;
+  public displayDescription: string;
+
   /**
    * @param {Object} args -
    * @constructor
    */
-  constructor(label: String, collapsibleState: TreeItemCollapsibleState) {
-    super(label, collapsibleState);
+  constructor(
+    public readonly name: string,
+    public readonly collapsibleState: TreeItemCollapsibleState,
+    nodeData: INodeData
+  ) {
+    super(name, collapsibleState, nodeData);
+
+    const instance = this;
+
+    // Set the instance member properties for the child Class.
+    instance._type = 'string';
+    instance.displayDescription = 'Attribute display description';
   }
+
+  /* Member Mutators & Accessors
+     ======================================================================== */
+  /** @member {boolean} expandable - Boolean for if the node is expandable. */
+  get expandable(): boolean { return true }
+
+  /** @member {string} type - Readonly string for getting the attribute type. */
+  get type(): string { return this._type; }
+
+  /** @member {string} tooltip - Readonly string for rendering a tooltip. */
+  get tooltip(): string { return this.name; }
+  get description(): string { return this.displayDescription || '' }
 }

@@ -4,7 +4,7 @@
  * on a tree view for display of SFCC metadata objects. This is a generic class used
  */
 
-import { Command, TreeItemCollapsibleState, TreeItem } from 'vscode';
+import { TreeItemCollapsibleState, TreeItem } from 'vscode';
 import INodeData from '../interfaces/INodeData';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
@@ -48,7 +48,8 @@ export class MetadataNode extends TreeItem {
     group: 'objectAttributeGroup',
     stringList: 'stringList',
     value: 'value',
-    groupAttribute: 'groupAttribute'
+    groupAttribute: 'groupAttribute',
+    sitePreference: 'sitePreference'
   }
 
   /**
