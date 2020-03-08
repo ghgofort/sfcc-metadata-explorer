@@ -329,6 +329,40 @@ export const apiConfig = {
           path: '/site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
         }
       }
+    },
+
+    /***************************************************************************
+     * OCAPI : Data API
+     * Resource : Sites
+     **************************************************************************/
+    sites: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+         * GET all sites.
+         * ================================================================== */
+        getAll: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'groupId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }, {
+              id: 'instanceType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }, {
+              id: 'preferenceId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: '/site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
+        }
+      }
     }
   },
 

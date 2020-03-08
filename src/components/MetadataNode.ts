@@ -22,6 +22,7 @@ export class MetadataNode extends TreeItem {
   // Define member properties.
   private _expandable: boolean;
   private _nodeType: string;
+  private _rootTree: string;
   public baseNodeName: string;
   public objectAttributeDefinition: ObjectAttributeDefinition;
   public objectAttributeGroup: ObjectAttributeGroup;
@@ -52,6 +53,12 @@ export class MetadataNode extends TreeItem {
     sitePreference: 'sitePreference'
   }
 
+  public static ROOT_NODES = {
+    default: 'systemObjectDefinitions',
+    sitePrefs: 'sitePreferences',
+    custObjDefs: 'customObjectDefinitions'
+  };
+
   /**
    * The constructor function that calls the super class constructor, and then
    * initializes the custom logic for the MetaNode class.
@@ -72,6 +79,8 @@ export class MetadataNode extends TreeItem {
     // Call the TreeNode constructor.
     super(name, collapsibleState);
     const instance = this;
+
+    instance._rootTree = MetadataNode.ROOT_NODES.default;
 
     // The types of tree nodes that have child nodes.
     const expandableTypes = Object.keys(MetadataNode.nodeTypes)
@@ -107,6 +116,10 @@ export class MetadataNode extends TreeItem {
 
   /** @member {string} nodeType - Readonly string for getting the node type. */
   get nodeType(): string { return MetadataNode.nodeTypes[this._nodeType]; }
+
+  /** @member {string} rootTree - The root node that the node originates from. */
+  get rootTree () { return this._rootTree; }
+  set rootTree (value) { this._rootTree = value; }
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }

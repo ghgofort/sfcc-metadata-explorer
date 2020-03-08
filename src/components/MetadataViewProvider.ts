@@ -89,8 +89,12 @@ export class MetadataViewProvider
         // Get children of expandable node types
         if (element.expandable) {
           const nodeType = element.nodeType;
-          const parent = element.parentId.split('.').pop();
-          if (nodeType === 'baseNodeName') {
+          const root = element.rootTree;
+
+
+          if (root === MetadataNode.ROOT_NODES.sitePrefs) {
+            return spHelper.getSitePreference(element);
+          } else if (nodeType === 'baseNodeName') {
             return this.getBaseNodeChildren(element);
           } else if (nodeType === 'objectTypeDefinition') {
             return this.getObjectDefinitionChildren(element);

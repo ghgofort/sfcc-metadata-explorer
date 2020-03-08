@@ -17,7 +17,6 @@ import INodeData from '../interfaces/INodeData';
  */
 export class SitePreferencesNode extends MetadataNode {
   private _type: string;
-  public displayDescription: string;
 
   /**
    * @param {Object} args -
@@ -33,19 +32,24 @@ export class SitePreferencesNode extends MetadataNode {
     const instance = this;
 
     // Set the instance member properties for the child Class.
-    instance._type = 'string';
-    instance.displayDescription = 'Attribute display description';
+    instance._type = instance.objectAttributeDefinition.valueType;
+    instance.displayDescription =
+      instance.objectAttributeDefinition.displayName.default;
+    instance.rootTree = MetadataNode.ROOT_NODES.sitePrefs;
   }
 
   /* Member Mutators & Accessors
      ======================================================================== */
-  /** @member {boolean} expandable - Boolean for if the node is expandable. */
-  get expandable(): boolean { return true }
-
+  /** @member {boolean} expandable - Readonly boolean for if the node is expandable. */
+  get expandable(): boolean {
+    return true;
+  }
   /** @member {string} type - Readonly string for getting the attribute type. */
-  get type(): string { return this._type; }
-
+  get type(): string {
+    return this._type;
+  }
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
-  get tooltip(): string { return this.name; }
-  get description(): string { return this.displayDescription || '' }
+  get tooltip(): string {
+    return this.objectAttributeDefinition.description.default;
+  }
 }

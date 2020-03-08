@@ -4,11 +4,11 @@
  *    operations for Site Preferences related calls.
  */
 
- import { MetadataNode } from '../components/MetadataNode';
+import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import { TreeItemCollapsibleState } from 'vscode';
-import { SitePreferencesNode } from '../components/SitePreferenceNode';
+import { SitePreferencesNode } from '../components/SitePreferencesNode';
 
 /**
  * @class
@@ -24,7 +24,7 @@ export default class SitePreferencesHelper {
    * @constructor
    */
   constructor(service: OCAPIService) {
-    this.service = service
+    this.service = service;
   }
 
   /**
@@ -81,30 +81,43 @@ export default class SitePreferencesHelper {
     }
   }
 
-  public async getPreferencesInGroup(element: MetadataNode): Promise<SitePreferencesNode[]> {
+  public async getPreferencesInGroup(
+    element: MetadataNode
+  ): Promise<SitePreferencesNode[]> {
     const childNodes: SitePreferencesNode[] = [];
     const attrGroup = element.objectAttributeGroup;
     const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
 
     // Attribute Definitions
     if (hasAttributes) {
-      attrGroup.attributeDefinitions.forEach(
-        attrDef => {
-          var name = attrDef.id;
-          var pref = new SitePreferencesNode(
-            name,
-            TreeItemCollapsibleState.Collapsed,
-            { parentId: element.parentId + element.objectAttributeGroup.id }
-          );
-          childNodes.push(pref);
-        }
-      );
+      attrGroup.attributeDefinitions.forEach(attrDef => {
+        var name = attrDef.id;
+        var pref = new SitePreferencesNode(
+          name,
+          TreeItemCollapsibleState.Collapsed,
+          {
+            objectAttributeDefinition: attrDef,
+            parentId: element.parentId + element.objectAttributeGroup.id
+          }
+        );
+        childNodes.push(pref);
+      });
     }
 
     return Promise.resolve(childNodes);
   }
 
-  public async getSitePreference(preferenceId): Promise<MetadataNode[]> {
-    return null;
+  public async getSitePreference(
+    element: MetadataNode
+  ): Promise<SitePreferencesNode[]> {
+    const childNodes: SitePreferencesNode[] = [];
+    const groupId = element.parentId.split('.').pop();
+    let _callSetup = await this.service.getCallSetup('sites', 'getPreference', {
+      select: '(**)',
+      expand: 'definition',
+      objectType: 'SitePreferences'
+    });
+
+    return Promise.resolve(childNodes);
   }
 }

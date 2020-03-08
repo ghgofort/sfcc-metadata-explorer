@@ -26,4 +26,5 @@ export default interface INodeData {
   baseNodeName?: string;
   nodeValue?: string | number;
   displayDescription?: string;
+  rootTree?:string;
 }
