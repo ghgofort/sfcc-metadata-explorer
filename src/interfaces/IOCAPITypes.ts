@@ -14,4 +14,10 @@ export namespace IOCAPITypes {
     [index: string]: string;
     default: string;
   }
+
+  export interface ICustomerListLink {
+    customer_list_id: String;
+    link: String;
+    title: ILocalizedString
+  }
 }
