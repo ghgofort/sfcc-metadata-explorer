@@ -30,6 +30,22 @@ export default class PreferenceValue {
       if (args.site_values) {
         this.siteValues = args.site_values;
       }
+      if (args.attribute_definition) {
+        this.attributeDefinition = new ObjectAttributeDefinition(
+          args.attribute_definition);
+      }
+      if (args.display_name && args.display_name.default) {
+        this.displayName = args.display_name;
+      }
+      if (args.id) {
+        this.id = args.id;
+      }
+      if (args.value_type) {
+        this.valueType = args.value_type;
+      }
+      if (args.description) {
+        this.description = args.description;
+      }
     }
   }
 }

@@ -135,11 +135,13 @@ export default class SitePreferencesHelper {
           prefValue.attributeDefinition.defaultValue
         ) {
           const defVal = prefValue.attributeDefinition.defaultValue;
+          const dispDesc = defVal.displayValue.default ?
+            defVal.id + ' : ' + defVal.displayValue.default : defVal.id;
 
             childNodes.push(new MetadataNode('Default Value:',
               TreeItemCollapsibleState.None,
               {
-                displayDescription: defVal.id + ' : ' + defVal.value,
+                displayDescription: dispDesc,
                 parentId: element.parentId + '.' + defVal.id
               }
             ));
