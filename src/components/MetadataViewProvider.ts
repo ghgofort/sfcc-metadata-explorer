@@ -95,6 +95,8 @@ export class MetadataViewProvider
             nodeType === 'objectAttributeDefinition'
           ) {
             return spHelper.getSitePreferenceSites(element);
+          } else if (nodeType === 'site') {
+            return spHelper.getSitePreference(element);
           } else if (nodeType === 'baseNodeName') {
             return this.getBaseNodeChildren(element);
           } else if (nodeType === 'objectTypeDefinition') {

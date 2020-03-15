@@ -8,8 +8,9 @@ import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import SitesHelper from './SitesHelper';
-import { TreeItemCollapsibleState } from 'vscode';
+import { TreeItemCollapsibleState, window } from 'vscode';
 import { SitePreferencesNode } from '../components/SitePreferencesNode';
+import PreferenceValue from '../documents/PreferenceValue';
 
 /**
  * @class
@@ -99,7 +100,7 @@ export default class SitePreferencesHelper {
           TreeItemCollapsibleState.Collapsed,
           {
             objectAttributeDefinition: attrDef,
-            parentId: element.parentId + element.objectAttributeGroup.id
+            parentId: element.parentId + '.' + element.objectAttributeGroup.id
           }
         );
         childNodes.push(pref);
@@ -114,21 +115,78 @@ export default class SitePreferencesHelper {
   ): Promise<MetadataNode[]> {
     let childNodes: MetadataNode[] = [];
     const groupId = element.parentId.split('.').pop();
+    const prefId = element.objectAttributeDefinition.id;
 
-    // Get the sites for the current SFCC server.
-    const sites = await this.sitesHelper.getAllSites(groupId);
+    try {
+      // Get the sites for the current SFCC server.
+      let _callData = await this.service.getCallSetup(
+        'sitePreferences',
+        'getPreference', {
+          groupId: groupId,
+          instanceType: 'sandbox',
+          preferenceId: prefId
+      });
 
-    if (sites && sites.data && sites.data.length) {
-      childNodes = sites.data.map(site => { return new MetadataNode(
-        site.id,
-        TreeItemCollapsibleState.Collapsed,
-        {
-          parentId: element.parentId + '.' + element.name,
-          site: site
+      let _callResult = await this.service.makeCall(_callData);
+
+      if (!_callResult.error && _callResult.site_values) {
+        var prefValue = new PreferenceValue(_callResult);
+        if (prefValue.attributeDefinition &&
+          prefValue.attributeDefinition.defaultValue
+        ) {
+          const defVal = prefValue.attributeDefinition.defaultValue;
+
+            childNodes.push(new MetadataNode('Default Value:',
+              TreeItemCollapsibleState.None,
+              {
+                displayDescription: defVal.id + ' : ' + defVal.value,
+                parentId: element.parentId + '.' + defVal.id
+              }
+            ));
         }
-      )});
+
+        Object.keys(prefValue.siteValues).forEach(function(siteId) {
+          childNodes.push(new MetadataNode(siteId,
+            TreeItemCollapsibleState.None,
+            {
+              displayDescription: prefValue.siteValues[siteId],
+              parentId: element.parentId + '.' + siteId
+            }
+          ));
+        })
+      } else if (!_callResult.error) {
+        childNodes.push(new MetadataNode('No site values set.',
+          TreeItemCollapsibleState.None,
+          {
+            displayDescription: ' -------  see console for response JSON.',
+            parentId: element.parentId + '.' + 'NA'
+          }
+        ));
+
+        console.log('OCAPI result: ', _callResult);
+      } else {
+        window.showErrorMessage('Unable to get preference values.');
+        console.error('ERROR -- OCAPI call result: ', _callResult);
+      }
+    } catch (e) {
+      window.showErrorMessage('ERROR calling OCAPI: ' + e.message);
     }
 
     return Promise.resolve(childNodes);
+  }
+
+  /**
+   * Gets the details of a site preference for the specified site.
+   */
+  public async getSitePreference(
+    element: MetadataNode
+  ): Promise<MetadataNode[]> {
+    let childNodes: MetadataNode[] = [];
+    const parents = element.parentId.split('.');
+    const siteId = parents.pop();
+    const groupId = parents.pop();
+
+
+    return childNodes;
   }
 }

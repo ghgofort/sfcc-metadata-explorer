@@ -307,7 +307,7 @@ export const apiConfig = {
         /* ==================================================================
          * GET SYSTEM OBJECT DEFINITION & ATTRIBUTES
          * ================================================================== */
-        getAll: {
+        getPreference: {
           authorization: 'BM_USER',
           headers: { 'Content-Type': 'application/json' },
           method: 'GET',
