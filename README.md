@@ -3,7 +3,7 @@
 ## Summary
 This extension consists of a tree view in the explorer to navigate through your sandbox metadata. There are several actions that can be applied to any given piece of metadata in order to read & modify the metadata in your sandbox.
 
-This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system objects defined on a SFCC instance. There are several additional features in the works at this time, but this extension is still a bit rough around the edges.
+This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system objects defined on a SFCC instance, but the functionality is limited to the most common things that I do as a developer.
 
 If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
@@ -15,6 +15,7 @@ If you find bugs, please log them to the github repository and I will do my best
 ### VSCode Settings
 * extension.sfccmetadata.explorer.systemobjects - Enable/disable the view of system object definitions in the explorer view. __default: true__
 * extension.sfccmetadata.explorer.customobjects - Enable/disable the view of custom object definitions in the explorer view. __default: true__
+* extension.sfccmetadata.explorer.sitepreferences - Enable/disable the view of Site Preferences in the explorer view. __default: true__
 
 ### Open Commerce API Access Setup
 In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed.
