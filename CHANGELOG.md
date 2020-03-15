@@ -2,6 +2,14 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.7.0 (3/15/20)
+### Minor Release
+- Added Feature: Site Preferences View to view what the preferences are set to for each site.
+   - Ability to set/update will be coming as soon as I have a bit more time.
+- Add new VSCode setting `extension.sfccmetadata.explorer.sitepreferences` for enabling the view of the site preferences tree in the view.
+- Update changelog.md & add setting to README.md.
+- Bump version.
+
 ## 0.6.1 (2/1/20)
 ### Patch Release
 - Fixed GH issue #61 to ensure that the description field is included in new attributes.

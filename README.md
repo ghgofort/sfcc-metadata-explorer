@@ -3,7 +3,7 @@
 ## Summary
 This extension consists of a tree view in the explorer to navigate through your sandbox metadata. There are several actions that can be applied to any given piece of metadata in order to read & modify the metadata in your sandbox.
 
-This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system objects defined on a SFCC instance. There are several additional features in the works at this time, but this extension is still a bit rough around the edges.
+This extension provides Sales Force Comerce Cloud (SFCC) developers with an alternate method for manipulating the metadata for system objects defined on a SFCC instance, but the functionality is limited to the most common things that I do as a developer.
 
 If you find bugs, please log them to the github repository and I will do my best to fix. [Issues on Github.com](https://github.com/ghgofort/sfcc-metadata-explorer/issues)
 
