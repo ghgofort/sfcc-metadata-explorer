@@ -20,6 +20,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
 
 /**
  * @class MetadataViewProvider
@@ -79,6 +80,7 @@ export class MetadataViewProvider
    * @return {Promise<MetadataNode[]>}
    */
   public async getChildren(element?: MetadataNode): Promise<MetadataNode[]> {
+    const spHelper = new SitePreferencesHelper(this.service);
     try {
       if (!element) {
         // Get the base nodes of the tree.
@@ -87,8 +89,15 @@ export class MetadataViewProvider
         // Get children of expandable node types
         if (element.expandable) {
           const nodeType = element.nodeType;
-          const parent = element.parentId.split('.').pop();
-          if (nodeType === 'baseNodeName') {
+          const root = element.rootTree;
+
+          if (root === MetadataNode.ROOT_NODES.sitePrefs &&
+            nodeType === 'objectAttributeDefinition'
+          ) {
+            return spHelper.getSitePreferenceSites(element);
+          } else if (nodeType === 'site') {
+            return spHelper.getSitePreference(element);
+          } else if (nodeType === 'baseNodeName') {
             return this.getBaseNodeChildren(element);
           } else if (nodeType === 'objectTypeDefinition') {
             return this.getObjectDefinitionChildren(element);
@@ -97,7 +106,11 @@ export class MetadataViewProvider
           } else if (nodeType === 'objectAttributeDefinition') {
             return this.getAttributeDefinitionChildren(element);
           } else if (nodeType === 'objectAttributeGroup') {
-            return this.getAttributeGroupChildren(element);
+            // If getting the site preferences, then use helper, otherwise call
+            // local class instance method.
+            return element.parentId === 'sitePreferences' ?
+              spHelper.getPreferencesInGroup(element) :
+              this.getAttributeGroupChildren(element);
           } else if (nodeType === 'objectAttributeValueDefinition') {
             return this.getAttributeValueDefinitionChildren(element);
           } else if (nodeType === 'stringList') {
@@ -254,18 +267,20 @@ export class MetadataViewProvider
   ): Promise<MetadataNode[]> {
     const baseName = element.baseNodeName;
 
-    /**
-     * @todo: REFACTOR: Use OCAPI system_object_definition_search call to filter
-     *    results for only system or custom object definitions on the server
-     *    before returning results.
-     */
+    let callDataObj =  {
+      count: 500,
+      select: '(**)'
+    };
+
+    if (baseName === 'sitePreferences') {
+      const spHelper = new SitePreferencesHelper(this.service);
+      return await spHelper.getAllPreferences();
+    }
+
     const _callSetup: ICallSetup = await this.service.getCallSetup(
       baseName,
       'getAll',
-      {
-        count: 500,
-        select: '(**)'
-      }
+      callDataObj
     );
 
     // Call the OCAPI service.
@@ -328,6 +343,11 @@ export class MetadataViewProvider
       workspaceConfig.get('explorer.customobjects')
     );
 
+    // - Show Custom Object Definitions
+    const showPreferences: boolean = Boolean(
+      workspaceConfig.get('explorer.sitepreferences')
+    );
+
     // If the user config is enabled, then show the option.
     if (showSystemObjects) {
       metaNodes.push(
@@ -351,6 +371,20 @@ export class MetadataViewProvider
           {
             parentId: 'root',
             baseNodeName: 'customObjectDefinitions'
+          }
+        )
+      );
+    }
+
+    // If display of Site Preferences is enabled, add node to tree.
+    if (showPreferences) {
+      metaNodes.push(
+        new MetadataNode(
+          'Site Preferences',
+          TreeItemCollapsibleState.Collapsed,
+          {
+            parentId: 'root',
+            baseNodeName: 'sitePreferences'
           }
         )
       );

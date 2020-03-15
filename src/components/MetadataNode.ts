@@ -4,7 +4,7 @@
  * on a tree view for display of SFCC metadata objects. This is a generic class used
  */
 
-import { Command, TreeItemCollapsibleState, TreeItem } from 'vscode';
+import { TreeItemCollapsibleState, TreeItem } from 'vscode';
 import INodeData from '../interfaces/INodeData';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
@@ -22,6 +22,7 @@ export class MetadataNode extends TreeItem {
   // Define member properties.
   private _expandable: boolean;
   private _nodeType: string;
+  private _rootTree: string;
   public baseNodeName: string;
   public objectAttributeDefinition: ObjectAttributeDefinition;
   public objectAttributeGroup: ObjectAttributeGroup;
@@ -48,8 +49,16 @@ export class MetadataNode extends TreeItem {
     group: 'objectAttributeGroup',
     stringList: 'stringList',
     value: 'value',
-    groupAttribute: 'groupAttribute'
+    groupAttribute: 'groupAttribute',
+    sitePreference: 'sitePreference',
+    sites: 'sites'
   }
+
+  public static ROOT_NODES = {
+    default: 'systemObjectDefinitions',
+    sitePrefs: 'sitePreferences',
+    custObjDefs: 'customObjectDefinitions'
+  };
 
   /**
    * The constructor function that calls the super class constructor, and then
@@ -71,6 +80,8 @@ export class MetadataNode extends TreeItem {
     // Call the TreeNode constructor.
     super(name, collapsibleState);
     const instance = this;
+
+    instance._rootTree = MetadataNode.ROOT_NODES.default;
 
     // The types of tree nodes that have child nodes.
     const expandableTypes = Object.keys(MetadataNode.nodeTypes)
@@ -106,6 +117,10 @@ export class MetadataNode extends TreeItem {
 
   /** @member {string} nodeType - Readonly string for getting the node type. */
   get nodeType(): string { return MetadataNode.nodeTypes[this._nodeType]; }
+
+  /** @member {string} rootTree - The root node that the node originates from. */
+  get rootTree () { return this._rootTree; }
+  set rootTree (value) { this._rootTree = value; }
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }
