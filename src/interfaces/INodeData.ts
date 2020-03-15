@@ -12,6 +12,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import Site from '../documents/Site';
 
 /** @interface INodeData */
 export default interface INodeData {
@@ -27,4 +28,5 @@ export default interface INodeData {
   nodeValue?: string | number;
   displayDescription?: string;
   rootTree?:string;
+  site?: Site;
 }

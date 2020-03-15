@@ -91,9 +91,10 @@ export class MetadataViewProvider
           const nodeType = element.nodeType;
           const root = element.rootTree;
 
-
-          if (root === MetadataNode.ROOT_NODES.sitePrefs) {
-            return spHelper.getSitePreference(element);
+          if (root === MetadataNode.ROOT_NODES.sitePrefs &&
+            nodeType === 'objectAttributeDefinition'
+          ) {
+            return spHelper.getSitePreferenceSites(element);
           } else if (nodeType === 'baseNodeName') {
             return this.getBaseNodeChildren(element);
           } else if (nodeType === 'objectTypeDefinition') {
@@ -274,11 +275,6 @@ export class MetadataViewProvider
       return await spHelper.getAllPreferences();
     }
 
-    /**
-     * @todo: REFACTOR: Use OCAPI system_object_definition_search call to filter
-     *    results for only system or custom object definitions on the server
-     *    before returning results.
-     */
     const _callSetup: ICallSetup = await this.service.getCallSetup(
       baseName,
       'getAll',

@@ -50,7 +50,8 @@ export class MetadataNode extends TreeItem {
     stringList: 'stringList',
     value: 'value',
     groupAttribute: 'groupAttribute',
-    sitePreference: 'sitePreference'
+    sitePreference: 'sitePreference',
+    sites: 'sites'
   }
 
   public static ROOT_NODES = {

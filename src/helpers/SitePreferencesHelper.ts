@@ -7,6 +7,7 @@
 import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import SitesHelper from './SitesHelper';
 import { TreeItemCollapsibleState } from 'vscode';
 import { SitePreferencesNode } from '../components/SitePreferencesNode';
 
@@ -17,6 +18,7 @@ import { SitePreferencesNode } from '../components/SitePreferencesNode';
  */
 export default class SitePreferencesHelper {
   private service: OCAPIService;
+  private sitesHelper: SitesHelper = new SitesHelper();
 
   /**
    * @param {OCAPIService} service - The OCAPI service instance used to
@@ -107,16 +109,25 @@ export default class SitePreferencesHelper {
     return Promise.resolve(childNodes);
   }
 
-  public async getSitePreference(
+  public async getSitePreferenceSites(
     element: MetadataNode
-  ): Promise<SitePreferencesNode[]> {
-    const childNodes: SitePreferencesNode[] = [];
+  ): Promise<MetadataNode[]> {
+    let childNodes: MetadataNode[] = [];
     const groupId = element.parentId.split('.').pop();
-    let _callSetup = await this.service.getCallSetup('sites', 'getPreference', {
-      select: '(**)',
-      expand: 'definition',
-      objectType: 'SitePreferences'
-    });
+
+    // Get the sites for the current SFCC server.
+    const sites = await this.sitesHelper.getAllSites(groupId);
+
+    if (sites && sites.data && sites.data.length) {
+      childNodes = sites.data.map(site => { return new MetadataNode(
+        site.id,
+        TreeItemCollapsibleState.Collapsed,
+        {
+          parentId: element.parentId + '.' + element.name,
+          site: site
+        }
+      )});
+    }
 
     return Promise.resolve(childNodes);
   }
