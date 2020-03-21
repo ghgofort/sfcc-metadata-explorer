@@ -5,8 +5,9 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 ## Unreleased
 - Updated version of npm package `webpack` to **^4.42.0**.
 - Updated version of npm package `webpack-cli` to **^3.3.11**.
+- Updated version to **0.8.1**.
 
-## 0.7.0 (3/15/20)
+## 0.8.0 (3/15/20)
 ### Minor Release
 - Added Feature: Site Preferences View to view what the preferences are set to for each site.
    - Ability to set/update will be coming as soon as I have a bit more time.
