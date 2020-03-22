@@ -2,7 +2,24 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## Unreleased
+## 0.9.0 (3/22/20)
+### Minor Release
+- Added ability to set SitePreferences custom attribute values as a context menu command.
+
+#### Code Updates
+- extension.ts => Added a refresh call to update the tree after pref value set.
+- SitePreferencesHelper.ts => Updated display description to be cast as string so boolean values show.
+- commandHelper.ts => Added break to string case to fix error with fallthrough to default.
+- CommandHelper.ts => Updated setPrefValue to get call setup then call OCAPI to update pref value & resolve promise to result.
+- INodeData.ts => Added id: string type to the IPreferenceValue interface.
+- Added listener to extension.ts to handle the context menu action.
+- Added command `extension.sfccexplorer.sitepreference.setvalue` to the package.json for setting preference values.
+- Added API config for the `PATCH` call to OCAPI `Sites` resource to set preference values.
+- Added feature to readme.md features list.
+- Updated CHANGELOG.md with notes of changes.
+
+## 0.8.1 (3/21/20)
+### Patch Release
 - Updated version of npm package `webpack` to **^4.42.0**.
 - Updated version of npm package `webpack-cli` to **^3.3.11**.
 - Updated version to **0.8.1**.

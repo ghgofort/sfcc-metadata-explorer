@@ -9,15 +9,16 @@
  * @namespace IOCAPITypes - Types used in OCAPI request and response documents.
  */
 export namespace IOCAPITypes {
+  /** @interface ICustomerListLink */
+  export interface ICustomerListLink {
+    customer_list_id: string;
+    link: string;
+    title: ILocalizedString;
+  }
+
   /** @interface ILocalizedString */
   export interface ILocalizedString {
     [index: string]: string;
     default: string;
-  }
-
-  export interface ICustomerListLink {
-    customer_list_id: String;
-    link: String;
-    title: ILocalizedString
   }
 }

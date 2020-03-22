@@ -1,9 +1,10 @@
 'use strict';
 
-import { commands, ExtensionContext, window, Disposable } from 'vscode';
-import { MetadataView } from './components/MetadataView';
-import OCAPIHelper from './helpers/OCAPIHelper';
+import { commands, Disposable, ExtensionContext, window } from 'vscode';
 import { MetadataNode } from './components/MetadataNode';
+import { MetadataView } from './components/MetadataView';
+import CommandHelper from './helpers/commandHelper';
+import OCAPIHelper from './helpers/OCAPIHelper';
 import XMLHandler from './xmlHandler/XMLHandler';
 
 /**
@@ -17,6 +18,7 @@ export function activate(context: ExtensionContext) {
   const metaView: MetadataView = new MetadataView(context);
   const ocapiHelper = new OCAPIHelper(metaView);
   const xmlHandler = new XMLHandler();
+  const commandHelper = new CommandHelper();
   metaView.getDataFromProvider('systemObjectDefinitions');
 
   /**
@@ -209,6 +211,24 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds the handler to the context menu action to set the value of a Site
+   * Preferences custom attribute.
+   *
+   * @listens extension.sfccexplorer.sitepreference.setvalue
+   */
+  const setSitePreferenceValue: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.sitepreference.setvalue',
+    (metaNode: MetadataNode) => {
+      commandHelper.setPrefValue(metaNode).then(refresh => {
+        if (refresh) {
+          metaView.currentProvider.refresh();
+        }
+      });
+    }
+  );
+
+  context.subscriptions.push(setSitePreferenceValue);
   context.subscriptions.push(getAttributeXMLDisposable);
   context.subscriptions.push(getAttributeGroupXMLDisposable);
   context.subscriptions.push(addGroupDisposable);

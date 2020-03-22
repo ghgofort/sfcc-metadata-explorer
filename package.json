@@ -2,7 +2,7 @@
   "name": "sfcc-metadata-explorer",
   "displayName": "SFCC Metadata Explorer",
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "publisher": "ghgofort",
   "repository": {
     "type": "git",
@@ -103,6 +103,11 @@
         "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
         "title": "Remove attribute from attribute group",
         "description": "Removes the selected attribute from the attribute group."
+      },
+      {
+        "command": "extension.sfccexplorer.sitepreference.setvalue",
+        "title": "Set preference value...",
+        "description": "Sets the selected site-value of the preference."
       }
     ],
     "menus": {
@@ -141,6 +146,10 @@
         {
           "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
           "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
+        },
+        {
+          "command": "extension.sfccexplorer.sitepreference.setvalue",
+          "when": "view == systemObjectDefinitionsView && viewItem == preferenceValue"
         }
       ]
     },

@@ -5,9 +5,9 @@
  *    tree node.
  */
 
-import { TreeItemCollapsibleState, TreeItem } from 'vscode';
+import { TreeItemCollapsibleState } from 'vscode';
+import { INodeData } from '../interfaces/INodeData';
 import { MetadataNode } from './MetadataNode';
-import INodeData from '../interfaces/INodeData';
 
 /**
  * @class

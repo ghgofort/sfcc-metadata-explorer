@@ -65,12 +65,14 @@ A configuration option to use specific credentials could be added in the future.
 * #### View a list of Custom Object Definitions.
 * #### View Attribute Definitions of System Object
 * #### View Attribute Groups of a System Object
+* #### View Site Preference Configurations by Site.
 
-### Context Menu : System Object : Implemented CRUD Operations
+### Context Menu : System Object : Implemented Edit/Delete Operations
 * #### Add Attribute Definition to System Object
 * #### Add Attribute Definition to Group
 * #### Delete Attribute Definition
 * #### Remove Attribute From Group
+* #### Set Site Preference Value.
 
 ### Context Menu : System Object : Implemented XML Operations
 * #### Get Attribute XML

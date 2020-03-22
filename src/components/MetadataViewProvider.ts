@@ -5,22 +5,22 @@
  * populating the tree view instance.
  */
 
-import { MetadataNode } from './MetadataNode';
 import {
   Event,
   EventEmitter,
   TreeDataProvider,
   TreeItemCollapsibleState,
-  WorkspaceConfiguration,
-  workspace
+  workspace,
+  WorkspaceConfiguration
 } from 'vscode';
-import { OCAPIService } from '../services/OCAPIService';
-import { ICallSetup } from '../services/ICallSetup';
-import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
+import { ICallSetup } from '../services/ICallSetup';
+import { OCAPIService } from '../services/OCAPIService';
+import { MetadataNode } from './MetadataNode';
 
 /**
  * @class MetadataViewProvider
@@ -31,7 +31,7 @@ import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
 export class MetadataViewProvider
   implements TreeDataProvider<MetadataNode | undefined> {
   // Declare memeber variables.
-  readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
+  public readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
   public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
   private service: OCAPIService = new OCAPIService();
@@ -153,9 +153,9 @@ export class MetadataViewProvider
           parentType,
           'getAttributes',
           {
-            select: '(**)',
             count: 500,
-            objectType: objectType
+            objectType,
+            select: '(**)'
           }
         );
 
@@ -203,7 +203,7 @@ export class MetadataViewProvider
         {
           select: '(**)',
           expand: 'definition',
-          objectType: objectType
+          objectType
         }
       );
 
@@ -267,7 +267,7 @@ export class MetadataViewProvider
   ): Promise<MetadataNode[]> {
     const baseName = element.baseNodeName;
 
-    let callDataObj =  {
+    const callDataObj =  {
       count: 500,
       select: '(**)'
     };
@@ -493,7 +493,7 @@ export class MetadataViewProvider
       );
     }
 
-    const nodeMap: Object = {
+    const nodeMap = {
       displayName: 'display name'
     };
 
