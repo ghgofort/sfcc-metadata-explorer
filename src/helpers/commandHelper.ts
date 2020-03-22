@@ -1,4 +1,10 @@
-import { CancellationToken, CancellationTokenSource, InputBoxOptions, QuickPickOptions, window } from 'vscode';
+import {
+  CancellationToken,
+  CancellationTokenSource,
+  InputBoxOptions,
+  QuickPickOptions,
+  window
+} from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import SitePreferencesHelper from './SitePreferencesHelper';
@@ -139,6 +145,7 @@ export default class CommandHelper {
    */
   private async getValueToSet(dataType: string): Promise<any> {
     let prefValue;
+    let success = true;
 
     // Set the options based on the data type.
     switch (dataType) {
@@ -148,13 +155,17 @@ export default class CommandHelper {
       case 'int':
         prefValue = this.getIntValue();
         break;
-
-      default:
+      case 'string':
         prefValue = this.getStringValue();
+        break;
+      default:
+        prefValue =
+          'Setting attribute on value type ' + dataType + ' is not supported.';
+        success = false;
         break;
     }
 
-    return Promise.resolve(prefValue);
+    return success ? Promise.resolve(prefValue) : Promise.reject(prefValue);
   }
 
   /**
@@ -164,11 +175,48 @@ export default class CommandHelper {
    *    invoked to set the pref value.
    */
   public async setPrefValue(element: MetadataNode) {
+    const par = element.parentId.split('.');
+    const siteId = par.pop();
+    const groupId = par.pop();
+    let error = false;
     const dataType = element.preferenceValue.type;
     // Get the value to set the preference to from the user.
-    const prefValue = await this.getValueToSet(dataType);
+    const prefValue = await this.getValueToSet(dataType)
+      .catch(err => {
+        window.showErrorMessage(err);
+        error = true;
+      });
 
-    // REMOVE ME
-    window.showInformationMessage(String(prefValue));
+    // Do not continue if there was an error.
+    if (error) {
+      return Promise.resolve(false);
+    }
+
+    const body = {};
+    body['c_' + element.preferenceValue.id] = prefValue;
+
+    const callData = {
+      group_id: groupId,
+      site_id: siteId,
+      instance_type: 'sandbox',
+      body: JSON.stringify(body)
+    };
+
+    try {
+      const callSetup = await this.service.getCallSetup(
+        'sites',
+        'setPrefValue',
+        callData
+      );
+
+      const callResult = await this.service.makeCall(callSetup);
+      console.log(callResult);
+      window.showInformationMessage('Attribute value set.');
+      return Promise.resolve(true);
+    } catch (e) {
+      window.showErrorMessage('Unable to set preference value.');
+      console.error(e.message);
+    }
+    return Promise.resolve(false);
   }
 }

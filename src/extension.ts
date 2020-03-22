@@ -220,7 +220,11 @@ export function activate(context: ExtensionContext) {
   const setSitePreferenceValue: Disposable = commands.registerCommand(
     'extension.sfccexplorer.sitepreference.setvalue',
     (metaNode: MetadataNode) => {
-      commandHelper.setPrefValue(metaNode);
+      commandHelper.setPrefValue(metaNode).then(refresh => {
+        if (refresh) {
+          metaView.currentProvider.refresh();
+        }
+      });
     }
   );
 

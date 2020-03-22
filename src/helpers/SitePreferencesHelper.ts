@@ -152,9 +152,10 @@ export default class SitePreferencesHelper {
           childNodes.push(new MetadataNode(siteId,
             TreeItemCollapsibleState.None,
             {
-              displayDescription: prefValue.siteValues[siteId],
+              displayDescription: String(prefValue.siteValues[siteId]),
               parentId: element.parentId + '.' + siteId,
               preferenceValue: {
+                id: prefId,
                 type: prefType
               }
             }

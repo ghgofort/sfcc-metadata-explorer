@@ -34,6 +34,7 @@ export interface INodeData {
 
 /** @interface IPreferenceValue */
 export interface IPreferenceValue {
+  id: string;
   type: string;
   enumValues?: string[] | number[];
 }
