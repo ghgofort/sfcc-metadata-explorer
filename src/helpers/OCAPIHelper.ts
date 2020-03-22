@@ -5,19 +5,19 @@
  * and delete attribute definitions.
  */
 
-import { ICallSetup } from '../services/ICallSetup';
-import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
-import { OCAPIService } from '../services/OCAPIService';
-import { MetadataView } from '../components/MetadataView';
 import {
-  window,
-  CancellationTokenSource,
   CancellationToken,
+  CancellationTokenSource,
+  InputBoxOptions,
   QuickPickOptions,
-  InputBoxOptions
+  window
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
+import { MetadataView } from '../components/MetadataView';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import { ICallSetup } from '../services/ICallSetup';
+import { OCAPIService } from '../services/OCAPIService';
 
 /**
  * @class OCAPIHelper
@@ -93,7 +93,7 @@ export default class OCAPIHelper {
     attributeDefinition: ObjectAttributeDefinition,
     includeDescription: boolean = false
   ): Promise<any> {
-    let includeFields = [
+    const includeFields = [
       'displayName',
       'key',
       'localizable',
@@ -114,7 +114,7 @@ export default class OCAPIHelper {
     let _callResult: any;
     const callData: any = {
       body: JSON.stringify(docObj),
-      objectType: objectType,
+      objectType,
       id: attributeDefinition.id
     };
 
@@ -147,7 +147,7 @@ export default class OCAPIHelper {
     objectType: string,
     attributeGroup: ObjectAttributeGroup
   ): Promise<any> {
-    let includeFields = ['displayName', 'description', 'id', 'position'];
+    const includeFields = ['displayName', 'description', 'id', 'position'];
 
     attributeGroup.position = 1.0;
 
@@ -156,7 +156,7 @@ export default class OCAPIHelper {
     let _callResult: any;
     const callData: any = {
       body: JSON.stringify(docObj),
-      objectType: objectType,
+      objectType,
       id: attributeGroup.id
     };
 
@@ -214,7 +214,7 @@ export default class OCAPIHelper {
    */
   private validateAttributeId(id: string): string {
     // Make a copy of the id string without any allowed speial characters.
-    let idWithoutAllowed = String(id);
+    const idWithoutAllowed = String(id);
     // Special chars allowed in SystemAttributeDefinition Id field.
     const allowedSpecialChars = [
       '+',
@@ -236,7 +236,7 @@ export default class OCAPIHelper {
 
     // Validate that there are no more special characters.
     const regex = /\W/;
-    let containsSpecialChars = regex.test(id);
+    const containsSpecialChars = regex.test(id);
 
     return containsSpecialChars
       ? 'Id for attribute contains illegal characters'
@@ -475,7 +475,7 @@ export default class OCAPIHelper {
         'getAttributeGroups',
         {
           select: '(**)',
-          objectType: objectType
+          objectType
         }
       );
 
@@ -494,7 +494,7 @@ export default class OCAPIHelper {
           'systemObjectDefinitions',
           'assignAttributeToGroup',
           {
-            objectType: objectType,
+            objectType,
             groupId: assignGroupId,
             attributeId: node.objectAttributeDefinition.id
           }
@@ -514,7 +514,7 @@ export default class OCAPIHelper {
       const errMsg = 'Unable to assign attribute to group: ';
       console.log(errMsg + e.message);
       window.showErrorMessage('Unable to assign attribute to group.');
-      return Promise.reject()
+      return Promise.reject();
     }
 
     return Promise.reject('ERROR: Unable to assign attribute to group.');
@@ -538,7 +538,7 @@ export default class OCAPIHelper {
         'systemObjectDefinitions',
         'deleteAttribute',
         {
-          objectType: objectType,
+          objectType,
           id: attributeId
         }
       );
@@ -563,7 +563,7 @@ export default class OCAPIHelper {
   public async removeAttributeFromGroup(node: MetadataNode): Promise<any> {
     const path = node.parentId.split('.');
     const objectType = path[path.length - 4];
-    const groupId = path[path.length -2];
+    const groupId = path[path.length - 2];
     const attributeId = node.name;
     let _callSetup: ICallSetup;
 
@@ -572,9 +572,9 @@ export default class OCAPIHelper {
         'systemObjectDefinitions',
         'removeAttributeFromGroup',
         {
-          objectType: objectType,
-          groupId: groupId,
-          attributeId: attributeId
+          objectType,
+          groupId,
+          attributeId
         }
       );
 
@@ -604,7 +604,7 @@ export default class OCAPIHelper {
     const ALLOWED_ATTRIBUTE_TYPES = ['string', 'number', 'boolean'];
     const attributeDefinition: ObjectAttributeDefinition =
       node.objectAttributeDefinition;
-    let isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
+    const isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
       type => 'root.systemObjectDefinitions.' + type === node.parentId
     );
 

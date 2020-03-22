@@ -8,14 +8,14 @@
  *    and what (if any) child nodes need to be fetched.
  */
 
-import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
-import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
+import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import Site from '../documents/Site';
 
 /** @interface INodeData */
-export default interface INodeData {
+export interface INodeData {
   parentId: string;
   groupAttribute?: string;
   objectAttributeDefinition?: ObjectAttributeDefinition;
@@ -29,5 +29,11 @@ export default interface INodeData {
   displayDescription?: string;
   rootTree?: string;
   site?: Site;
-  preferenceValue?: string;
+  preferenceValue?: IPreferenceValue;
+}
+
+/** @interface IPreferenceValue */
+export interface IPreferenceValue {
+  type: string;
+  enumValues?: string[] | number[];
 }

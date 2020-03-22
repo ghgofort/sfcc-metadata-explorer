@@ -4,13 +4,13 @@
  *    operations for Site Preferences related calls.
  */
 
-import { MetadataNode } from '../components/MetadataNode';
-import { OCAPIService } from '../services/OCAPIService';
-import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
-import SitesHelper from './SitesHelper';
 import { TreeItemCollapsibleState, window } from 'vscode';
+import { MetadataNode } from '../components/MetadataNode';
 import { SitePreferencesNode } from '../components/SitePreferencesNode';
+import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import PreferenceValue from '../documents/PreferenceValue';
+import { OCAPIService } from '../services/OCAPIService';
+import SitesHelper from './SitesHelper';
 
 /**
  * @class
@@ -34,7 +34,7 @@ export default class SitePreferencesHelper {
    * getAllPreferences
    */
   public async getAllPreferences(): Promise<MetadataNode[]> {
-    let _callSetup = await this.service.getCallSetup(
+    const _callSetup = await this.service.getCallSetup(
       'systemObjectDefinitions',
       'getAttributeGroups',
       {
@@ -44,7 +44,7 @@ export default class SitePreferencesHelper {
       }
     );
 
-    let _callResult = await this.service.makeCall(_callSetup);
+    const _callResult = await this.service.makeCall(_callSetup);
 
     // If the API call returns data create the first level of a tree.
     if (
@@ -94,8 +94,8 @@ export default class SitePreferencesHelper {
     // Attribute Definitions
     if (hasAttributes) {
       attrGroup.attributeDefinitions.forEach(attrDef => {
-        var name = attrDef.id;
-        var pref = new SitePreferencesNode(
+        const name = attrDef.id;
+        const pref = new SitePreferencesNode(
           name,
           TreeItemCollapsibleState.Collapsed,
           {
@@ -113,24 +113,25 @@ export default class SitePreferencesHelper {
   public async getSitePreferenceSites(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    let childNodes: MetadataNode[] = [];
+    const childNodes: MetadataNode[] = [];
     const groupId = element.parentId.split('.').pop();
     const prefId = element.objectAttributeDefinition.id;
+    const prefType = element.objectAttributeDefinition.valueType;
 
     try {
       // Get the sites for the current SFCC server.
-      let _callData = await this.service.getCallSetup(
+      const _callData = await this.service.getCallSetup(
         'sitePreferences',
         'getPreference', {
-          groupId: groupId,
+          groupId,
           instanceType: 'sandbox',
           preferenceId: prefId
       });
 
-      let _callResult = await this.service.makeCall(_callData);
+      const _callResult = await this.service.makeCall(_callData);
 
       if (!_callResult.error && _callResult.site_values) {
-        var prefValue = new PreferenceValue(_callResult);
+        const prefValue = new PreferenceValue(_callResult);
         if (prefValue.attributeDefinition &&
           prefValue.attributeDefinition.defaultValue
         ) {
@@ -138,7 +139,7 @@ export default class SitePreferencesHelper {
           const dispDesc = defVal.displayValue.default ?
             defVal.id + ' : ' + defVal.displayValue.default : defVal.id;
 
-            childNodes.push(new MetadataNode('Default Value:',
+          childNodes.push(new MetadataNode('Default Value:',
               TreeItemCollapsibleState.None,
               {
                 displayDescription: dispDesc,
@@ -147,16 +148,18 @@ export default class SitePreferencesHelper {
             ));
         }
 
-        Object.keys(prefValue.siteValues).forEach(function(siteId) {
+        Object.keys(prefValue.siteValues).forEach(siteId => {
           childNodes.push(new MetadataNode(siteId,
             TreeItemCollapsibleState.None,
             {
               displayDescription: prefValue.siteValues[siteId],
               parentId: element.parentId + '.' + siteId,
-              preferenceValue: prefValue.siteValues[siteId]
+              preferenceValue: {
+                type: prefValue.siteValues[siteId]
+              }
             }
           ));
-        })
+        });
       } else if (!_callResult.error) {
         childNodes.push(new MetadataNode('No site values set.',
           TreeItemCollapsibleState.None,
@@ -184,7 +187,7 @@ export default class SitePreferencesHelper {
   public async getSitePreference(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    let childNodes: MetadataNode[] = [];
+    const childNodes: MetadataNode[] = [];
     const parents = element.parentId.split('.');
     const siteId = parents.pop();
     const groupId = parents.pop();
@@ -201,7 +204,7 @@ export default class SitePreferencesHelper {
   public async setPreferenceValue(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    let childNodes: MetadataNode[] = [];
+    const childNodes: MetadataNode[] = [];
 
     return Promise.resolve(childNodes);
   }

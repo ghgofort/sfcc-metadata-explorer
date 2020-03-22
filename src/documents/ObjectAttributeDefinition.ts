@@ -131,7 +131,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    * @return {string} - Returns a stringified JSON object representation of the
    *    OCAPI document class that can be submitted to the API methods.
    */
-  public getDocument(includeFields: string[] = []): Object {
+  public getDocument(includeFields: string[] = []): object {
     const documentObj = {};
     let memberNames = Object.keys(this).filter(
       key =>

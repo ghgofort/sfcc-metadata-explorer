@@ -1,11 +1,11 @@
 'use strict';
 
-import { commands, ExtensionContext, window, Disposable } from 'vscode';
-import { MetadataView } from './components/MetadataView';
-import OCAPIHelper from './helpers/OCAPIHelper';
+import { commands, Disposable, ExtensionContext, window } from 'vscode';
 import { MetadataNode } from './components/MetadataNode';
-import XMLHandler from './xmlHandler/XMLHandler';
+import { MetadataView } from './components/MetadataView';
 import CommandHelper from './helpers/commandHelper';
+import OCAPIHelper from './helpers/OCAPIHelper';
+import XMLHandler from './xmlHandler/XMLHandler';
 
 /**
  * The entry point for the extension. This lifecycle method is called when the

@@ -8,7 +8,6 @@ export const apiConfig = {
   clientId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {
-
     /***************************************************************************
      * OCAPI : Data API
      * Resource : CustomObjectDefinitions
@@ -28,7 +27,8 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
-            }, {
+            },
+            {
               id: 'count',
               type: 'number',
               use: 'QUERY_PARAMETER'
@@ -36,7 +36,7 @@ export const apiConfig = {
           ],
           // Use the system_object_definition endpoint with the filter to only
           // get the custom object tyeps.
-          path: 'system_object_definitions',
+          path: 'system_object_definitions'
         },
 
         /* ==================================================================
@@ -53,7 +53,7 @@ export const apiConfig = {
               use: 'PATH_PARAMETER'
             }
           ],
-          path: '/custom_object_definitions/{objectType}/attribute_definitions',
+          path: '/custom_object_definitions/{objectType}/attribute_definitions'
         },
 
         /* ==================================================================
@@ -68,7 +68,8 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
@@ -78,7 +79,6 @@ export const apiConfig = {
         }
       }
     },
-
 
     /***************************************************************************
      * OCAPI : Data API
@@ -116,13 +116,14 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
-            }, {
+            },
+            {
               id: 'count',
               type: 'number',
               use: 'QUERY_PARAMETER'
             }
           ],
-          path: 'system_object_definitions',
+          path: 'system_object_definitions'
         },
 
         /* ==================================================================
@@ -137,7 +138,8 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
@@ -154,7 +156,7 @@ export const apiConfig = {
           headers: {
             'Content-Type': 'application/json',
             'x-dw-validate-existing': true,
-            'Accept': 'application/json'
+            Accept: 'application/json'
           },
           method: 'PUT',
           params: [
@@ -162,14 +164,15 @@ export const apiConfig = {
               id: 'id',
               type: 'string',
               use: 'PATH_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
-
           ],
-          path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
+          path:
+            'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
 
         /* ==================================================================
@@ -180,7 +183,7 @@ export const apiConfig = {
           headers: {
             'Content-Type': 'application/json',
             'x-dw-validate-existing': true,
-            'Accept': 'application/json'
+            Accept: 'application/json'
           },
           method: 'DELETE',
           params: [
@@ -188,14 +191,15 @@ export const apiConfig = {
               id: 'id',
               type: 'string',
               use: 'PATH_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
-
           ],
-          path: 'system_object_definitions/{objectType}/attribute_definitions/{id}'
+          path:
+            'system_object_definitions/{objectType}/attribute_definitions/{id}'
         },
 
         /* ==================================================================
@@ -206,7 +210,7 @@ export const apiConfig = {
           headers: {
             'Content-Type': 'application/json',
             'x-dw-validate-existing': true,
-            'Accept': 'application/json'
+            Accept: 'application/json'
           },
           method: 'PUT',
           params: [
@@ -214,12 +218,12 @@ export const apiConfig = {
               id: 'id',
               type: 'string',
               use: 'PATH_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
-
           ],
           path: 'system_object_definitions/{objectType}/attribute_groups/{id}'
         },
@@ -236,7 +240,8 @@ export const apiConfig = {
               id: 'select',
               type: 'string',
               use: 'QUERY_PARAMETER'
-            },{
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
@@ -257,17 +262,20 @@ export const apiConfig = {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'groupId',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'attributeId',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
           ],
-          path: 'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
+          path:
+            'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
         },
 
         /* ==================================================================
@@ -282,17 +290,20 @@ export const apiConfig = {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'groupId',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'attributeId',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
           ],
-          path: 'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
+          path:
+            'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
         }
       }
     },
@@ -316,17 +327,20 @@ export const apiConfig = {
               id: 'groupId',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'instanceType',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'preferenceId',
               type: 'string',
               use: 'PATH_PARAMETER'
             }
           ],
-          path: '/site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
+          path:
+            '/site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
         }
       }
     },
@@ -357,20 +371,23 @@ export const apiConfig = {
               id: 'site_id',
               type: 'string',
               use: 'PATH_PARAMETER'
-            }, {
+            },
+            {
               id: 'instance_type',
               type: 'string',
-              use: 'PATH_PARAMETER',
-            }, {
+              use: 'PATH_PARAMETER'
+            },
+            {
               id: 'group_id',
               type: 'string',
-              use: 'PATH_PARAMETER',
+              use: 'PATH_PARAMETER'
             }
           ],
-          path: 'sites/{site_id}/site_preferences/preference_groups/{group_id}/{instance_type}'
+          path:
+            'sites/{site_id}/site_preferences/preference_groups/{group_id}/{instance_type}'
         }
       }
-    },
+    }
   },
 
   /*

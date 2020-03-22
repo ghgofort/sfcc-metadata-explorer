@@ -1,6 +1,7 @@
 import { OCAPIService } from '../services/OCAPIService';
 import SitePreferencesHelper from './SitePreferencesHelper';
 import { MetadataNode } from '../components/MetadataNode';
+import { CancellationTokenSource, CancellationToken } from 'vscode';
 
 /**
  * @class
@@ -23,6 +24,11 @@ export default class CommandHelper {
    *    invoked to set the pref value.
    */
   public async setPref(element: MetadataNode) {
-    /** @todo: Get pref val from user, then call API to set & display result */
+    // Create a cancelation token instance to cancel the request when needed.
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelAddAttributeToken: CancellationToken = tokenSource.token;
+
+    // Get attribute data type from the element.
+    var elementDataType = '';
   }
 }

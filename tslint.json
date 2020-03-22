@@ -10,12 +10,16 @@
       "indent": [true, "spaces", 2],
       "no-console": false,
       "object-literal-key-quotes": false,
+      "no-namespace": false,
+      "variable-name": false,
+      "member-ordering": false,
+      "object-literal-sort-keys": false,
       "quotemark": [
         true,
         "single"
       ],
       "semicolon": true,
-      "trailing-comma": false,
+      "trailing-comma": false
     },
     "rulesDirectory": []
 }

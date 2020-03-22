@@ -4,12 +4,12 @@
  * on a tree view for display of SFCC metadata objects. This is a generic class used
  */
 
-import { TreeItemCollapsibleState, TreeItem } from 'vscode';
-import INodeData from '../interfaces/INodeData';
+import { TreeItem, TreeItemCollapsibleState } from 'vscode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
-import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
+import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
+import { INodeData, IPreferenceValue } from '../interfaces/INodeData';
 
 /**
  * @class MetadataNode
@@ -19,10 +19,6 @@ import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDef
  * property, or value.
  */
 export class MetadataNode extends TreeItem {
-  // Define member properties.
-  private _expandable: boolean;
-  private _nodeType: string;
-  private _rootTree: string;
   public baseNodeName: string;
   public objectAttributeDefinition: ObjectAttributeDefinition;
   public objectAttributeGroup: ObjectAttributeGroup;
@@ -33,7 +29,12 @@ export class MetadataNode extends TreeItem {
   public stringList: string[];
   public value: string | number;
   public displayDescription: string;
-  public preferenceValue: string;
+  public preferenceValue: IPreferenceValue;
+
+  // Define member properties.
+  private _expandable: boolean;
+  private _nodeType: string;
+  private _rootTree: string;
 
   /**
    * @static
@@ -54,12 +55,12 @@ export class MetadataNode extends TreeItem {
     sites: 'sites',
     stringList: 'stringList',
     value: 'value'
-  }
+  };
 
   public static ROOT_NODES = {
+    custObjDefs: 'customObjectDefinitions',
     default: 'systemObjectDefinitions',
-    sitePrefs: 'sitePreferences',
-    custObjDefs: 'customObjectDefinitions'
+    sitePrefs: 'sitePreferences'
   };
 
   /**
@@ -121,10 +122,10 @@ export class MetadataNode extends TreeItem {
   get nodeType(): string { return MetadataNode.nodeTypes[this._nodeType]; }
 
   /** @member {string} rootTree - The root node that the node originates from. */
-  get rootTree () { return this._rootTree; }
-  set rootTree (value) { this._rootTree = value; }
+  get rootTree() { return this._rootTree; }
+  set rootTree(value) { this._rootTree = value; }
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
   get tooltip(): string { return this.name; }
-  get description(): string { return this.displayDescription || '' }
+  get description(): string { return this.displayDescription || ''; }
 }
