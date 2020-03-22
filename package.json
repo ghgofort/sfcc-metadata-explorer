@@ -103,6 +103,11 @@
         "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
         "title": "Remove attribute from attribute group",
         "description": "Removes the selected attribute from the attribute group."
+      },
+      {
+        "command": "extension.sfccexplorer.sitepreference.setvalue",
+        "title": "Remove attribute from attribute group",
+        "description": "Removes the selected attribute from the attribute group."
       }
     ],
     "menus": {
@@ -140,6 +145,10 @@
         },
         {
           "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
+          "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
+        },
+        {
+          "command": "extension.sfccexplorer.sitepreference.setvalue",
           "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
         }
       ]

@@ -347,9 +347,30 @@ export const apiConfig = {
           method: 'GET',
           params: [],
           path: '/sites'
+        },
+        setPrefValue: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'PATCH',
+          params: [
+            {
+              id: 'site_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }, {
+              id: 'instance_type',
+              type: 'string',
+              use: 'PATH_PARAMETER',
+            }, {
+              id: 'group_id',
+              type: 'string',
+              use: 'PATH_PARAMETER',
+            }
+          ],
+          path: 'sites/{site_id}/site_preferences/preference_groups/{group_id}/{instance_type}'
         }
       }
-    }
+    },
   },
 
   /*

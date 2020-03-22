@@ -188,7 +188,20 @@ export default class SitePreferencesHelper {
     const siteId = parents.pop();
     const groupId = parents.pop();
 
-
     return childNodes;
+  }
+
+  /**
+   * Sets the value of a site preference attribute by getting the value from the
+   * user and sending to OCAPI to set.
+   * @param {MetadataNode} element - The element currently selected when the
+   *    context menu action was invoked.
+   */
+  public async setPreferenceValue(
+    element: MetadataNode
+  ): Promise<MetadataNode[]> {
+    let childNodes: MetadataNode[] = [];
+
+    return Promise.resolve(childNodes);
   }
 }

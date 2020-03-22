@@ -5,6 +5,7 @@ import { MetadataView } from './components/MetadataView';
 import OCAPIHelper from './helpers/OCAPIHelper';
 import { MetadataNode } from './components/MetadataNode';
 import XMLHandler from './xmlHandler/XMLHandler';
+import CommandHelper from './helpers/commandHelper';
 
 /**
  * The entry point for the extension. This lifecycle method is called when the
@@ -17,6 +18,7 @@ export function activate(context: ExtensionContext) {
   const metaView: MetadataView = new MetadataView(context);
   const ocapiHelper = new OCAPIHelper(metaView);
   const xmlHandler = new XMLHandler();
+  const commandHelper = new CommandHelper();
   metaView.getDataFromProvider('systemObjectDefinitions');
 
   /**
@@ -209,6 +211,20 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds the handler to the context menu action to set the value of a Site
+   * Preferences custom attribute.
+   *
+   * @listens extension.sfccexplorer.sitepreference.setvalue
+   */
+  const setSitePreferenceValue: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.sitepreference.setvalue',
+    (metaNode: MetadataNode) => {
+      commandHelper.setPref(metaNode);
+    }
+  );
+
+  context.subscriptions.push(setSitePreferenceValue);
   context.subscriptions.push(getAttributeXMLDisposable);
   context.subscriptions.push(getAttributeGroupXMLDisposable);
   context.subscriptions.push(addGroupDisposable);
