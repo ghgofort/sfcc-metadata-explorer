@@ -152,7 +152,8 @@ export default class SitePreferencesHelper {
             TreeItemCollapsibleState.None,
             {
               displayDescription: prefValue.siteValues[siteId],
-              parentId: element.parentId + '.' + siteId
+              parentId: element.parentId + '.' + siteId,
+              preferenceValue: prefValue.siteValues[siteId]
             }
           ));
         })

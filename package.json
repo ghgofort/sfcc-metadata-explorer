@@ -106,8 +106,8 @@
       },
       {
         "command": "extension.sfccexplorer.sitepreference.setvalue",
-        "title": "Remove attribute from attribute group",
-        "description": "Removes the selected attribute from the attribute group."
+        "title": "Set preference value...",
+        "description": "Sets the selected site-value of the preference."
       }
     ],
     "menus": {
@@ -149,7 +149,7 @@
         },
         {
           "command": "extension.sfccexplorer.sitepreference.setvalue",
-          "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
+          "when": "view == systemObjectDefinitionsView && viewItem == preferenceValue"
         }
       ]
     },

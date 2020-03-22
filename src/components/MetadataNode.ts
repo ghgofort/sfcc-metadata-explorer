@@ -33,6 +33,7 @@ export class MetadataNode extends TreeItem {
   public stringList: string[];
   public value: string | number;
   public displayDescription: string;
+  public preferenceValue: string;
 
   /**
    * @static
@@ -41,17 +42,18 @@ export class MetadataNode extends TreeItem {
    *    document types.
    */
   public static nodeTypes = {
-    parentContainer: 'parentContainer',
-    baseNodeName: 'baseNodeName',
-    definition: 'objectTypeDefinition',
     attribute: 'objectAttributeDefinition',
     attributeValue: 'objectAttributeValueDefinition',
+    baseNodeName: 'baseNodeName',
+    definition: 'objectTypeDefinition',
     group: 'objectAttributeGroup',
-    stringList: 'stringList',
-    value: 'value',
     groupAttribute: 'groupAttribute',
+    parentContainer: 'parentContainer',
+    preferenceValue: 'preferenceValue',
     sitePreference: 'sitePreference',
-    sites: 'sites'
+    sites: 'sites',
+    stringList: 'stringList',
+    value: 'value'
   }
 
   public static ROOT_NODES = {

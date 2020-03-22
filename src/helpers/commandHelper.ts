@@ -23,6 +23,6 @@ export default class CommandHelper {
    *    invoked to set the pref value.
    */
   public async setPref(element: MetadataNode) {
-    /** @todo:  */
+    /** @todo: Get pref val from user, then call API to set & display result */
   }
 }
