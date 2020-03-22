@@ -155,7 +155,7 @@ export default class SitePreferencesHelper {
               displayDescription: prefValue.siteValues[siteId],
               parentId: element.parentId + '.' + siteId,
               preferenceValue: {
-                type: prefValue.siteValues[siteId]
+                type: prefType
               }
             }
           ));
