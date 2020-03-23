@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.9.1 (3/23/20)
+### Patch Release
+- Bugfix for GitHub Issue #71:
+    - Added check for displayName property as well as displayName.default when setting value of node.
+
 ## 0.9.0 (3/22/20)
 ### Minor Release
 - Added ability to set SitePreferences custom attribute values as a context menu command.

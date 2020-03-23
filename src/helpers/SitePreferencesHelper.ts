@@ -136,7 +136,8 @@ export default class SitePreferencesHelper {
           prefValue.attributeDefinition.defaultValue
         ) {
           const defVal = prefValue.attributeDefinition.defaultValue;
-          const dispDesc = defVal.displayValue.default ?
+          const dispDesc = typeof defVal.displayValue !== 'undefined' &&
+            defVal.displayValue.default ?
             defVal.id + ' : ' + defVal.displayValue.default : defVal.id;
 
           childNodes.push(new MetadataNode('Default Value:',

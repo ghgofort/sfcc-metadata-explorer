@@ -18,11 +18,11 @@ export default class PreferenceValue {
   public description: IOCAPITypes.ILocalizedString = { default: '' };
   public displayName: IOCAPITypes.ILocalizedString = { default: '' };
   public attributeDefinition: ObjectAttributeDefinition;
-  public siteValues: Map<string, Object> = new Map();
+  public siteValues: Map<string, object> = new Map();
   public valueType: string = '';
 
   /**
-   * @param {Object} args - The raw JSON result for the Sites call.
+   * @param {object} args - The raw JSON result for the Sites call.
    * @constructor
    */
   constructor(args) {
