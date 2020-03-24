@@ -242,6 +242,11 @@ export const apiConfig = {
               use: 'QUERY_PARAMETER'
             },
             {
+              id: 'count',
+              type: 'number',
+              use: 'QUERY_PARAMETER'
+            },
+            {
               id: 'objectType',
               type: 'string',
               use: 'PATH_PARAMETER'

@@ -38,6 +38,7 @@ export default class SitePreferencesHelper {
       'systemObjectDefinitions',
       'getAttributeGroups',
       {
+        count: 150,
         select: '(**)',
         expand: 'definition',
         objectType: 'SitePreferences'

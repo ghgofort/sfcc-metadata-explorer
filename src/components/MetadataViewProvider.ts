@@ -202,6 +202,7 @@ export class MetadataViewProvider
         'getAttributeGroups',
         {
           select: '(**)',
+          count: 150,
           expand: 'definition',
           objectType
         }

@@ -474,6 +474,7 @@ export default class OCAPIHelper {
         'systemObjectDefinitions',
         'getAttributeGroups',
         {
+          count: 150,
           select: '(**)',
           objectType
         }

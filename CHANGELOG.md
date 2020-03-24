@@ -2,6 +2,12 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.9.2 (3/24/20)
+### Patch Release
+- Bugfix: Allow display of more than 25 attribute groups by adding count = 150 query parameter to each call.
+    - TODO: Change the max value to be a VSCode setting.
+- Updated CHANGELOG.md in prep of version bump.
+
 ## 0.9.1 (3/23/20)
 ### Patch Release
 - Bugfix for GitHub Issue #71:
