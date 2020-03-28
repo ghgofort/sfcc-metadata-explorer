@@ -1,7 +1,8 @@
-import { MetadataNode } from '../components/MetadataNode';
 import { window, workspace } from 'vscode';
+import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import OCAPIHelper from '../helpers/OCAPIHelper';
 
 /**
  * @file XMLHandler.ts
@@ -16,14 +17,15 @@ import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
  */
 export default class XMLHandler {
   /* Class imports */
-  xmlLib = require('xmlbuilder');
+  private xmlLib = require('xmlbuilder');
+  private ocapiHelper = new OCAPIHelper();
 
   /* Instance members */
-  public static NAMESPACE_STRING: String =
+  public static NAMESPACE_STRING: string =
     'http://www.demandware.com/xml/impex/metadata/2006-10-31';
 
   /** A list of System Objects that support the site-specific flag on attributes. */
-  public static FIELD_ATTRIBUTE_MAP: Object = {
+  public static FIELD_ATTRIBUTE_MAP: object = {
     'order-required-flag': ['Product'],
     'site-specific-flag': [
       'Product', 'Catalog', 'SitePreferences'
@@ -79,14 +81,24 @@ export default class XMLHandler {
    *    necessary child XML.
    * @param {string} systemObjectType - The system object that the attribute
    *    will be added to.
-   * @param {ObjectAttributeDefinition} attribute - The ObjectAttributeDefinition
-   *    class instance to derive the XML data from.
+   * @param {MetadataNode} element - The MetadataNode that was selected.
    */
-  private getObjectAttributeXML(rootNode: any,
+  private async getObjectAttributeXML(rootNode: any,
     systemObjectType: string,
-    attribute: ObjectAttributeDefinition
+    element: MetadataNode
   ) {
-    let valType = attribute.valueType.toLocaleLowerCase();
+    let attribute = element.objectAttributeDefinition;
+    const valType = attribute.valueType.toLocaleLowerCase();
+
+    // Check if the attribute is an Enum type.
+    if (valType.indexOf('enum') > -1) {
+      // Call OCAPI to get the value definitions of the attribute.
+      const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
+
+      if (attrAPIObj) {
+        attribute = new ObjectAttributeDefinition(attrAPIObj);
+      }
+    }
 
     // Create the XML tree.
     const attrDefsNode = rootNode
@@ -142,11 +154,7 @@ export default class XMLHandler {
 
     attrDefNode.ele('externally-defined-flag', attribute.externallyDefined);
 
-
-
-    /**
-     * Define properties that are specific to certain value types.
-     */
+    /** Define properties that are specific to certain value types. */
     if (valType.toLowerCase() === 'string') {
       // Set min-length for String attributes.
       attrDefNode.ele({ 'min-length': attribute.minLength });
@@ -155,7 +163,7 @@ export default class XMLHandler {
     ) {
       // Add any value-definitions that are configured for the attribute.
       const valDefs = attrDefNode.ele('value-definitions');
-      attribute.valueDefinitions.forEach(function (valDef) {
+      attribute.valueDefinitions.forEach(valDef => {
         if (valDef.displayValue && valDef.value) {
           const valDefXML = valDefs.ele('value-definition');
           valDefXML.ele('display',
@@ -174,7 +182,7 @@ export default class XMLHandler {
         attrDefNode.ele('default-value', attribute.defaultValue.value);
     }
   }
-s
+
   /* ========================================================================
    * Public Exported Methods
    * ======================================================================== */
@@ -197,8 +205,7 @@ s
     }).att('xmlns', XMLHandler.NAMESPACE_STRING);
 
     if (metaNode.nodeType === 'objectAttributeDefinition') {
-      const attribute = metaNode.objectAttributeDefinition;
-      this.getObjectAttributeXML(rootNode, systemObjectType, attribute);
+      await this.getObjectAttributeXML(rootNode, systemObjectType, metaNode);
     } else if (metaNode.nodeType === 'objectAttributeGroup') {
       this.getObjectGroupXML(rootNode, systemObjectType,
         metaNode.objectAttributeGroup);

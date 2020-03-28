@@ -10,8 +10,8 @@ import {
   CancellationTokenSource,
   InputBoxOptions,
   QuickPickOptions,
-  window,
-  TreeItemCollapsibleState
+  TreeItemCollapsibleState,
+  window
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';

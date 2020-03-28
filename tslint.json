@@ -19,7 +19,8 @@
         "single"
       ],
       "semicolon": true,
-      "trailing-comma": false
+      "trailing-comma": false,
+      "align": false
     },
     "rulesDirectory": []
 }

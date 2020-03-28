@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.9.4 (3/27/20)
+### Patch Release
+- Fix for Get XML command of "enum" type attributes.
+- Update changelog in prep of version bump.
+
 ## 0.9.3 (3/27/20)
 ### Patch Release
 - Fixed GH Issue #69 to display attribute values of enum type attributes.
