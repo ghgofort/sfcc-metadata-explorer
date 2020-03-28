@@ -23,6 +23,7 @@ export class MetadataNode extends TreeItem {
   public objectAttributeDefinition: ObjectAttributeDefinition;
   public objectAttributeGroup: ObjectAttributeGroup;
   public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
+  public objectAttributeValueDefinitions: ObjectAttributeValueDefinition[];
   public objectTypeDefinition: ObjectTypeDefinition;
   public parentContainer: string;
   public parentId: string;
@@ -45,6 +46,7 @@ export class MetadataNode extends TreeItem {
   public static nodeTypes = {
     attribute: 'objectAttributeDefinition',
     attributeValue: 'objectAttributeValueDefinition',
+    attributeValues: 'objectAttributeValueDefinitions',
     baseNodeName: 'baseNodeName',
     definition: 'objectTypeDefinition',
     group: 'objectAttributeGroup',

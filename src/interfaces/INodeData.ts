@@ -21,6 +21,7 @@ export interface INodeData {
   objectAttributeDefinition?: ObjectAttributeDefinition;
   objectAttributeGroup?: ObjectAttributeGroup;
   objectAttributeValueDefinition?: ObjectAttributeValueDefinition;
+  objectAttributeValueDefinitions?: ObjectAttributeValueDefinition[];
   objectTypeDefinition?: ObjectTypeDefinition;
   stringList?: string[];
   parentContainer?: string;

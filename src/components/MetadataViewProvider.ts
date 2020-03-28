@@ -35,6 +35,7 @@ export class MetadataViewProvider
   public readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
   public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
+  private ocapiHelper = new OCAPIHelper();
   private service: OCAPIService = new OCAPIService();
 
   /**
@@ -113,6 +114,8 @@ export class MetadataViewProvider
               spHelper.getPreferencesInGroup(element) :
               this.getAttributeGroupChildren(element);
           } else if (nodeType === 'objectAttributeValueDefinition') {
+            return this.getAttributeValueDefinitionChildren(element);
+          } else if (nodeType === 'objectAttributeValueDefinitions') {
             return this.getAttributeValueDefinitionChildren(element);
           } else if (nodeType === 'stringList') {
             return this.getStringListChildren(element);
@@ -535,8 +538,7 @@ export class MetadataViewProvider
     // Check if the attribute is an Enum type.
     if (objAttrDef.valueType.indexOf('enum') > -1) {
       // Call OCAPI to get the value definitions of the attribute.
-      const ocapiHelper = new OCAPIHelper();
-      const attrAPIObj = await ocapiHelper.getExpandedAttribute(element);
+      const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
 
       if (attrAPIObj) {
         objAttrDef = new ObjectAttributeDefinition(attrAPIObj);
@@ -598,10 +600,13 @@ export class MetadataViewProvider
         );
       } else if (Array.isArray(objAttrDef[key]) && objAttrDef[key].length) {
           // == ObjectAttributeValueDefinition[]
-          /**
-           * @todo: Return an expandable node and setup function to get child
-           *    nodes for each configured Enum value.
-           */
+          return new MetadataNode('Value Definitions',
+            TreeItemCollapsibleState.Collapsed,
+            {
+              objectAttributeValueDefinitions: objAttrDef[key],
+              parentId: element.parentId + '.' + element.objectAttributeDefinition.id
+            }
+          );
       }
     });
   }
