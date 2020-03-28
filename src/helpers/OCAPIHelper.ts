@@ -10,7 +10,8 @@ import {
   CancellationTokenSource,
   InputBoxOptions,
   QuickPickOptions,
-  window
+  window,
+  TreeItemCollapsibleState
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
@@ -570,6 +571,35 @@ export default class OCAPIHelper {
       console.log(e);
       // If there was an error, return the error message for display.
       return Promise.reject('ERROR occured while deleting the attribute.');
+    }
+  }
+
+  /**
+   * Get the tree nodes for the value definitions of an `enum-of-string` or
+   * `enum-of-int` type attribute definition.
+   *
+   * @param {MetadataNode} node - The currently selected tree node instance.
+   */
+  public getValueDefinitionNodes(node: MetadataNode): MetadataNode[] {
+    const attrVals = node.objectAttributeValueDefinitions;
+    const parentId = node.parentId + '.valueDefinitions';
+    if (attrVals.length) {
+      return attrVals.map(val => {
+        return new MetadataNode(String(val.value),
+        TreeItemCollapsibleState.Collapsed,
+        {
+          parentId,
+          objectAttributeValueDefinition: val
+        });
+      });
+    } else {
+      return [new MetadataNode('No values configured.',
+        TreeItemCollapsibleState.None,
+        {
+          parentId,
+          displayDescription: '---'
+        }
+      )];
     }
   }
 

@@ -116,7 +116,7 @@ export class MetadataViewProvider
           } else if (nodeType === 'objectAttributeValueDefinition') {
             return this.getAttributeValueDefinitionChildren(element);
           } else if (nodeType === 'objectAttributeValueDefinitions') {
-            return this.getAttributeValueDefinitionChildren(element);
+            return this.ocapiHelper.getValueDefinitionNodes(element);
           } else if (nodeType === 'stringList') {
             return this.getStringListChildren(element);
           }
