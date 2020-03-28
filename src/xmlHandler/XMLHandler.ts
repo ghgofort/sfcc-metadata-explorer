@@ -159,6 +159,7 @@ export default class XMLHandler {
       // Set min-length for String attributes.
       attrDefNode.ele({ 'min-length': attribute.minLength });
     } else if (valType.indexOf('enum') > -1 &&
+      attribute.valueDefinitions &&
       attribute.valueDefinitions.length
     ) {
       // Add any value-definitions that are configured for the attribute.

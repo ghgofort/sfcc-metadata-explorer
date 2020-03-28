@@ -3,7 +3,12 @@
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
 ## Unreleased Changes:
+
+## 0.10.1 (3/28/20)
+### Patch Release
+- Fix bug w/getXML from enum_of_string w/no attr/definitions defined.
 - Fix version in changelog after releasing minor instead of patch by mistake.
+- Update changelog in prep of version bump.
 
 ## 0.10.0 (3/27/20)
 ### Minor Release
