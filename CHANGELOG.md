@@ -2,8 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## 0.9.4 (3/27/20)
-### Patch Release
+## Unreleased Changes:
+- Fix version in changelog after releasing minor instead of patch by mistake.
+
+## 0.10.0 (3/27/20)
+### Minor Release
 - Fix for Get XML command of "enum" type attributes.
 - Update changelog in prep of version bump.
 
