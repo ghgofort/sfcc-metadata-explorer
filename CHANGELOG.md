@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
+## 0.9.3 (3/27/20)
+### Patch Release
+- Fixed GH Issue #69 to display attribute values of enum type attributes.
+- Updated changelog & bumbed version w/release.
+
 ## 0.9.2 (3/24/20)
 ### Patch Release
 - Bugfix: Allow display of more than 25 attribute groups by adding count = 150 query parameter to each call.
