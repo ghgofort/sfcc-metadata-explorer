@@ -113,10 +113,15 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
     this.siteSpecific = args.site_specific || false;
     this.system = args.system || false;
     this.unit = args.unit || { default: '' };
-    this.valueDefinitions = args.value_definitions || [];
     this.valueType = args.value_type || '';
     this.visible = args.visible || false;
     this.includedFields = args.includeFields || [];
+
+    if (args.value_definitions && args.value_definitions.length) {
+      this.valueDefinitions = args.value_definitions.map(valueDef => {
+        return new ObjectAttributeValueDefinition(valueDef);
+      });
+    }
   }
 
   /**

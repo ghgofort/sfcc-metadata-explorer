@@ -17,6 +17,7 @@ import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
+import OCAPIHelper from '../helpers/OCAPIHelper';
 import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
 import { ICallSetup } from '../services/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
@@ -153,7 +154,7 @@ export class MetadataViewProvider
           parentType,
           'getAttributes',
           {
-            count: 500,
+            count: 700,
             objectType,
             select: '(**)'
           }
@@ -529,8 +530,18 @@ export class MetadataViewProvider
   private async getAttributeDefinitionChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    const objAttrDef: ObjectAttributeDefinition =
-      element.objectAttributeDefinition;
+    let objAttrDef: ObjectAttributeDefinition = element.objectAttributeDefinition;
+
+    // Check if the attribute is an Enum type.
+    if (objAttrDef.valueType.indexOf('enum') > -1) {
+      // Call OCAPI to get the value definitions of the attribute.
+      const ocapiHelper = new OCAPIHelper();
+      const attrAPIObj = await ocapiHelper.getExpandedAttribute(element);
+
+      if (attrAPIObj) {
+        objAttrDef = new ObjectAttributeDefinition(attrAPIObj);
+      }
+    }
 
     // Loop through the member properties and handle each possible type
     // for display as a node on the tree.
@@ -585,6 +596,12 @@ export class MetadataViewProvider
               element.parentId + '.' + element.objectAttributeDefinition.id
           }
         );
+      } else if (Array.isArray(objAttrDef[key]) && objAttrDef[key].length) {
+          // == ObjectAttributeValueDefinition[]
+          /**
+           * @todo: Return an expandable node and setup function to get child
+           *    nodes for each configured Enum value.
+           */
       }
     });
   }

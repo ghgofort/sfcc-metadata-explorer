@@ -149,6 +149,33 @@ export const apiConfig = {
         },
 
         /* ==================================================================
+         * GET OBJECT ATTRIBUTE DEFINITION
+         * ================================================================== */
+        getAttribute: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dw-validate-existing': true,
+            Accept: 'application/json'
+          },
+          method: 'GET',
+          params: [
+            {
+              id: 'id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path:
+            'system_object_definitions/{objectType}/attribute_definitions/{id}'
+        },
+
+        /* ==================================================================
          * CREATE NEW ATTRIBUTE DEFINITION
          * ================================================================== */
         createAttribute: {
@@ -321,7 +348,7 @@ export const apiConfig = {
       api: 'data',
       availableCalls: {
         /* ==================================================================
-         * GET SYSTEM OBJECT DEFINITION & ATTRIBUTES
+         * GET SitePreference by Id
          * ================================================================== */
         getPreference: {
           authorization: 'BM_USER',

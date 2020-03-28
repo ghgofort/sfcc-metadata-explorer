@@ -13,7 +13,6 @@ import {
   window
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
-import { MetadataView } from '../components/MetadataView';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import { ICallSetup } from '../services/ICallSetup';
@@ -26,7 +25,6 @@ import { OCAPIService } from '../services/OCAPIService';
  * object definitions used by the SFCC instance.
  */
 export default class OCAPIHelper {
-  private metadataView: MetadataView;
   private service: OCAPIService = new OCAPIService();
 
   /**
@@ -63,14 +61,6 @@ export default class OCAPIHelper {
     'set of numbers': 'set_of_double',
     'set of strings': 'set_of_string'
   };
-
-  /**
-   * @param {MetadataView} metaView - The MetadataView class instance that can
-   *    be used to read the seleted items in the MetadataViewProvider instance.
-   */
-  constructor(metaView: MetadataView) {
-    this.metadataView = metaView;
-  }
 
   /* ========================================================================
    * Private Instance Members
@@ -541,6 +531,37 @@ export default class OCAPIHelper {
         {
           objectType,
           id: attributeId
+        }
+      );
+
+      return await this.service.makeCall(_callSetup);
+    } catch (e) {
+      console.log(e);
+      // If there was an error, return the error message for display.
+      return Promise.reject('ERROR occured while deleting the attribute.');
+    }
+  }
+
+  /**
+   * Gets the full System Object Attribute definition from OCAPI with value
+   * definitions included.
+   *
+   * @param {MetadataNode} node - The selected tree node instance.
+   */
+  public async getExpandedAttribute(node: MetadataNode): Promise<any> {
+    const path = node.parentId.split('.');
+    const objectType = path[path.length - 2];
+    const attributeId = node.objectAttributeDefinition.id;
+    let _callSetup: ICallSetup;
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'getAttribute',
+        {
+          objectType,
+          id: attributeId,
+          expand: 'value'
         }
       );
 

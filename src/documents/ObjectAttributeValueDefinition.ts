@@ -18,7 +18,7 @@ export default class ObjectAttributeValueDefinition {
   public displayValue: IOCAPITypes.ILocalizedString;
   public id: string;
   public position: number;
-  public value: Object;
+  public value: object;
 
   /**
    * A constructor function for initializing new instances of the class.
@@ -48,9 +48,8 @@ export default class ObjectAttributeValueDefinition {
    * @return {Object} - Returns a JSON object representation of the OCAPI
    *    document class that can be submitted to the API methods.
    */
-  public getDocument(includeFields: string[] = []): Object {
+  public getDocument(includeFields: string[] = []): object {
     let result = {};
-
     return result;
   }
 }

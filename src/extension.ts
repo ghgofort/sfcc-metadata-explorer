@@ -16,7 +16,7 @@ import XMLHandler from './xmlHandler/XMLHandler';
 export function activate(context: ExtensionContext) {
   // Setup view for System Object Definitions view.
   const metaView: MetadataView = new MetadataView(context);
-  const ocapiHelper = new OCAPIHelper(metaView);
+  const ocapiHelper = new OCAPIHelper();
   const xmlHandler = new XMLHandler();
   const commandHelper = new CommandHelper();
   metaView.getDataFromProvider('systemObjectDefinitions');
