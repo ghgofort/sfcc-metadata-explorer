@@ -2,7 +2,9 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## Unreleased Changes:
+## 0.11.0 (2/29/20)
+- Add submenu context command to delete a system object attribute group.
+- Updated changelog & readme with new command.
 
 ## 0.10.1 (3/28/20)
 ### Patch Release

@@ -90,6 +90,11 @@
         "description": "Add a new attribute group to the system object."
       },
       {
+        "command": "extension.sfccexplorer.objectattributegroup.deletegroup",
+        "title": "Delete attribute group",
+        "description": "Deletes the attribute group and all asignments to the group."
+      },
+      {
         "command": "extension.sfccexplorer.systemobjectattribute.getxml",
         "title": "Get attribute XML",
         "description": "Get XML for the attribute to import & export via SFCC."
@@ -141,6 +146,10 @@
         },
         {
           "command": "extension.sfccexplorer.objectattributegroup.getxml",
+          "when": "view == systemObjectDefinitionsView && viewItem == group"
+        },
+        {
+          "command": "extension.sfccexplorer.objectattributegroup.deletegroup",
           "when": "view == systemObjectDefinitionsView && viewItem == group"
         },
         {

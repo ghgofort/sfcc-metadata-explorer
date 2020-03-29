@@ -186,6 +186,36 @@ export function activate(context: ExtensionContext) {
   );
 
   /**
+   * Binds the handler for the context menu command to set the default value of
+   * a system object attribute.
+   *
+   * @listens extension.sfccexplorer.groupattributedefinition.removefromgroup
+   */
+  const deleteGroupDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.objectattributegroup.deletegroup',
+    (metaNode: MetadataNode) => {
+      ocapiHelper
+        .deleteAttributeGroup(metaNode)
+        .then(data => {
+          window.showInformationMessage(
+            'Attribute group deleted successfully.');
+          metaView.currentProvider.refresh();
+        })
+        .catch(err => {
+          // If the user canceled the action, then don't show an error.
+          if (typeof err.error === 'boolean' &&
+            err.error === false
+          ) {
+            return;
+          }
+
+          window.showErrorMessage('Could not delete attribute group:' + JSON.stringify(err));
+          console.log(err);
+        });
+    }
+  );
+
+  /**
    * Binds the handler to the context menu action to get the XML from a system
    * object attribute definition.
    *
@@ -228,6 +258,7 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  context.subscriptions.push(deleteGroupDisposable);
   context.subscriptions.push(setSitePreferenceValue);
   context.subscriptions.push(getAttributeXMLDisposable);
   context.subscriptions.push(getAttributeGroupXMLDisposable);
