@@ -2,12 +2,9 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
 
-## Unreleased Changes:
-- Added setup for call to OCAPI DELETE attribute group endpoint to apiConfig module.
-- Added new command to delete attribute group to package.json.
-- Added command listener w/call to helper in extension.ts.
-- Added helper to make call to OCAPService class for delete operation.
-- Added command to delete attribute group as context menu option when attribute groups are selected.
+## 0.11.0 (2/29/20)
+- Add submenu context command to delete a system object attribute group.
+- Updated changelog & readme with new command.
 
 ## 0.10.1 (3/28/20)
 ### Patch Release
