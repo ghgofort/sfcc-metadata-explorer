@@ -6,6 +6,7 @@ All notable changes to the "sfcc-metadata-explorer" extension will be documented
 - Add submenu context command to delete a system object attribute group.
 - Updated changelog & readme with new command.
 
+
 ## 0.10.1 (3/28/20)
 ### Patch Release
 - Fix bug w/getXML from enum_of_string w/no attr/definitions defined.
