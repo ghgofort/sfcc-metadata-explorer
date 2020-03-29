@@ -544,6 +544,37 @@ export default class OCAPIHelper {
   }
 
   /**
+   * Deletes the selected attribute group from the system object.
+   *
+   * @param {MetadataNode} node - The selected tree node instance.
+   * @returns {Promise<any>} - Returns a Promise that resolves to a results
+   *    object from the API call.
+   */
+  public async deleteAttributeGroup(node: MetadataNode): Promise<any> {
+    const path = node.parentId.split('.');
+    const objectType = path[path.length - 2];
+    const groupId = node.objectAttributeGroup.id;
+    let _callSetup: ICallSetup;
+
+    try {
+      _callSetup = await this.service.getCallSetup(
+        'systemObjectDefinitions',
+        'deleteAttributeGroup',
+        {
+          objectType,
+          id: groupId
+        }
+      );
+
+      return await this.service.makeCall(_callSetup);
+    } catch (e) {
+      console.log(e);
+      // If there was an error, return the error message for display.
+      return Promise.reject('ERROR occured while deleting the attribute.');
+    }
+  }
+
+  /**
    * Gets the full System Object Attribute definition from OCAPI with value
    * definitions included.
    *

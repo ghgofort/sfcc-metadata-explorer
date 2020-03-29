@@ -256,6 +256,32 @@ export const apiConfig = {
         },
 
         /* ==================================================================
+         * DELETE ATTRIBUTE GROUP
+         * ================================================================== */
+        deleteAttributeGroup: {
+          authorization: 'BM_USER',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-dw-validate-existing': true,
+            Accept: 'application/json'
+          },
+          method: 'DELETE',
+          params: [
+            {
+              id: 'id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'objectType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path: 'system_object_definitions/{objectType}/attribute_groups/{id}'
+        },
+
+        /* ==================================================================
          * GET ATTRIBUTE GROUPS
          * ================================================================== */
         getAttributeGroups: {
