@@ -1,11 +1,11 @@
 /**
  * @file SitesHelper.ts
- *@fileoverview - Class for helping with Sites API resource call setup & result handling.
+ * @fileoverview - Class for helping with Sites API resource call setup & result handling.
  */
 
-import { OCAPIService } from '../services/OCAPIService';
-import Sites from '../documents/Sites';
 import { window } from 'vscode';
+import Sites from '../documents/Sites';
+import { OCAPIService } from '../services/OCAPIService';
 
 /**
  * @class
@@ -22,11 +22,11 @@ export default class SitesHelper {
    */
   public async getAllSites(groupId): Promise<Sites> {
     try {
-      let _callSetup = await this.service.getCallSetup('sites', 'getAll', {
+      const _callSetup = await this.service.getCallSetup('sites', 'getAll', {
         select: '(**)',
         objectType: 'Sites',
       });
-      let _callResult = await this.service.makeCall(_callSetup);
+      const _callResult = await this.service.makeCall(_callSetup);
 
       if (!_callResult.error &&
         typeof _callResult.count !== 'undefined' &&

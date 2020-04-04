@@ -38,4 +38,5 @@ export interface IPreferenceValue {
   id: string;
   type: string;
   enumValues?: string[] | number[];
+  objectAttributeDefinition: ObjectAttributeDefinition;
 }
