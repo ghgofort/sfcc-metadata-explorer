@@ -8,6 +8,8 @@ import {
 import { MetadataNode } from '../components/MetadataNode';
 import { OCAPIService } from '../services/OCAPIService';
 import SitePreferencesHelper from './SitePreferencesHelper';
+import OCAPIHelper from './OCAPIHelper';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 
 /**
  * @class
@@ -15,12 +17,14 @@ import SitePreferencesHelper from './SitePreferencesHelper';
  *    from the view provider functionality.
  */
 export default class CommandHelper {
+  private ocapiHelper: OCAPIHelper;
   private service: OCAPIService;
   private prefsHelper: SitePreferencesHelper;
 
   constructor() {
     this.service = new OCAPIService();
     this.prefsHelper = new SitePreferencesHelper(this.service);
+    this.ocapiHelper = new OCAPIHelper();
   }
 
   /* ========================================================================
@@ -70,6 +74,68 @@ export default class CommandHelper {
     }
 
     return Promise.resolve(value);
+  }
+
+  /**
+   * @description- Gets the Int type value from the list of configured value
+   *    options from the user.
+   * @return {Promise<number>} - Returns a promise that resolves to the enum
+   *    value that the user selected to set the preference value to.
+   */
+  private async getEnumValue(element: MetadataNode): Promise<number|string> {
+    // Create a cancelation token instance to cancel the request when needed.
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelBoolToken: CancellationToken = tokenSource.token;
+    const intSelectOptions: QuickPickOptions = {
+      placeHolder: 'Select value'
+    };
+
+    try {
+      const displayValues = [];
+      const valueOptions = {};
+
+      // Get the expanded attribute with the values.
+      let attrDef = element.preferenceValue.objectAttributeDefinition;
+      // Call OCAPI to get the value definitions of the attribute.
+      const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
+
+      if (attrAPIObj) {
+        attrDef = new ObjectAttributeDefinition(attrAPIObj);
+      } else {
+        throw new Error('Failed call to OCAPI to get attribute values.');
+      }
+
+      if (attrDef &&
+        attrDef.valueDefinitions &&
+        attrDef.valueDefinitions.length
+      ) {
+        // Create a map object for value => displayValue.
+        attrDef.valueDefinitions.forEach(attrVal => {
+          valueOptions[attrVal.displayValue.default] = attrVal.value;
+          // Keep an array of display values for choices.
+          displayValues.push(attrVal.displayValue.default);
+        });
+      } else {
+        // If no attribute values show a warning message & return.
+        window.showWarningMessage('No values configured for ' +
+          attrDef.valueType + ' attribute type');
+        return Promise.reject('No values configured for enum type.');
+      }
+
+      // Show user quick-pick to select one of the configured enum values.
+      const selectedValue = await window.showQuickPick(
+        displayValues,
+        intSelectOptions,
+        cancelBoolToken
+      );
+
+      return Promise.resolve(valueOptions[selectedValue]);
+    } catch (e) {
+      window.showErrorMessage('There was an error setting attribute value.');
+      console.log(e);
+    }
+
+    return Promise.reject('Action canceled.');
   }
 
   /**
@@ -143,26 +209,41 @@ export default class CommandHelper {
    * @return {Promise<any>} - Returns a Promise that resolves to the value the
    *    user has selcted to set the attribute to.
    */
-  private async getValueToSet(dataType: string): Promise<any> {
+  private async getValueToSet(element: MetadataNode): Promise<any> {
+    const dataType = element.preferenceValue.type;
     let prefValue;
     let success = true;
 
-    // Set the options based on the data type.
-    switch (dataType) {
-      case 'boolean':
-        prefValue = this.getBooleanValue();
-        break;
-      case 'int':
-        prefValue = this.getIntValue();
-        break;
-      case 'string':
-        prefValue = this.getStringValue();
-        break;
-      default:
-        prefValue =
-          'Setting attribute on value type ' + dataType + ' is not supported.';
+    try {
+      // Set the options based on the data type.
+      switch (dataType) {
+        case 'boolean':
+          prefValue = await this.getBooleanValue();
+          break;
+        case 'enum_of_int':
+        case 'enum_of_string':
+          prefValue = await this.getEnumValue(element);
+          break;
+        case 'int':
+          prefValue = await this.getIntValue();
+          break;
+        case 'string':
+          prefValue = await this.getStringValue();
+          break;
+        default:
+          prefValue = 'Setting attribute on value type ' + dataType +
+            ' is not currently supported.';
+          success = false;
+          break;
+      }
+
+      if (!prefValue) {
+        window.showInformationMessage('Set attribute value cancelled.');
         success = false;
-        break;
+      }
+    } catch (e) {
+      success = false;
+      console.log('Unable to set attribute value: ', e);
     }
 
     return success ? Promise.resolve(prefValue) : Promise.reject(prefValue);
@@ -179,13 +260,13 @@ export default class CommandHelper {
     const siteId = par.pop();
     const groupId = par.pop();
     let error = false;
-    const dataType = element.preferenceValue.type;
+
     // Get the value to set the preference to from the user.
-    const prefValue = await this.getValueToSet(dataType)
-      .catch(err => {
-        window.showErrorMessage(err);
+    const prefValue = await this.getValueToSet(element);
+    if (!prefValue) {
+        window.showErrorMessage('Could not set pref value.');
         error = true;
-      });
+    }
 
     // Do not continue if there was an error.
     if (error) {

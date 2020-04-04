@@ -582,8 +582,13 @@ export default class OCAPIHelper {
    */
   public async getExpandedAttribute(node: MetadataNode): Promise<any> {
     const path = node.parentId.split('.');
-    const objectType = path[path.length - 2];
-    const attributeId = node.objectAttributeDefinition.id;
+    let objectType = node.objectAttributeDefinition ? path[path.length - 2] :
+      'SitePreferences';
+    // Capitalize 1st letter of type for OCAPI.
+    objectType = objectType.replace(/^\w/, c => c.toUpperCase());
+    const attributeId = node.objectAttributeDefinition ?
+      node.objectAttributeDefinition.id :
+      node.preferenceValue.id;
     let _callSetup: ICallSetup;
 
     try {
