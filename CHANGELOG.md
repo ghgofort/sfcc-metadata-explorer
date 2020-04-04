@@ -1,14 +1,15 @@
 # Change Log
 
-All notable changes to the "sfcc-metadata-explorer" extension will be documented in this file.
+All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
 ## 0.11.1 (4/4/20)
+### Patch Release
 - Updates to allow setting preference values of a enum type from existing configured enum type values.
 
 ## 0.11.0 (3/29/20)
+### Minor Release
 - Add submenu context command to delete a system object attribute group.
 - Updated changelog & readme with new command.
-
 
 ## 0.10.1 (3/28/20)
 ### Patch Release
