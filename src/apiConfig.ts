@@ -4,6 +4,52 @@
  *    the available OCAPI calls.
  */
 
+import { window, workspace, WorkspaceConfiguration } from 'vscode';
+
+/* ========================================================================
+ * Configuration Helpers
+ * ======================================================================== */
+
+/**
+ * @function getAPIVersion - Gets the configured API version from the VSCode
+ *    configuration setting if configured or uses a default fallback if not.
+ * @returns {string} - Returns the version string for use in an OCAPI document.
+ */
+export const getAPIVersion = () => {
+  const DEFAULT = '20.4';
+  // Get the workspace configuration object for all configuration settings
+  // related to this extension.
+  const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(
+    'extension.sfccmetadata'
+  );
+
+  const apiVersion: string = String(workspaceConfig.get('ocapi.version'));
+  const tester = /^[\d]{2}\.[\d]$/;
+  if (apiVersion && !tester.test(apiVersion)) {
+    window.showErrorMessage('Value configured for OCAPI version in preference' +
+      ' is not a valid value: ' + apiVersion + '. Using default version: ' +
+      DEFAULT);
+  }
+
+  return apiVersion && tester.test(apiVersion) ? apiVersion : DEFAULT;
+};
+
+/**
+ * @function getAPIVersionForPath - Gets the configured API version in the
+ *    expected format for using in an OCAPI call URL.
+ * @returns {string} - Returns the string version of the URL.
+ */
+export const getAPIVersionForPath = () => {
+  return 'v' + getAPIVersion().replace('.', '_');
+};
+
+/* ========================================================================
+ * Exported API Configuration Object
+ * ======================================================================== */
+
+/**
+ * @description - API configuration object for confguration of the OCAPI routes.
+ */
 export const apiConfig = {
   clientId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
@@ -454,5 +500,5 @@ export const apiConfig = {
    * assigned in your sandboxes OCAPI Configuration and should be in the same
    * format as it is in an OCAPI URL (i.e.: v18_8).
    */
-  version: 'v18_8'
+  version: getAPIVersionForPath()
 };

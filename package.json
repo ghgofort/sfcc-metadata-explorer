@@ -43,6 +43,12 @@
           "default": true,
           "description": "Enable the display of Site Preferences in the meta-explorer tree view",
           "scope": "window"
+        },
+        "extension.sfccmetadata.ocapi.version": {
+          "type": "string",
+          "default": "20.4",
+          "description": "Configure the OCAPI version for API calls - default: 20.4",
+          "scope": "window"
         }
       }
     },

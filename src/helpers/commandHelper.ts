@@ -6,10 +6,10 @@ import {
   window
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
-import { OCAPIService } from '../services/OCAPIService';
-import SitePreferencesHelper from './SitePreferencesHelper';
-import OCAPIHelper from './OCAPIHelper';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
+import { OCAPIService } from '../services/OCAPIService';
+import OCAPIHelper from './OCAPIHelper';
+import SitePreferencesHelper from './SitePreferencesHelper';
 
 /**
  * @class
@@ -237,7 +237,7 @@ export default class CommandHelper {
           break;
       }
 
-      if (!prefValue) {
+      if (typeof prefValue === 'undefined') {
         window.showInformationMessage('Set attribute value cancelled.');
         success = false;
       }
@@ -263,7 +263,7 @@ export default class CommandHelper {
 
     // Get the value to set the preference to from the user.
     const prefValue = await this.getValueToSet(element);
-    if (!prefValue) {
+    if (typeof prefValue === 'undefined') {
         window.showErrorMessage('Could not set pref value.');
         error = true;
     }
@@ -292,8 +292,10 @@ export default class CommandHelper {
 
       const callResult = await this.service.makeCall(callSetup);
       console.log(callResult);
-      window.showInformationMessage('Attribute value set.');
-      return Promise.resolve(true);
+      if (callResult && !callResult.error) {
+        window.showInformationMessage('Attribute value set.');
+        return Promise.resolve(true);
+      }
     } catch (e) {
       window.showErrorMessage('Unable to set preference value.');
       console.error(e.message);

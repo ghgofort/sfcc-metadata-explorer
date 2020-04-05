@@ -49,7 +49,7 @@ export default class ObjectAttributeValueDefinition {
    *    document class that can be submitted to the API methods.
    */
   public getDocument(includeFields: string[] = []): object {
-    let result = {};
+    const result = {};
     return result;
   }
 }

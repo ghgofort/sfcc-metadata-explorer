@@ -129,13 +129,17 @@ export default class SitePreferencesHelper {
           preferenceId: prefId
       });
 
-      const _callResult = await this.service.makeCall(_callData);
+      const callResult = await this.service.makeCall(_callData);
+      const sites = await this.sitesHelper.getAllSites();
 
-      if (!_callResult.error && _callResult.site_values) {
-        const prefValue = new PreferenceValue(_callResult);
+      if (!callResult.error) {
+        const prefValue = new PreferenceValue(callResult);
+
+        // Add a default value tree node.
         if (prefValue.attributeDefinition &&
           prefValue.attributeDefinition.defaultValue
         ) {
+          // Use default value from attribute definition.
           const defVal = prefValue.attributeDefinition.defaultValue;
           const dispDesc = typeof defVal.displayValue !== 'undefined' &&
             defVal.displayValue.default ?
@@ -148,23 +152,40 @@ export default class SitePreferencesHelper {
                 parentId: element.parentId + '.' + defVal.id
               }
             ));
-        }
-
-        Object.keys(prefValue.siteValues).forEach(siteId => {
-          childNodes.push(new MetadataNode(siteId,
+        } else {
+          // No default value set.
+          childNodes.push(new MetadataNode('Default Value: ',
             TreeItemCollapsibleState.None,
             {
-              displayDescription: String(prefValue.siteValues[siteId]),
-              parentId: element.parentId + '.' + siteId,
-              preferenceValue: {
-                id: prefId,
-                type: prefType,
-                objectAttributeDefinition: element.objectAttributeDefinition
-              }
+              displayDescription: 'No default set',
+              parentId: element.parentId + '.' + prefValue.id
             }
           ));
+        }
+
+        if (sites && sites.count && sites.data && sites.data.length) {
+
+          sites.data.forEach(site => {
+            const siteVal = prefValue.siteValues &&
+              typeof prefValue.siteValues[site.id] !== 'undefined' ?
+              prefValue.siteValues[site.id] : 'No value set';
+            childNodes.push(new MetadataNode(site.id,
+              TreeItemCollapsibleState.None,
+              {
+                displayDescription: String(siteVal),
+                parentId: element.parentId + '.' + site.id,
+                preferenceValue: {
+                  id: prefId,
+                  type: prefType,
+                  objectAttributeDefinition: element.objectAttributeDefinition
+                }
+              }
+            ));
+          });
+        }
+        Object.keys(prefValue.siteValues).forEach(siteId => {
         });
-      } else if (!_callResult.error) {
+      } else if (!callResult.error) {
         childNodes.push(new MetadataNode('No site values set.',
           TreeItemCollapsibleState.None,
           {
@@ -173,10 +194,10 @@ export default class SitePreferencesHelper {
           }
         ));
 
-        console.log('OCAPI result: ', _callResult);
+        console.log('OCAPI result: ', callResult);
       } else {
         window.showErrorMessage('Unable to get preference values.');
-        console.error('ERROR -- OCAPI call result: ', _callResult);
+        console.error('ERROR -- OCAPI call result: ', callResult);
       }
     } catch (e) {
       window.showErrorMessage('ERROR calling OCAPI: ' + e.message);
