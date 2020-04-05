@@ -2,6 +2,12 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 0.11.2 (4/5/20)
+### Patch Release
+- Fixed issue of displaying site preference values for all sites if they have a value configured or not.
+- Fixed issue of display of bool-false values in tree due to teneray exressions.
+- Added ability to set attribute value on site with no current value.
+
 ## 0.11.1 (4/4/20)
 ### Patch Release
 - Updates to allow setting preference values of a enum type from existing configured enum type values.
