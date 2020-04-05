@@ -1,5 +1,6 @@
-import { IOCAPITypes } from '../interfaces/IOCAPITypes';
+import { apiConfig, getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 
 /**
  * Site.ts
@@ -18,7 +19,7 @@ export default class Site implements IAPIDocument {
   public description: IOCAPITypes.ILocalizedString;
   public displayName: IOCAPITypes.ILocalizedString;
   public id: string;
-  public inDeletion: Boolean;
+  public inDeletion: boolean;
   public link: string;
   public storefrontStatus: string;
   public includedFields: string[] = [];
@@ -41,7 +42,7 @@ export default class Site implements IAPIDocument {
     this.storefrontStatus = args && args.storefront_status ? args.storefront_status : '';
 
     if (args && args.customerListLink) {
-      let title: IOCAPITypes.ILocalizedString = { default: '' };
+      const title: IOCAPITypes.ILocalizedString = { default: '' };
       if (args.customerListLink.title && args.customerListLink.title.default) {
         const localeKeys = Object.keys(args.customerListLink.title).filter(key => key !== 'default');
         title.default = args.customerListLink.title.default;
@@ -55,7 +56,7 @@ export default class Site implements IAPIDocument {
       this.customerListLink = {
         customer_list_id: args.customerListLink.id || '',
         link: args.customerListLink.link || '',
-        title: title
+        title
       };
     }
   }
@@ -68,7 +69,7 @@ export default class Site implements IAPIDocument {
    *    fields will be included.
    * @return {IGetDocument}
    */
-  public getDocument(includeFields: string[] = []): Object {
+  public getDocument(includeFields: string[] = []): object {
     const documentObj = {};
     let memberNames = Object.keys(this).filter(
       key =>
@@ -105,14 +106,14 @@ export default class Site implements IAPIDocument {
         if (!isComplexType) {
           documentObj[docPropName] = localPropVal;
         } else if (docPropName === 'customerListLink') {
-            let title = { default: '' };
+            const title = { default: '' };
             title.default = localPropVal.title && localPropVal.title.default || '';
 
             documentObj[docPropName] = {
               customerListId: localPropVal.customer_list_id || '',
               link: localPropVal.link || '',
-              title: title
-            }
+              title
+            };
         } else {
           // ==> ILocalizedString - this.description & this.displayName
           documentObj[docPropName] = localPropVal;
@@ -120,7 +121,8 @@ export default class Site implements IAPIDocument {
       }
     });
 
-    documentObj['_v'] = '18.8';
+    // tslint:disable-next-line: no-string-literal
+    documentObj['_v'] = getAPIVersion();
 
     return documentObj;
   }

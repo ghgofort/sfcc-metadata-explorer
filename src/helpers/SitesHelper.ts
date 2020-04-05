@@ -20,7 +20,7 @@ export default class SitesHelper {
    *
    * @return {Sites} - Returns an instance of the Sites document class.
    */
-  public async getAllSites(groupId): Promise<Sites> {
+  public async getAllSites(): Promise<Sites> {
     try {
       const _callSetup = await this.service.getCallSetup('sites', 'getAll', {
         select: '(**)',
@@ -48,4 +48,3 @@ export default class SitesHelper {
 
   }
 }
-

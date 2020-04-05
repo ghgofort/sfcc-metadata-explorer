@@ -9,7 +9,8 @@ import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
-import { INodeData, IPreferenceValue } from '../interfaces/INodeData';
+import Sites from '../documents/Sites';
+import { INodeData, IPreferenceValue, IPreferenceValueDefinition } from '../interfaces/INodeData';
 
 /**
  * @class MetadataNode
@@ -27,6 +28,8 @@ export class MetadataNode extends TreeItem {
   public objectTypeDefinition: ObjectTypeDefinition;
   public parentContainer: string;
   public parentId: string;
+  public preferenceValueDefinitions: IPreferenceValueDefinition[];
+  public sites: Sites[];
   public stringList: string[];
   public value: string | number;
   public displayDescription: string;

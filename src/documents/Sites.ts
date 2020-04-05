@@ -12,14 +12,14 @@ import Site from './Site';
  *    sending API calls that require the Sites document.
  */
 export default class Sites {
-  public count: Number = 0;
+  public count: number = 0;
   public data: Site[] = [];
-  public expand: String[] = [];
-  public next: String = '';
-  public previous: String = '';
-  public select: String = '';
-  public start: Number = 0;
-  public total: Number = 0;
+  public expand: string[] = [];
+  public next: string = '';
+  public previous: string = '';
+  public select: string = '';
+  public start: number = 0;
+  public total: number = 0;
 
   /**
    * @param {Object} args - The raw JSON result for the Sites call.

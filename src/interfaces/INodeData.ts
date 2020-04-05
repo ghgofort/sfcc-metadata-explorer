@@ -40,3 +40,8 @@ export interface IPreferenceValue {
   enumValues?: string[] | number[];
   objectAttributeDefinition: ObjectAttributeDefinition;
 }
+
+export interface IPreferenceValueDefinition {
+  site: Site;
+  valueDefinition?: ObjectAttributeValueDefinition;
+}

@@ -6,6 +6,7 @@
 
 import { createReadStream } from 'fs';
 import fetch from 'node-fetch';
+import { URLSearchParams } from 'url';
 import {
   RelativePattern,
   Uri,
@@ -13,11 +14,10 @@ import {
   workspace,
   WorkspaceFolder
 } from 'vscode';
-import { apiConfig } from '../apiConfig';
+import { apiConfig, getAPIVersionForPath } from '../apiConfig';
 import { OAuth2Token } from '../authorization/OAuth2Token';
 import { HTTP_VERB, ICallSetup } from './ICallSetup';
 import { IDWConfig } from './IDWConfig';
-import { URLSearchParams } from 'url';
 
 /**
  * @class OCAPIService
@@ -84,16 +84,11 @@ export class OCAPIService {
     } else {
       setupResult.setupError = true;
       setupResult.setupErrMsg +=
-        '\nNo API version was specified in the apiConfig object';
+        '\nNo API was specified in the apiConfig object';
     }
 
-    if (apiConfig.hasOwnProperty('version')) {
-      setupResult.endpoint += apiConfig.version + '/';
-    } else {
-      setupResult.setupError = true;
-      setupResult.setupErrMsg +=
-        '\nNo API version is specified in the apiConfig';
-    }
+    // Add the configured version to the path.
+    setupResult.endpoint += getAPIVersionForPath() + '/';
 
     // Check if the call name is configured for the specified resource.
     if (
@@ -197,7 +192,7 @@ export class OCAPIService {
         // Loop through any keys that are not in the API config and add them to
         // the request in either the URI or the Body of the request, based on the
         // HTTP method used.
-        dataKeys.forEach(function (optionalParam) {
+        dataKeys.forEach((optionalParam) => {
           // Add any remaining parameters to the request.
           if (setupResult.method === HTTP_VERB.get) {
             setupResult.endpoint +=
@@ -228,7 +223,7 @@ export class OCAPIService {
         // Check if there needs to be an OAuth2 token included with the request.
         if (callConfig && typeof callConfig.authorization === 'string') {
           const token = await this.getOAuth2Token(callConfig.authorization);
-          setupResult.headers['Authorization'] =
+          setupResult.headers.Authorization =
             token.tokenType + ' ' + token.accessToken;
         }
       }
@@ -266,7 +261,7 @@ export class OCAPIService {
       this.isGettingToken = true;
 
       // Concatenate the pieces of the URL.
-      let url =
+      const url =
         'https://' +
         this.dwConfig.hostname +
         '/dw/oauth2/access_token?client_id=' +
@@ -357,7 +352,7 @@ export class OCAPIService {
       })
       .catch(err => {
         const errMsg = 'There was an error making the Open Commerce' +
-        ' API call: ' + err.name + '\n' + 'Message: ' + err.message
+        ' API call: ' + err.name + '\n' + 'Message: ' + err.message;
         window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
         return { error: true, errorMessage: errMsg };
       });
