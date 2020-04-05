@@ -183,8 +183,6 @@ export default class SitePreferencesHelper {
             ));
           });
         }
-        Object.keys(prefValue.siteValues).forEach(siteId => {
-        });
       } else if (!callResult.error) {
         childNodes.push(new MetadataNode('No site values set.',
           TreeItemCollapsibleState.None,
