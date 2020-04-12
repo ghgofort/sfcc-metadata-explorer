@@ -119,6 +119,11 @@
         "command": "extension.sfccexplorer.sitepreference.setvalue",
         "title": "Set preference value...",
         "description": "Sets the selected site-value of the preference."
+      },
+      {
+        "command": "extension.sfccexplorer.systemobjects.getxml",
+        "title": "Get full XML",
+        "description": "Gets the full system-objecttype-extensions.xml export file."
       }
     ],
     "menus": {
@@ -165,6 +170,10 @@
         {
           "command": "extension.sfccexplorer.sitepreference.setvalue",
           "when": "view == systemObjectDefinitionsView && viewItem == preferenceValue"
+        },
+        {
+          "command": "extension.sfccexplorer.systemobjects.getxml",
+          "when": "view == systemObjectDefinitionsView && viewItem == baseNodeName"
         }
       ]
     },

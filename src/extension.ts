@@ -258,6 +258,20 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds the handler to the context menu action to get the XML for all system
+   * object type attributes from the SFCC server.
+   *
+   * @listens extension.sfccexplorer.systemobjects.getxml
+   */
+  const getFullXMLDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.systemobjects.getxml',
+    (metaNode: MetadataNode) => {
+      xmlHandler.getFullXML(metaNode);
+    }
+  );
+
+  context.subscriptions.push(getFullXMLDisposable);
   context.subscriptions.push(deleteGroupDisposable);
   context.subscriptions.push(setSitePreferenceValue);
   context.subscriptions.push(getAttributeXMLDisposable);

@@ -2,6 +2,9 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## Unreleased
+- Added new VSCode command `extension.sfccexplorer.systemobjects.getxml` to the package.json & context menu command when root node selected.
+
 ## 0.11.2 (4/5/20)
 ### Patch Release
 - Fixed issue of displaying site preference values for all sites if they have a value configured or not.

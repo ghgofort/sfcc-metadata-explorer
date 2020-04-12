@@ -21,4 +21,17 @@ export namespace IOCAPITypes {
     [index: string]: string;
     default: string;
   }
+
+  /** @interface IJobExecutionParameter */
+  export interface IJobExecutionParameter {
+    name: string;
+    value: string;
+  }
+
+  /** @interface IStatus */
+  export interface IStatus {
+    code: string;
+    message: string;
+    status: 'ok'|'error';
+  }
 }

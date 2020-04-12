@@ -6,11 +6,9 @@
  */
 
 /**
- * @interface IGetDocument
+ * @type IGetDocument
  */
-interface IGetDocument {
-  (): Object
-};
+type IGetDocument = () => object;
 
 /**
  * @interface IAPIDocument
@@ -18,7 +16,7 @@ interface IGetDocument {
 export default interface IAPIDocument {
   // Member Variables
   includedFields: string[];
-  readonly MEMBER_MAP: Object;
+  readonly MEMBER_MAP: object;
 
   // Member Functions
   getDocument: IGetDocument;

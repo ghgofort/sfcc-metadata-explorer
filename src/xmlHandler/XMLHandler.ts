@@ -222,4 +222,14 @@ export default class XMLHandler {
         window.showTextDocument(doc);
       });
   }
+
+  /**
+   * Creates a new file in the editor and populates it with the full xml export
+   * of the system object definitions from the configured SFCC isntance.
+   *
+   * @param {MetadataNode} metaNode - The tree node instance.
+   */
+  public async getFullXML(metaNode: MetadataNode) {
+    /** @todo: Back w/more soon.*/
+  }
 }
