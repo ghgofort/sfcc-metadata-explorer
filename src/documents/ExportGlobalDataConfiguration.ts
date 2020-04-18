@@ -19,7 +19,7 @@ export default class ExportGlobalDataConfiguration implements IAPIDocument {
    *    JSON object for the document as an argument to construct the isntance.
    * @constructor
    */
-  constructor(args) {
+  constructor(args = {}) {
     /** @todo:  */
   }
 

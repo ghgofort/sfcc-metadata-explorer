@@ -64,7 +64,7 @@ export default class ObjectAttributeGroup implements IAPIDocument {
     }
   }
 
-  public getDocument(includeFields: string[] = []): Object {
+  public getDocument(includeFields: string[] = []): object {
     const documentObj = {};
     let memberNames = Object.keys(this).filter(
       key =>
