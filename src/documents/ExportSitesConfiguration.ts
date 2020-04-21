@@ -1,3 +1,4 @@
+import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
 
 /**
@@ -105,6 +106,9 @@ export default class ExportSitesConfiguration implements IAPIDocument {
     Object.keys(instance.MEMBER_MAP).forEach(key => {
       docObj[instance.MEMBER_MAP[key]] = instance[key];
     });
+
+    // tslint:disable-next-line: no-string-literal
+    docObj['_v'] = getAPIVersion();
 
     return docObj;
   }

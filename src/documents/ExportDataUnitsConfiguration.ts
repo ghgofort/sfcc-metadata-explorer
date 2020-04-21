@@ -1,3 +1,4 @@
+import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
 import ExportGlobalDataConfiguration from './ExportGlobalDataConfiguration';
 import ExportSitesConfiguration from './ExportSitesConfiguration';
@@ -9,14 +10,14 @@ import ExportSitesConfiguration from './ExportSitesConfiguration';
  *    include in an archive export global job execution.
  */
 export default class ExportDataUnitsConfiguration implements IAPIDocument {
-  public catalogStaticResources: object = { all: true };
-  public catalogs: object = { all: true };
-  public customerLists: object = { all: true };
-  public globalData: ExportGlobalDataConfiguration = new ExportGlobalDataConfiguration();
-  public inventoryLists: object = { all: true };
-  public libraries: object = { all: true };
-  public libraryStaticResources: object = { all: true };
-  public priceBooks: object = { all: true };
+  public catalogStaticResources: object = { all: false };
+  public catalogs: object = { all: false };
+  public customerLists: object = { all: false };
+  public globalData: ExportGlobalDataConfiguration = new ExportGlobalDataConfiguration({});
+  public inventoryLists: object = { all: false };
+  public libraries: object = { all: false };
+  public libraryStaticResources: object = { all: false };
+  public priceBooks: object = { all: false };
   public sites: object = { all: new ExportSitesConfiguration() };
   public includedFields: string[] = [];
   public readonly MEMBER_MAP = {
@@ -32,7 +33,7 @@ export default class ExportDataUnitsConfiguration implements IAPIDocument {
    * @param {Object} args - constructor param doc
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any = {}) {
     if (args) {
       // Add the objects to the key map
       if (args.catalog_static_resources) {
@@ -50,14 +51,54 @@ export default class ExportDataUnitsConfiguration implements IAPIDocument {
       if (args.inventory_lists) {
         this.inventoryLists = args.inventory_lists;
       }
+      if (args.libraries) {
+        this.libraries = args.libraries;
+      }
       if (args.price_books) {
         this.priceBooks = args.price_books;
       }
-
+      if (args.sites) {
+        this.sites = new ExportSitesConfiguration(args.sites);
+      }
     }
   }
 
   public getDocument(includeFields: string[] = []) {
-    return {};
+    const instance = this;
+    const documentObj = {};
+    let memberNames = Object.keys(instance).filter(
+      key =>
+        typeof key !== 'function' &&
+        key !== 'MEMBER_MAP' &&
+        key !== 'includedFields'
+    );
+
+    // If the fields to return were specified, then filter the array of
+    // properties to assign to the new object literal.
+    if (includeFields && includeFields.length) {
+      memberNames = memberNames.filter(
+        name => includeFields.indexOf(name) > -1
+      );
+    } else if (instance.includedFields.length) {
+      memberNames = memberNames.filter(
+        name => instance.includedFields.indexOf(name) > -1
+      );
+    }
+
+    // Create a property on the results object.
+    memberNames.forEach(localPropName => {
+      const docPropName: string = localPropName in instance.MEMBER_MAP ?
+        instance.MEMBER_MAP[localPropName] : localPropName;
+      const localPropVal = instance[localPropName];
+      const isAll = localPropVal &&
+        typeof localPropVal.all === 'boolean' &&
+        localPropVal.all;
+
+      if (localPropName === 'globalData') {
+        documentObj[docPropName] = localPropVal.getDocument();
+      }
+    });
+
+    return documentObj;
   }
 }

@@ -99,7 +99,7 @@ export const apiConfig = {
               use: 'PATH_PARAMETER'
             }
           ],
-          path: '/custom_object_definitions/{objectType}/attribute_definitions'
+          path: 'custom_object_definitions/{objectType}/attribute_definitions'
         },
 
         /* ==================================================================
@@ -122,6 +122,139 @@ export const apiConfig = {
             }
           ],
           path: 'custom_object_definitions/{objectType}/attribute_definitions'
+        }
+      }
+    },
+
+    /***************************************************************************
+     * OCAPI : Data API
+     * Resource : Jobs
+     **************************************************************************/
+    jobs: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+         * POST Execute Job
+         * ================================================================== */
+        executeJob: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+          params: [
+            {
+              id: 'job_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path:
+            'jobs/{job_id}/executions'
+        },
+        /* ==================================================================
+         * POST Execute Job
+         * ================================================================== */
+        getExecution: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'job_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'execution_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path:
+            'jobs/{job_id}/executions/{execution_id}'
+        }
+      }
+    },
+
+    /***************************************************************************
+     * OCAPI : Data API
+     * Resource : SitePreferences
+     **************************************************************************/
+    sitePreferences: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+         * GET SitePreference by Id
+         * ================================================================== */
+        getPreference: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [
+            {
+              id: 'groupId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'instanceType',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'preferenceId',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path:
+            'site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
+        }
+      }
+    },
+
+    /***************************************************************************
+     * OCAPI : Data API
+     * Resource : Sites
+     **************************************************************************/
+    sites: {
+      api: 'data',
+      availableCalls: {
+        /* ==================================================================
+         * GET ALL SITES
+         * ================================================================== */
+        getAll: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'GET',
+          params: [],
+          path: '/sites'
+        },
+        /* ==================================================================
+         * PATCH Site Preferece value
+         * ================================================================== */
+        setPrefValue: {
+          authorization: 'BM_USER',
+          headers: { 'Content-Type': 'application/json' },
+          method: 'PATCH',
+          params: [
+            {
+              id: 'site_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'instance_type',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            },
+            {
+              id: 'group_id',
+              type: 'string',
+              use: 'PATH_PARAMETER'
+            }
+          ],
+          path:
+            'sites/{site_id}/site_preferences/preference_groups/{group_id}/{instance_type}'
         }
       }
     },
@@ -408,87 +541,6 @@ export const apiConfig = {
           ],
           path:
             'system_object_definitions/{objectType}/attribute_groups/{groupId}/attribute_definitions/{attributeId}'
-        }
-      }
-    },
-
-    /***************************************************************************
-     * OCAPI : Data API
-     * Resource : SitePreferences
-     **************************************************************************/
-    sitePreferences: {
-      api: 'data',
-      availableCalls: {
-        /* ==================================================================
-         * GET SitePreference by Id
-         * ================================================================== */
-        getPreference: {
-          authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
-          method: 'GET',
-          params: [
-            {
-              id: 'groupId',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            },
-            {
-              id: 'instanceType',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            },
-            {
-              id: 'preferenceId',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            }
-          ],
-          path:
-            '/site_preferences/preference_groups/{groupId}/{instanceType}/preferences/{preferenceId}'
-        }
-      }
-    },
-
-    /***************************************************************************
-     * OCAPI : Data API
-     * Resource : Sites
-     **************************************************************************/
-    sites: {
-      api: 'data',
-      availableCalls: {
-        /* ==================================================================
-         * GET all sites.
-         * ================================================================== */
-        getAll: {
-          authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
-          method: 'GET',
-          params: [],
-          path: '/sites'
-        },
-        setPrefValue: {
-          authorization: 'BM_USER',
-          headers: { 'Content-Type': 'application/json' },
-          method: 'PATCH',
-          params: [
-            {
-              id: 'site_id',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            },
-            {
-              id: 'instance_type',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            },
-            {
-              id: 'group_id',
-              type: 'string',
-              use: 'PATH_PARAMETER'
-            }
-          ],
-          path:
-            'sites/{site_id}/site_preferences/preference_groups/{group_id}/{instance_type}'
         }
       }
     }

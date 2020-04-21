@@ -7,7 +7,6 @@
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import ObjectAttributeDefinition from './ObjectAttributeDefinition';
 
-
 /**
  * @class
  * @classdesc - A class for handling the Sites API document for recieving &

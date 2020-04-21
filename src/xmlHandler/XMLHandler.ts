@@ -2,13 +2,9 @@ import { window, workspace } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
+import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
-
-/**
- * @file XMLHandler.ts
- * @fileoverview - Exports a class that can be used for handling XML and
- *    building and parsing XML strings for generating SFCC schema XML.
- */
 
 /**
  * @class XMLHandler
@@ -19,6 +15,7 @@ export default class XMLHandler {
   /* Class imports */
   private xmlLib = require('xmlbuilder');
   private ocapiHelper = new OCAPIHelper();
+  private ExportHelper = new ExportHelper();
 
   /* Instance members */
   public static NAMESPACE_STRING: string =
@@ -230,6 +227,28 @@ export default class XMLHandler {
    * @param {MetadataNode} metaNode - The tree node instance.
    */
   public async getFullXML(metaNode: MetadataNode) {
-    /** @todo: Back w/more soon.*/
+    const saeConfig = new SiteArchiveExportConfiguration();
+
+    // Setup the call POST data.
+    if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
+      saeConfig.dataUnits.globalData.systemTypeDefinitions = true;
+      saeConfig.dataUnits.catalogStaticResources = { all: false };
+      saeConfig.dataUnits.catalogs = { all: false };
+      saeConfig.dataUnits.customerLists = { all: false };
+      saeConfig.dataUnits.inventoryLists = { all: false };
+      saeConfig.dataUnits.libraries = { all: false };
+      saeConfig.dataUnits.libraryStaticResources = { all: false };
+      saeConfig.dataUnits.priceBooks = { all: false };
+      saeConfig.dataUnits.sites = { all: false };
+    }
+
+    const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
+
+    if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
+        /** @todo: Check server until job is complete, then download file. */
+    } else {
+      window.showErrorMessage('There was an error triggering the system export job');
+      console.log(executionResult);
+    }
   }
 }
