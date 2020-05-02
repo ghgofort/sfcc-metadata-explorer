@@ -50,31 +50,49 @@ export default class XMLHandler {
    *
    * @param {string} jobId - The id of the job that was executed.
    * @param {string} executionId The Id of the execution action.
-   * @param {number} recursionCount - The number of times that the check has run.
    * @return {Promise<boolean>} - A boolean flag indicating if the operation
    *    completed successfully.
    */
-  private async getJobExecutionResult(jobId: string, executionId: string, recursionCount: number) {
-    const instance = this;
-    let jobComplete = false;
+  private async getJobExecutionResult(jobId: string, executionId: string): Promise<any> {
+    let jobRunning = true;
+    let jobSuccess = true;
+    let jobExe = null;
 
-    const jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+    // Set a 200ms timeout to give server time to finish job then check status.
+    jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
 
     // Check if job is finished & if it completed successfully.
-    if (jobExe.id && jobExe._type === 'job_execution' && jobExe.job_id && jobExe.status) {
-      jobComplete = jobExe.status === 'pending' || jobExe.status === 'running';
+    if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
+      jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
+        jobExe.status.toUpperCase() === 'RUNNING';
 
-      if (!jobComplete && recursionCount < XMLHandler.MAX_JOB_POLLS) {
-        setTimeout(() => {
-          return instance.getJobExecutionResult(jobId, executionId, recursionCount++);
-        }, XMLHandler.JOB_POLL_INTERVAL);
-      } else if (!jobComplete) {
-        // Max tries reached and job still not showing as complete.
-        return Promise.resolve(false);
+      // If the job is still running, set another timeout & try again.
+      if (jobRunning) {
+        console.log('Job execution not complete - try 1');
+        setTimeout(() => {}, XMLHandler.JOB_POLL_INTERVAL);
+        jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+
+
+        if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
+          jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
+            jobExe.status.toUpperCase() === 'RUNNING';
+
+          if (jobRunning) {
+            window.showErrorMessage('Error - Unable to get JobExecution result');
+            Promise.reject('Error - Unable to get JobExecution result');
+          }
+        }
       } else {
-
+        console.log('Job Completled with status: ', jobExe.status);
+        jobSuccess = jobExe.status.toUpperCase() === 'OK';
       }
+    } else {
+      console.log('Job Execution Error');
+      jobSuccess = false;
+      jobRunning = false;
     }
+
+    return Promise.resolve(jobSuccess);
   }
 
   private getObjectGroupXML(rootNode: any,
@@ -281,7 +299,7 @@ export default class XMLHandler {
     const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
 
     if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
-      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id, 0);
+      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id);
 
       if (!exportSuccess) {
         window.showErrorMessage('There was an error running the system export job');

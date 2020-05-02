@@ -29,8 +29,8 @@ export default class SiteArchiveExportConfiguration implements IAPIDocument {
     const instance = this;
     if (args) {
       this.exportFile = args.export_file || './sfccMetaExplorerExport';
-      this.overwriteExportFile = typeof args.overwrite_export_file === 'boolean' &&
-        args.overwrite_export_file;
+      this.overwriteExportFile = typeof args.overwrite_export_file === 'boolean' ?
+        args.overwrite_export_file : true;
       if (args.data_units) {
         this.dataUnits = new ExportDataUnitsConfiguration(args.data_units);
       }

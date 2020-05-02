@@ -44,7 +44,7 @@ export default class ExportHelper {
       return Promise.reject(e);
     }
 
-    Promise.resolve(callResult);
+    return Promise.resolve(callResult);
   }
 
   /**
