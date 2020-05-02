@@ -30,6 +30,9 @@ export default class XMLHandler {
     'visible-flag': ['Product']
   };
 
+  public static readonly MAX_JOB_POLLS: number = 50;
+  public static readonly JOB_POLL_INTERVAL: number = 200;
+
   /**
    * @constructor
    */
@@ -40,6 +43,39 @@ export default class XMLHandler {
   /* ========================================================================
    * Private Helper Functions
    * ======================================================================== */
+
+  /**
+   * Gets the results of a job execution by making calls on a regular interval
+   * to check and see if the job execution is complete yet.
+   *
+   * @param {string} jobId - The id of the job that was executed.
+   * @param {string} executionId The Id of the execution action.
+   * @param {number} recursionCount - The number of times that the check has run.
+   * @return {Promise<boolean>} - A boolean flag indicating if the operation
+   *    completed successfully.
+   */
+  private async getJobExecutionResult(jobId: string, executionId: string, recursionCount: number) {
+    const instance = this;
+    let jobComplete = false;
+
+    const jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+
+    // Check if job is finished & if it completed successfully.
+    if (jobExe.id && jobExe._type === 'job_execution' && jobExe.job_id && jobExe.status) {
+      jobComplete = jobExe.status === 'pending' || jobExe.status === 'running';
+
+      if (!jobComplete && recursionCount < XMLHandler.MAX_JOB_POLLS) {
+        setTimeout(() => {
+          return instance.getJobExecutionResult(jobId, executionId, recursionCount++);
+        }, XMLHandler.JOB_POLL_INTERVAL);
+      } else if (!jobComplete) {
+        // Max tries reached and job still not showing as complete.
+        return Promise.resolve(false);
+      } else {
+
+      }
+    }
+  }
 
   private getObjectGroupXML(rootNode: any,
     systemObjectType: string,
@@ -245,7 +281,14 @@ export default class XMLHandler {
     const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
 
     if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
-        /** @todo: Check server until job is complete, then download file. */
+      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id, 0);
+
+      if (!exportSuccess) {
+        window.showErrorMessage('There was an error running the system export job');
+      } else {
+        window.showInformationMessage('Export completed successfully, retrieving file from webdav.');
+      }
+
     } else {
       window.showErrorMessage('There was an error triggering the system export job');
       console.log(executionResult);

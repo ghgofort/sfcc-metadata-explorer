@@ -150,8 +150,9 @@ export const apiConfig = {
           path:
             'jobs/{job_id}/executions'
         },
+
         /* ==================================================================
-         * POST Execute Job
+         * GET Job Execution
          * ================================================================== */
         getExecution: {
           authorization: 'BM_USER',
@@ -229,6 +230,7 @@ export const apiConfig = {
           params: [],
           path: '/sites'
         },
+
         /* ==================================================================
          * PATCH Site Preferece value
          * ================================================================== */

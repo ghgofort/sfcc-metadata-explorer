@@ -11,6 +11,13 @@ import { OCAPIService } from '../services/OCAPIService';
 export default class ExportHelper {
   private ocapiService = new OCAPIService();
 
+  /**
+   * Gets the JobExecution OCAPI Document for the specified Job Id.
+   * @param {string} jobId - The Id of the job that was executed.
+   * @param {string} executionId - The Id of the execution to retrieve results from.
+   * @return {Promise<any>} - Returns a Promise that resolves to the JobExecution
+   *    JSON result from the server.
+   */
   public async getJobExecution(jobId: string, executionId: string): Promise<any> {
     let callSetup: ICallSetup = null;
     let callResult: any;
@@ -36,6 +43,8 @@ export default class ExportHelper {
       console.error(e);
       return Promise.reject(e);
     }
+
+    Promise.resolve(callResult);
   }
 
   /**
