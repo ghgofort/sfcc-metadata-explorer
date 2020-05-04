@@ -5,6 +5,7 @@ import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
 import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
+import WebDAVService from '../services/WebDAVService';
 
 /**
  * @class XMLHandler
@@ -14,6 +15,7 @@ import OCAPIHelper from '../helpers/OCAPIHelper';
 export default class XMLHandler {
   /* Class imports */
   private xmlLib = require('xmlbuilder');
+  private webDAVService = new WebDAVService();
   private ocapiHelper = new OCAPIHelper();
   private ExportHelper = new ExportHelper();
 
@@ -282,6 +284,8 @@ export default class XMLHandler {
    */
   public async getFullXML(metaNode: MetadataNode) {
     const saeConfig = new SiteArchiveExportConfiguration();
+    const zlib = require('zlib');
+    const fs = require('fs');
 
     // Setup the call POST data.
     if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
@@ -304,7 +308,28 @@ export default class XMLHandler {
       if (!exportSuccess) {
         window.showErrorMessage('There was an error running the system export job');
       } else {
-        window.showInformationMessage('Export completed successfully, retrieving file from webdav.');
+        window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
+        const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
+        const rawFile = await this.webDAVService.getFileFromServer(exportPath);
+        console.log(rawFile);
+        let fileContents;
+
+        try {
+          fileContents = zlib.unzipSync(rawFile);
+        } catch (e) {
+          console.log(e);
+        }
+
+        if (fileContents) {
+          // Create the text document and show in the editor.
+          workspace.openTextDocument({
+            language: 'xml',
+            content: fileContents.toString()
+          })
+          .then(doc => {
+            window.showTextDocument(doc);
+          });
+        }
       }
 
     } else {
