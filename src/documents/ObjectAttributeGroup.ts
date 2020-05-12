@@ -4,6 +4,7 @@
  * document representing an attribute group of a system or custom object.
  */
 
+import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
 import ObjectAttributeDefinition from './ObjectAttributeDefinition';
 
@@ -64,7 +65,7 @@ export default class ObjectAttributeGroup implements IAPIDocument {
     }
   }
 
-  public getDocument(includeFields: string[] = []): Object {
+  public getDocument(includeFields: string[] = []): object {
     const documentObj = {};
     let memberNames = Object.keys(this).filter(
       key =>
@@ -112,7 +113,8 @@ export default class ObjectAttributeGroup implements IAPIDocument {
       }
     });
 
-    documentObj['_v'] = '18.8';
+    // tslint:disable-next-line: no-string-literal
+    documentObj['_v'] = getAPIVersion();
 
     return documentObj;
   }

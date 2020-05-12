@@ -13,10 +13,24 @@ If you find bugs, please log them to the github repository and I will do my best
 - You must configure your Open Commerce API settings to allow access for the API calls that are needed.
 
 ### VSCode Settings
-* `extension.sfccmetadata.explorer.systemobjects` - Enable/disable the view of system object definitions in the explorer view. __default: true__
-* `extension.sfccmetadata.explorer.customobjects` - Enable/disable the view of custom object definitions in the explorer view. __default: true__
-* `extension.sfccmetadata.explorer.sitepreferences` - Enable/disable the view of Site Preferences in the explorer view. __default: true__
-* `extension.sfccmetadata.ocapi.version` - Configure the version of the OCAPI API that you are calling. __default: 20.4__
+* `extension.sfccmetadata.explorer.systemobjects`
+  - Enable/disable the view of system object definitions in the explorer view.
+  - __default: true__
+* `extension.sfccmetadata.explorer.customobjects`
+  - Enable/disable the view of custom object definitions in the explorer view.
+  - __default: true__
+* `extension.sfccmetadata.explorer.sitepreferences`
+  - Enable/disable the view of Site Preferences in the explorer view.
+  - __default: true__
+* `extension.sfccmetadata.ocapi.version`
+  - Configure the version of the OCAPI API that you are calling.
+  - __default: 20.4__
+* `extension.sfccmetadata.ocapi.clientid`
+  - Configure the client ID used for calling the OCAPI API.
+  - __default: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`__
+* `extension.sfccmetadata.ocapi.clientpassword`
+  - Configure the client password used for calling the OCAPI API.
+  - __default: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`__
 
 ### Open Commerce API Access Setup
 In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed.
@@ -54,11 +68,10 @@ _Example dw.json Config_
 }
 ```
 
-The extension is currently setup to use the default OCAPI application ID & password:
+The extension is currently setup to use the default OCAPI application ID & password if the settings are not configured in the matching VSCode settings:
    - Default Application ID: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
    - Default Application Password: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`
 
-A configuration option to use specific credentials could be added in the future.
 
 ## Features
 ### Basic Tree View - View System Object Information
@@ -79,6 +92,10 @@ A configuration option to use specific credentials could be added in the future.
 ### Context Menu : System Object : Implemented XML Operations
 * #### Get Attribute XML
 * #### Get Attribute Group XML
+
+## Context Menu : System Objects Root Node: Implemented XML Operations
+* #### Get full system-objecttype-definitions.xml export from the server.
+    - _This currently downloads as a .zip in the 1st configured workspace folder_
 
 ## References:
 

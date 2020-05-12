@@ -49,6 +49,18 @@
           "default": "20.4",
           "description": "Configure the OCAPI version for API calls - default: 20.4",
           "scope": "window"
+        },
+        "extension.sfccmetadata.ocapi.clientid": {
+          "type": "string",
+          "default": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "description": "Configure the OCAPI client ID used for API calls - default: 30 letter 'a' characters",
+          "scope": "window"
+        },
+        "extension.sfccmetadata.ocapi.clientpassword": {
+          "type": "string",
+          "default": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "description": "Configure the OCAPI client password used for API calls - default: 30 letter 'a' characters",
+          "scope": "window"
         }
       }
     },
@@ -119,6 +131,11 @@
         "command": "extension.sfccexplorer.sitepreference.setvalue",
         "title": "Set preference value...",
         "description": "Sets the selected site-value of the preference."
+      },
+      {
+        "command": "extension.sfccexplorer.systemobjects.getxml",
+        "title": "Get full XML",
+        "description": "Gets the full system-objecttype-extensions.xml export file."
       }
     ],
     "menus": {
@@ -165,6 +182,10 @@
         {
           "command": "extension.sfccexplorer.sitepreference.setvalue",
           "when": "view == systemObjectDefinitionsView && viewItem == preferenceValue"
+        },
+        {
+          "command": "extension.sfccexplorer.systemobjects.getxml",
+          "when": "view == systemObjectDefinitionsView && viewItem == baseNodeName"
         }
       ]
     },

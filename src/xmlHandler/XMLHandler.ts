@@ -2,13 +2,10 @@ import { window, workspace } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
+import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
-
-/**
- * @file XMLHandler.ts
- * @fileoverview - Exports a class that can be used for handling XML and
- *    building and parsing XML strings for generating SFCC schema XML.
- */
+import WebDAVService from '../services/WebDAVService';
 
 /**
  * @class XMLHandler
@@ -18,7 +15,9 @@ import OCAPIHelper from '../helpers/OCAPIHelper';
 export default class XMLHandler {
   /* Class imports */
   private xmlLib = require('xmlbuilder');
+  private webDAVService = new WebDAVService();
   private ocapiHelper = new OCAPIHelper();
+  private ExportHelper = new ExportHelper();
 
   /* Instance members */
   public static NAMESPACE_STRING: string =
@@ -33,6 +32,9 @@ export default class XMLHandler {
     'visible-flag': ['Product']
   };
 
+  public static readonly MAX_JOB_POLLS: number = 50;
+  public static readonly JOB_POLL_INTERVAL: number = 200;
+
   /**
    * @constructor
    */
@@ -43,6 +45,67 @@ export default class XMLHandler {
   /* ========================================================================
    * Private Helper Functions
    * ======================================================================== */
+
+  /**
+   * Gets the results of a job execution by making calls on a regular interval
+   * to check and see if the job execution is complete yet.
+   *
+   * @param {string} jobId - The id of the job that was executed.
+   * @param {string} executionId The Id of the execution action.
+   * @return {Promise<boolean>} - A boolean flag indicating if the operation
+   *    completed successfully.
+   */
+  private async getJobExecutionResult(jobId: string, executionId: string): Promise<any> {
+    const MAX_CALLS = 10;
+    let jobRunning = true;
+    let jobSuccess = true;
+    let jobExe = null;
+
+    // --- TRY 1 ---
+    jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+
+    // Check if job is finished & if it completed successfully.
+    if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
+      jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
+        jobExe.status.toUpperCase() === 'RUNNING';
+    } else {
+      window.showErrorMessage('Error getting job execution result from OCAPI');
+      jobSuccess = false;
+      jobRunning = false;
+      return Promise.reject('Error calling OCAPI');
+    }
+
+    /** @function sleep - Promisify the setTimeout method. */
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Retry API call until job complete, max calls, or an error.
+    let i = 0;
+    while (jobRunning && i < MAX_CALLS) {
+      console.log('Job execution not complete - trying again (2nd try)');
+      await sleep(XMLHandler.JOB_POLL_INTERVAL);
+
+      // Retry call to check if job is completed.
+      jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+
+      if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
+        jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
+          jobExe.status.toUpperCase() === 'RUNNING';
+        jobSuccess = jobExe.status.toUpperCase === 'OK';
+      } else {
+        jobSuccess = false;
+        jobRunning = false;
+      }
+
+      i++;
+    }
+
+    // If there was an error show a message and return.
+    if (!jobSuccess) {
+      window.showErrorMessage('Error getting job execution result from OCAPI');
+    }
+
+    return Promise.resolve(jobSuccess);
+  }
 
   private getObjectGroupXML(rootNode: any,
     systemObjectType: string,
@@ -221,5 +284,49 @@ export default class XMLHandler {
       .then(doc => {
         window.showTextDocument(doc);
       });
+  }
+
+  /**
+   * Creates a new file in the editor and populates it with the full xml export
+   * of the system object definitions from the configured SFCC isntance.
+   *
+   * @param {MetadataNode} metaNode - The tree node instance.
+   */
+  public async getFullXML(metaNode: MetadataNode) {
+    const saeConfig = new SiteArchiveExportConfiguration();
+
+    // Setup the call POST data.
+    if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
+      saeConfig.dataUnits.globalData.systemTypeDefinitions = true;
+      saeConfig.dataUnits.catalogStaticResources = { all: false };
+      saeConfig.dataUnits.catalogs = { all: false };
+      saeConfig.dataUnits.customerLists = { all: false };
+      saeConfig.dataUnits.inventoryLists = { all: false };
+      saeConfig.dataUnits.libraries = { all: false };
+      saeConfig.dataUnits.libraryStaticResources = { all: false };
+      saeConfig.dataUnits.priceBooks = { all: false };
+      saeConfig.dataUnits.sites = { all: false };
+    }
+
+    const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
+
+    if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
+      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id);
+
+      if (!exportSuccess) {
+        window.showErrorMessage('There was an error running the system export job');
+      } else {
+        window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
+        const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
+        const rawFile = await this.webDAVService.getFileFromServer(exportPath);
+
+        /** @todo: Unizp the package and display on screen. */
+
+        window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
+      }
+
+    } else {
+      window.showErrorMessage('There was an error triggering the system export job');
+    }
   }
 }

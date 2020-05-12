@@ -2,6 +2,15 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.0.0 (5/12/20)
+### Major Release
+- Moved OCAPI Client ID & Pass to VSCode settings with default values. Doesn't break default, but allows for using configured Ids.
+   - Setting for OCAPI clinet ID:`extension.sfccmetadata.ocapi.clientid`
+   - Setting for OCAPI clinet password:`extension.sfccmetadata.ocapi.clientpassword`
+- Added new VSCode command `extension.sfccexplorer.systemobjects.getxml` to the package.json & context menu command when root node selected to get execute a job on the target server to get the full XML export for system-obeject-definitions.
+- Updated README.md to include new feature & settings.
+- Update version for release.
+
 ## 0.11.2 (4/5/20)
 ### Patch Release
 - Fixed issue of displaying site preference values for all sites if they have a value configured or not.
