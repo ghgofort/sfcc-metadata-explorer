@@ -7,7 +7,7 @@
 import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
 import { window } from 'vscode';
-import { apiConfig, getAPIVersionForPath } from '../apiConfig';
+import { apiConfig, getAPIVersionForPath, getClientId, getClientPass } from '../apiConfig';
 import { OAuth2Token } from '../authorization/OAuth2Token';
 import { HTTP_VERB, ICallSetup } from './ICallSetup';
 import { IDWConfig } from './IDWConfig';
@@ -260,7 +260,7 @@ export class OCAPIService {
         'https://' +
         this.dwConfig.hostname +
         '/dw/oauth2/access_token?client_id=' +
-        apiConfig.clientId;
+        getClientId();
 
       // Encode credentials to base64
       const encodedString = Buffer.from(
@@ -268,7 +268,7 @@ export class OCAPIService {
           ':' +
           this.dwConfig.password +
           ':' +
-          apiConfig.clientPassword
+          getClientPass()
       ).toString('base64');
       const authString = 'Basic ' + encodedString;
       const bodyParams = new URLSearchParams();

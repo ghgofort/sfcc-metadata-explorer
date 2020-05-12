@@ -43,6 +43,48 @@ export const getAPIVersionForPath = () => {
   return 'v' + getAPIVersion().replace('.', '_');
 };
 
+/**
+ * Gets the configured clientId for the OCAPI calls from the VSCode setting, or
+ * uses the default if none is set.
+ * @return {string} - Returns the 30 character client Id configured for
+ *    making calls to OCAPI.
+ */
+export const getClientId = () => {
+  let clientId = apiConfig.clientId;
+  const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(
+    'extension.sfccmetadata'
+  );
+  const configId = String(workspaceConfig.get('ocapi.clientid'));
+  const tester = /^[\S]{30}$/;
+  if (configId && !tester.test(configId)) {
+    window.showErrorMessage('Value configured for OCAPI clientId is not valid: ' +
+      configId + '. Using default version API client Id.');
+  }
+
+  return configId && tester.test(configId) ? configId : clientId;
+};
+
+/**
+ * Gets the configured client password for the OCAPI calls from VSCode setting,
+ * or uses the default if none is set.
+ * @return {string} - Returns the 30 character client Id configured for
+ *    making calls to OCAPI.
+ */
+export const getClientPass = () => {
+  let defaultPass = apiConfig.clientId;
+  const workspaceConfig: WorkspaceConfiguration = workspace.getConfiguration(
+    'extension.sfccmetadata'
+  );
+  const configPass = String(workspaceConfig.get('ocapi.clientpassword'));
+  const tester = /^[\S]{30}$/;
+  if (configPass && !tester.test(configPass)) {
+    window.showErrorMessage('Value configured for OCAPI client password is not valid: ' +
+      configPass + '. Using default version API client Id.');
+  }
+
+  return configPass && tester.test(configPass) ? configPass : defaultPass;
+};
+
 /* ========================================================================
  * Exported API Configuration Object
  * ======================================================================== */
