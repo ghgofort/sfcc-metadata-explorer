@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import { IDWConfig } from './IDWConfig';
 import ConfigHelper from '../helpers/ConfigHelper';
+import { workspace } from 'vscode';
 
 /**
  * WebDAVService.ts
@@ -21,19 +22,20 @@ export default class WebDAVService {
     username: ''
   };
 
-  public async getFileFromServer(path: string) {
+  public async getFileFromServer(serverPath: string) {
     const fs = require('fs');
+    const path = require('path');
     const util = require('util');
     const zlib = require('zlib')
     const chunks: Buffer[] = [];
     // Get the config from the dw.json file for auth.
     this.dwConfig = await this.ConfigHelper.getDWConfig();
-    if (!this.dwConfig.ok) {
+    if (!this.dwConfig.ok || !workspace.workspaceFolders) {
       return Promise.reject('Config is invalid');
     }
 
     // Set the hostname from dw.json to URL.
-    const url = path.replace('{0}', this.dwConfig.hostname);
+    const url = serverPath.replace('{0}', this.dwConfig.hostname);
 
     // Get Basic Auth credentials & encode to base64.
     let authCreds = this.dwConfig.username + ':' + this.dwConfig.password;
@@ -46,15 +48,12 @@ export default class WebDAVService {
       }
     };
 
-    console.log('url for webdav: ', url);
-    console.log('options for webdav: ', options);
-
     const streamPipe = util.promisify(require('stream').pipeline);
+    const filePath = workspace.workspaceFolders[0].uri.toString().substring(8) + path.sep + 'sfccExport.zip';
 
     return fetch(url, options)
       .then(res => {
-        console.log(res.headers.raw());
-        return streamPipe(res.body, fs.createWriteStream('sfccExport.zip'));
+        return streamPipe(res.body, fs.createWriteStream(filePath));
       })
       .catch(err =>{
         console.error(err);

@@ -56,42 +56,52 @@ export default class XMLHandler {
    *    completed successfully.
    */
   private async getJobExecutionResult(jobId: string, executionId: string): Promise<any> {
+    const MAX_CALLS = 10;
     let jobRunning = true;
     let jobSuccess = true;
     let jobExe = null;
 
-    // Set a 200ms timeout to give server time to finish job then check status.
+    // --- TRY 1 ---
     jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
 
     // Check if job is finished & if it completed successfully.
     if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
       jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
         jobExe.status.toUpperCase() === 'RUNNING';
-
-      // If the job is still running, set another timeout & try again.
-      if (jobRunning) {
-        console.log('Job execution not complete - try 1');
-        setTimeout(() => {}, XMLHandler.JOB_POLL_INTERVAL);
-        jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
-
-
-        if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
-          jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
-            jobExe.status.toUpperCase() === 'RUNNING';
-
-          if (jobRunning) {
-            window.showErrorMessage('Error - Unable to get JobExecution result');
-            Promise.reject('Error - Unable to get JobExecution result');
-          }
-        }
-      } else {
-        console.log('Job Completled with status: ', jobExe.status);
-        jobSuccess = jobExe.status.toUpperCase() === 'OK';
-      }
     } else {
-      console.log('Job Execution Error');
+      window.showErrorMessage('Error getting job execution result from OCAPI');
       jobSuccess = false;
       jobRunning = false;
+      return Promise.reject('Error calling OCAPI');
+    }
+
+    /** @function sleep - Promisify the setTimeout method. */
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Retry API call until job complete, max calls, or an error.
+    let i = 0;
+    while (jobRunning && i < MAX_CALLS) {
+      console.log('Job execution not complete - trying again (2nd try)');
+      await sleep(XMLHandler.JOB_POLL_INTERVAL);
+
+      // Retry call to check if job is completed.
+      jobExe = await this.ExportHelper.getJobExecution(jobId, executionId);
+
+      if (jobExe && jobExe.id && jobExe.job_id && jobExe.status) {
+        jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
+          jobExe.status.toUpperCase() === 'RUNNING';
+        jobSuccess = jobExe.status.toUpperCase === 'OK';
+      } else {
+        jobSuccess = false;
+        jobRunning = false;
+      }
+
+      i++;
+    }
+
+    // If there was an error show a message and return.
+    if (!jobSuccess) {
+      window.showErrorMessage('Error getting job execution result from OCAPI');
     }
 
     return Promise.resolve(jobSuccess);
@@ -284,8 +294,6 @@ export default class XMLHandler {
    */
   public async getFullXML(metaNode: MetadataNode) {
     const saeConfig = new SiteArchiveExportConfiguration();
-    const zlib = require('zlib');
-    const fs = require('fs');
 
     // Setup the call POST data.
     if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
@@ -311,30 +319,14 @@ export default class XMLHandler {
         window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
         const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
         const rawFile = await this.webDAVService.getFileFromServer(exportPath);
-        console.log(rawFile);
-        let fileContents;
 
-        try {
-          fileContents = zlib.unzipSync(rawFile);
-        } catch (e) {
-          console.log(e);
-        }
+        /** @todo: Unizp the package and display on screen. */
 
-        if (fileContents) {
-          // Create the text document and show in the editor.
-          workspace.openTextDocument({
-            language: 'xml',
-            content: fileContents.toString()
-          })
-          .then(doc => {
-            window.showTextDocument(doc);
-          });
-        }
+        window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
       }
 
     } else {
       window.showErrorMessage('There was an error triggering the system export job');
-      console.log(executionResult);
     }
   }
 }

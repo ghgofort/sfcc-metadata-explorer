@@ -35,9 +35,11 @@ export default class ExportHelper {
     try {
       callSetup = await this.ocapiService.getCallSetup(
         'jobs', 'getExecution', callData);
-      console.log(callSetup);
-      callResult = await this.ocapiService.makeCall(callSetup);
-      console.log(callResult);
+      if (!callSetup.setupError) {
+        callResult = await this.ocapiService.makeCall(callSetup);
+      } else {
+        throw new Error('Call setup error.');
+      }
     } catch (e) {
       window.showErrorMessage('Error getting job execution results from server');
       console.error(e);
