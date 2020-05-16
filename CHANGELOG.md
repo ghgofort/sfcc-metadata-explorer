@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.0.1 (5/16/20)
+### Patch Release
+* Added package adm-zip to the dependencies.
+* Add code to unzip the archive & show the full XML export in the editor.
+
 ## 1.0.0 (5/12/20)
 ### Major Release
 - Moved OCAPI Client ID & Pass to VSCode settings with default values. Doesn't break default, but allows for using configured Ids.
