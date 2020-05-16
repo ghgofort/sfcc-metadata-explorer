@@ -293,6 +293,8 @@ export default class XMLHandler {
    * @param {MetadataNode} metaNode - The tree node instance.
    */
   public async getFullXML(metaNode: MetadataNode) {
+    const path = require('path');
+    const AdmZip = require('adm-zip');
     const saeConfig = new SiteArchiveExportConfiguration();
 
     // Setup the call POST data.
@@ -319,12 +321,29 @@ export default class XMLHandler {
         window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
         const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
         const rawFile = await this.webDAVService.getFileFromServer(exportPath);
-
-        /** @todo: Unizp the package and display on screen. */
-
         window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
-      }
 
+        // Un-zip the archive.
+        const filePath = workspace.workspaceFolders[0].uri.toString().substring(8) + path.sep + 'sfccExport.zip';
+        const zip = new AdmZip(filePath);
+        const zipEntries = zip.getEntries();
+        if (zipEntries && zipEntries.length) {
+          zipEntries.forEach(function(zipEntry) {
+            if (zipEntry.name === 'system-objecttype-extensions.xml') {
+              // Create the text document and show in the editor.
+              workspace.openTextDocument({
+                  language: 'xml',
+                  content: zipEntry.getData().toString('utf8')
+              })
+              .then(doc => {
+                window.showTextDocument(doc);
+              });
+            }
+          });
+        } else {
+          window.showErrorMessage('There was an error unzipping the archive');
+        }
+      }
     } else {
       window.showErrorMessage('There was an error triggering the system export job');
     }

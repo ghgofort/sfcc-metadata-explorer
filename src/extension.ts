@@ -3,7 +3,7 @@
 import { commands, Disposable, ExtensionContext, window } from 'vscode';
 import { MetadataNode } from './components/MetadataNode';
 import { MetadataView } from './components/MetadataView';
-import CommandHelper from './helpers/commandHelper';
+import CommandHelper from './helpers/CommandHelper';
 import OCAPIHelper from './helpers/OCAPIHelper';
 import XMLHandler from './xmlHandler/XMLHandler';
 
