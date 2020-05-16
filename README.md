@@ -95,7 +95,6 @@ The extension is currently setup to use the default OCAPI application ID & passw
 
 ## Context Menu : System Objects Root Node: Implemented XML Operations
 * #### Get full system-objecttype-definitions.xml export from the server.
-    - _This currently downloads as a .zip in the 1st configured workspace folder_
 
 ## References:
 
@@ -116,6 +115,7 @@ The Icon for this extension is taken from the the Wikimedia Commons page here: [
 ## Known Issues
 This is a list of known issues that are results of incompatabilities, or limited scope of work. Issues / Bugs relating to the expected functionality of the extension can be foundon the [**github repository issues page**](https://github.com/ghgofort/sfcc-metadata-explorer/issues).
 
+* The context-menu command for `Get Full XML Export' only works with system object definitions for now and will show a warnig otherwise.
 * The maximum number of attribute that will be fetched is 700. If a system object has more than 700 attributes...whoah?
 * The maximum number of attribute groups that will be fetched is 150.
     * @TODO: Update these to VSCode adjustable settings.
