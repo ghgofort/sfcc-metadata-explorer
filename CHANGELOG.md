@@ -2,6 +2,10 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.0.2 (7/2/20)
+### Patch Release
+* Fix for file name of XML export when no workspace folder is open.
+
 ## 1.0.1 (5/16/20)
 ### Patch Release
 * Added package adm-zip to the dependencies.

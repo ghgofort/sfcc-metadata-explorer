@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { IDWConfig } from './IDWConfig';
 import ConfigHelper from '../helpers/ConfigHelper';
-import { workspace } from 'vscode';
+import { workspace, WorkspaceFolder } from 'vscode';
 
 /**
  * WebDAVService.ts
@@ -49,7 +49,10 @@ export default class WebDAVService {
     };
 
     const streamPipe = util.promisify(require('stream').pipeline);
-    const filePath = workspace.workspaceFolders[0].uri.toString().substring(8) + path.sep + 'sfccExport.zip';
+    const currentPath = !workspace.workspaceFolders ? workspace.rootPath :
+      workspace.workspaceFolders[0].uri.fsPath;
+
+    const filePath = currentPath + path.sep + 'sfccExport.zip';
 
     return fetch(url, options)
       .then(res => {
