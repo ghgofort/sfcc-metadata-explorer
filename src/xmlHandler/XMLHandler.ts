@@ -69,7 +69,7 @@ export default class XMLHandler {
       jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
         jobExe.status.toUpperCase() === 'RUNNING';
     } else {
-      window.showErrorMessage('Error getting job execution result from OCAPI');
+      window.showErrorMessage('Error getting job execution result from OCAPI - try 1');
       jobSuccess = false;
       jobRunning = false;
       return Promise.reject('Error calling OCAPI');
@@ -79,7 +79,7 @@ export default class XMLHandler {
     const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     // Retry API call until job complete, max calls, or an error.
-    let i = 0;
+    let i = 2;
     while (jobRunning && i < XMLHandler.MAX_JOB_POLLS) {
       console.log('Job execution not complete - trying again (' + i + ' try)');
       await sleep(XMLHandler.JOB_POLL_INTERVAL);
