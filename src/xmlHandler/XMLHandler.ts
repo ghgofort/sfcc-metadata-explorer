@@ -33,7 +33,7 @@ export default class XMLHandler {
   };
 
   public static readonly MAX_JOB_POLLS: number = 50;
-  public static readonly JOB_POLL_INTERVAL: number = 200;
+  public static readonly JOB_POLL_INTERVAL: number = 500;
 
   /**
    * @constructor
@@ -80,8 +80,8 @@ export default class XMLHandler {
 
     // Retry API call until job complete, max calls, or an error.
     let i = 0;
-    while (jobRunning && i < MAX_CALLS) {
-      console.log('Job execution not complete - trying again (2nd try)');
+    while (jobRunning && i < XMLHandler.MAX_JOB_POLLS) {
+      console.log('Job execution not complete - trying again (' + i + ' try)');
       await sleep(XMLHandler.JOB_POLL_INTERVAL);
 
       // Retry call to check if job is completed.
