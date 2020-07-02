@@ -56,7 +56,6 @@ export default class XMLHandler {
    *    completed successfully.
    */
   private async getJobExecutionResult(jobId: string, executionId: string): Promise<any> {
-    const MAX_CALLS = 10;
     let jobRunning = true;
     let jobSuccess = true;
     let jobExe = null;
@@ -69,10 +68,7 @@ export default class XMLHandler {
       jobRunning = jobExe.status.toUpperCase() === 'PENDING' ||
         jobExe.status.toUpperCase() === 'RUNNING';
     } else {
-      window.showErrorMessage('Error getting job execution result from OCAPI - try 1');
-      jobSuccess = false;
-      jobRunning = false;
-      return Promise.reject('Error calling OCAPI');
+      window.showWarningMessage('Error getting job execution result from OCAPI - try 1');
     }
 
     /** @function sleep - Promisify the setTimeout method. */
