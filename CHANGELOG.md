@@ -2,6 +2,14 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.0.4 (7/2/20)
+### Patch Release
+* Update to handle 1st failure gracefully in case the job execution is not found yet.
+
+## 1.0.3 (7/2/20)
+### Patch Release
+* Fix for error handling of attempts to get job execution result.
+
 ## 1.0.2 (7/2/20)
 ### Patch Release
 * Fix for file name of XML export when no workspace folder is open.
