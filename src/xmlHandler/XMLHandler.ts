@@ -237,7 +237,7 @@ export default class XMLHandler {
     }
 
     if (typeof attribute.defaultValue !== undefined &&
-      attribute.defaultValue.value
+      attribute.defaultValue.value != null
     ) {
         attrDefNode.ele('default-value', attribute.defaultValue.value);
     }
