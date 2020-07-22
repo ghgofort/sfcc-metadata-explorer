@@ -137,7 +137,7 @@ export default class SitePreferencesHelper {
 
         // Add a default value tree node.
         if (prefValue.attributeDefinition &&
-          prefValue.attributeDefinition.defaultValue
+          prefValue.attributeDefinition.defaultValue != null
         ) {
           // Use default value from attribute definition.
           const defVal = prefValue.attributeDefinition.defaultValue;

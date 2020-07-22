@@ -32,7 +32,11 @@ export default class ObjectAttributeValueDefinition {
       this.displayValue = args.display_value || { default: '' };
       this.id = args.id || '';
       this.position = args.position || -1;
-      this.value = args.value || {};
+      if (args.value == false) {
+        this.value = args.value;
+      } else {
+        this.value = args.value || {};
+      }
     }
   }
 
