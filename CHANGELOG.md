@@ -2,6 +2,12 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.0.5 (7/22/20)
+### Patch Release
+* Update to handle boolean type attributes for XML properly - Fix contributed by [david-mkhitaryan-dev](https://github.com/david-mkhitaryan-dev).
+* Added a contributors section to the README.md now that there is more than 1.
+* bump version.
+
 ## 1.0.4 (7/2/20)
 ### Patch Release
 * Update to handle 1st failure gracefully in case the job execution is not found yet.

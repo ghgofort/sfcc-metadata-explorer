@@ -93,8 +93,12 @@ The extension is currently setup to use the default OCAPI application ID & passw
 * #### Get Attribute XML
 * #### Get Attribute Group XML
 
-## Context Menu : System Objects Root Node: Implemented XML Operations
+### Context Menu : System Objects Root Node: Implemented XML Operations
 * #### Get full system-objecttype-definitions.xml export from the server.
+
+## Contributors
+* [ghgofort](https://github.com/ghgofort) (Repo Owner)
+* [david-mkhitaryan-dev](https://github.com/david-mkhitaryan-dev)
 
 ## References:
 
