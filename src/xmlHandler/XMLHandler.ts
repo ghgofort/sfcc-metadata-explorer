@@ -320,7 +320,8 @@ export default class XMLHandler {
         window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
 
         // Un-zip the archive.
-        const filePath = workspace.workspaceFolders[0].uri.toString().substring(8) + path.sep + 'sfccExport.zip';
+        const currentPath = !workspace.workspaceFolders ? workspace.rootPath : workspace.workspaceFolders[0].uri.fsPath;
+        const filePath = currentPath + path.sep + 'sfccExport.zip';
         const zip = new AdmZip(filePath);
         const zipEntries = zip.getEntries();
         if (zipEntries && zipEntries.length) {
