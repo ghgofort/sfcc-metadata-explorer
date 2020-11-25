@@ -2,7 +2,7 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
-## 1.1.0 (11/25/20)
+## 1.2.0 (11/25/20)
 ### Minor Release
 * Fix for OCAPI password & client Id settings not allowing real configurable values due to 30char hard limit imposed on field.
 * Update changelog & bump version.
