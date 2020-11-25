@@ -55,13 +55,13 @@ export const getClientId = () => {
     'extension.sfccmetadata'
   );
   const configId = String(workspaceConfig.get('ocapi.clientid'));
-  const tester = /^[\S]{30}$/;
-  if (configId && !tester.test(configId)) {
-    window.showErrorMessage('Value configured for OCAPI clientId is not valid: ' +
-      configId + '. Using default version API client Id.');
+
+  if (!configId) {
+    window.showInformationMessage('No value configured for OCAPI clientId in ' +
+      'VSCode setting: Using default version API client Id.');
   }
 
-  return configId && tester.test(configId) ? configId : clientId;
+  return !configId ? clientId : configId;
 };
 
 /**
@@ -76,13 +76,13 @@ export const getClientPass = () => {
     'extension.sfccmetadata'
   );
   const configPass = String(workspaceConfig.get('ocapi.clientpassword'));
-  const tester = /^[\S]{30}$/;
-  if (configPass && !tester.test(configPass)) {
-    window.showErrorMessage('Value configured for OCAPI client password is not valid: ' +
-      configPass + '. Using default version API client Id.');
+
+  if (!configPass) {
+    window.showInformationMessage('No value configured for OCAPI client password ' +
+      'VSCode setting. Using default version API client Id.');
   }
 
-  return configPass && tester.test(configPass) ? configPass : defaultPass;
+  return !configPass ? defaultPass : configPass;
 };
 
 /* ========================================================================
