@@ -28,6 +28,10 @@ export namespace IOCAPITypes {
     value: string;
   }
 
+  export interface IOCAPIData {
+    id: string
+  }
+
   /** @interface IStatus */
   export interface IStatus {
     code: string;

@@ -34,7 +34,7 @@ export class MetadataViewProvider
   // Declare memeber variables.
   public readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
   public providerType: string = '';
-  private eventEmitter: EventEmitter<MetadataNode | undefined> = null;
+  private eventEmitter: EventEmitter<MetadataNode | undefined>;
   private ocapiHelper = new OCAPIHelper();
   private service: OCAPIService = new OCAPIService();
 
@@ -86,7 +86,7 @@ export class MetadataViewProvider
     try {
       if (!element) {
         // Get the base nodes of the tree.
-        return this.getRootChildren(element);
+        return this.getRootChildren();
       } else {
         // Get children of expandable node types
         if (element.expandable) {
@@ -128,6 +128,7 @@ export class MetadataViewProvider
     } catch (e) {
       return Promise.reject(e.message);
     }
+    return Promise.reject('An Unexpected Error Occurred!');
   }
 
   /**
@@ -144,9 +145,9 @@ export class MetadataViewProvider
   ): Promise<MetadataNode[]> {
     const path = element.parentId.split('.');
     const objectType = path.pop();
-    const parentType = path.pop();
+    const parentType = path.pop() || '';
     const isAttribute = element.name !== 'Attribute Groups';
-    let _callSetup: ICallSetup = null;
+    let _callSetup: ICallSetup;
     let _callResult: any;
 
     // If this is the node for attribute definitions.
@@ -174,18 +175,30 @@ export class MetadataViewProvider
         typeof _callResult.data !== 'undefined' &&
         Array.isArray(_callResult.data)
       ) {
-        return _callResult.data.map(resultObj => {
+        return _callResult.data.map((resultObj: { id: string; display_name: { default: string | undefined; }; }): MetadataNode => {
+          if (resultObj) {
+            return new MetadataNode(
+              resultObj.id,
+              TreeItemCollapsibleState.Collapsed,
+              {
+                parentId: element.parentId + '.' + objectType,
+                objectAttributeDefinition: new ObjectAttributeDefinition(
+                  resultObj
+                ),
+                displayDescription: resultObj.display_name
+                  ? resultObj.display_name.default
+                  : ''
+              }
+            );
+          }
+
           return new MetadataNode(
-            resultObj.id,
+            'ERROR',
             TreeItemCollapsibleState.Collapsed,
             {
-              parentId: element.parentId + '.' + objectType,
-              objectAttributeDefinition: new ObjectAttributeDefinition(
-                resultObj
-              ),
-              displayDescription: resultObj.display_name
-                ? resultObj.display_name.default
-                : ''
+              parentId: element.parentId + '.' + 'ERROR',
+              objectAttributeDefinition: new ObjectAttributeDefinition({}),
+              displayDescription: 'There wasn an error calling the API',
             }
           );
         });
@@ -215,12 +228,11 @@ export class MetadataViewProvider
       _callResult = await this.service.makeCall(_callSetup);
 
       // If the API call returns data create the first level of a tree.
-      if (
-        !_callResult.error &&
+      if (!_callResult.error &&
         typeof _callResult.data !== 'undefined' &&
         Array.isArray(_callResult.data)
       ) {
-        return _callResult.data.map(resultObj => {
+        return _callResult.data.map((resultObj: { id: string; display_name: { default: string | undefined; }; }) => {
           return new MetadataNode(
             resultObj.id,
             TreeItemCollapsibleState.Collapsed,
@@ -269,7 +281,7 @@ export class MetadataViewProvider
    */
   private async getBaseNodeChildren(
     element: MetadataNode
-  ): Promise<MetadataNode[]> {
+  ): Promise<any> {
     const baseName = element.baseNodeName;
 
     const callDataObj =  {
@@ -295,11 +307,11 @@ export class MetadataViewProvider
     if (_callResult.data && Array.isArray(_callResult.data)) {
       // Add the display name to the custom objects so that they can be
       // easily identified as custom.
-      return _callResult.data.filter(obj => {
+      return _callResult.data.filter((obj: { object_type: string; display_name: any; }) => {
         return baseName === 'systemObjectDefinitions' ?
           (obj.object_type !== 'CustomObject') :
           (obj.object_type === 'CustomObject' && obj.display_name);
-      }).map(filterdObj => {
+      }).map((filterdObj: { object_type: string; display_name: { default: string; }; }) => {
         // Get the display name for the tree node.
         let name = '';
         if (baseName === 'systemObjectDefinitions') {
@@ -326,9 +338,7 @@ export class MetadataViewProvider
    * @return {Promise<MetadataNode[]>} - Returns a promise that will resolve to
    *    the child MetadataNodes array.
    */
-  private async getRootChildren(
-    element: MetadataNode
-  ): Promise<MetadataNode[]> {
+  private async getRootChildren(): Promise<MetadataNode[]> {
     const metaNodes: MetadataNode[] = [];
 
     // Get the workspace configuration object for all configuration settings

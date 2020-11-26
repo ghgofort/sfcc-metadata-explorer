@@ -16,6 +16,7 @@ import Site from '../documents/Site';
 
 /** @interface INodeData */
 export interface INodeData {
+  [key: string]: any;
   parentId: string;
   groupAttribute?: string;
   objectAttributeDefinition?: ObjectAttributeDefinition;
@@ -31,6 +32,23 @@ export interface INodeData {
   rootTree?: string;
   site?: Site;
   preferenceValue?: IPreferenceValue;
+}
+
+export interface INodeTypes {
+  [key: string]: string;
+  attribute: string;
+  attributeValue: string;
+  attributeValues: string;
+  baseNodeName: string;
+  definition: string;
+  group: string;
+  groupAttribute: string;
+  parentContainer: string;
+  preferenceValue: string;
+  sitePreference: string;
+  sites: string;
+  stringList: string;
+  value: string;
 }
 
 /** @interface IPreferenceValue */
