@@ -7,13 +7,7 @@
 
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 
-interface IValDefinitionArgs {
-  description: IOCAPITypes.ILocalizedString;
-  display_value: IOCAPITypes.ILocalizedString;
-  id: string;
-  position: number;
-  value: Object;
-}
+
 
 /**
  * @class ObjectAttributeValueDefinition
@@ -27,7 +21,7 @@ export default class ObjectAttributeValueDefinition {
   public id: string;
   public position: number;
   public value: any;
-  [index: string]: string|IOCAPITypes.ILocalizedString|number;
+  [index: string]: any;
 
   /**
    * A constructor function for initializing new instances of the class.
@@ -35,7 +29,7 @@ export default class ObjectAttributeValueDefinition {
    *    to the Open Commerce API of type object_attribute_value_definition.
    * @constructor
    */
-  constructor(args: IValDefinitionArgs) {
+  constructor(args: IOCAPITypes.IValDefinitionArgs) {
     this.description = args && args.description ? args.description : { default: '' };
     this.displayValue = args.display_value || { default: '' };
     this.id = args.id || '';

@@ -38,7 +38,6 @@ export class MetadataViewProvider
   implements TreeDataProvider<MetadataNode | undefined> {
   // Declare memeber variables.
   public readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
-  public providerType: string = '';
   private eventEmitter: EventEmitter<MetadataNode | undefined>;
   private ocapiHelper = new OCAPIHelper();
   private service: OCAPIService = new OCAPIService();
@@ -49,10 +48,8 @@ export class MetadataViewProvider
    * @param {EventEmitter<MetadataNode | undefined>} eventEmitter
    */
   constructor(
-    providerType: string,
     eventEmitter: EventEmitter<MetadataNode | undefined>
   ) {
-    this.providerType = providerType;
     this.eventEmitter = eventEmitter;
     this.onDidChangeTreeData = this.eventEmitter.event;
   }

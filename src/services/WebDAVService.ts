@@ -55,10 +55,10 @@ export default class WebDAVService {
     const filePath = currentPath + path.sep + 'sfccExport.zip';
 
     return fetch(url, options)
-      .then(res => {
+      .then((res) => {
         return streamPipe(res.body, fs.createWriteStream(filePath));
       })
-      .catch(err =>{
+      .catch((err: any) =>{
         console.error(err);
       });
   }

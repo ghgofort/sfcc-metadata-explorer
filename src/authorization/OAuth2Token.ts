@@ -3,6 +3,8 @@
  * @fileoverview - A class to hold an OAuth 2.0 access token.
  */
 
+interface IOAuth2TokenArgs { expires_in: number; token_type: string; access_token: string; };
+
 export class OAuth2Token {
   // Define class members and their default values.
   public expiresIn: number = 0;
@@ -10,7 +12,7 @@ export class OAuth2Token {
   public accessToken: string = '';
   public timeCreated: number = 0;
 
-  constructor(args: { expires_in: number; token_type: string; access_token: string; }) {
+  constructor(args: IOAuth2TokenArgs = { expires_in: 0, token_type: '', access_token: '' }) {
     // Assign any instance values passed in at instantiation.
     if (args.expires_in) {
       this.expiresIn = args.expires_in;
