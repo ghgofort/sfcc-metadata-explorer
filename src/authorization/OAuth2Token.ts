@@ -10,7 +10,7 @@ export class OAuth2Token {
   public accessToken: string = '';
   public timeCreated: number = 0;
 
-  constructor(args) {
+  constructor(args: { expires_in: number; token_type: string; access_token: string; }) {
     // Assign any instance values passed in at instantiation.
     if (args.expires_in) {
       this.expiresIn = args.expires_in;

@@ -15,6 +15,7 @@ import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
  *      SFCC OCAPI.
  */
 export default class ObjectAttributeDefinition implements IAPIDocument {
+  [index: string]: any;
   // Declare public class members.
   public defaultValue: ObjectAttributeValueDefinition;
   public description: IOCAPITypes.ILocalizedString;
@@ -27,9 +28,9 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public link: string;
   public localizable: boolean;
   public mandatory: boolean;
-  public maxValue?: number;
+  public maxValue: number;
   public minLength: number;
-  public minValue?: number;
+  public minValue: number;
   public multiValueType: boolean;
   public orderRequired: boolean;
   public queryable: boolean;
@@ -42,7 +43,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public siteSpecific: boolean;
   public system: boolean;
   public unit: IOCAPITypes.ILocalizedString;
-  public valueDefinitions: ObjectAttributeValueDefinition[];
+  public valueDefinitions: ObjectAttributeValueDefinition[] = [];
   public valueType: string;
   public visible: boolean;
 
@@ -84,7 +85,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    *  - The values for field_height and field_width are ignored only kept for
    *    use in the import and export files.
    */
-  constructor(args) {
+  constructor(args: any) {
     this.defaultValue =
       new ObjectAttributeValueDefinition(args.default_value) ||
       new ObjectAttributeValueDefinition({});

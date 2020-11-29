@@ -13,6 +13,7 @@ import ObjectAttributeDefinition from './ObjectAttributeDefinition';
  * @classdesc - Used for handling the OCAPI document: ObjectAttributeGroup.
  */
 export default class ObjectAttributeGroup implements IAPIDocument {
+  [index: string]: string|ObjectAttributeDefinition[]|number|boolean|string[]|Object;
   // Class Member Fields
   public attributeDefinitions: ObjectAttributeDefinition[] = [];
   public attributeDefinitionsCount: number = 0;

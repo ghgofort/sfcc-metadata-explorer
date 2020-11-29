@@ -7,6 +7,14 @@
 
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 
+interface IValDefinitionArgs {
+  description: IOCAPITypes.ILocalizedString;
+  display_value: IOCAPITypes.ILocalizedString;
+  id: string;
+  position: number;
+  value: Object;
+}
+
 /**
  * @class ObjectAttributeValueDefinition
  * @classdesc - A data class for the OCAPI data API document type:
@@ -18,25 +26,24 @@ export default class ObjectAttributeValueDefinition {
   public displayValue: IOCAPITypes.ILocalizedString;
   public id: string;
   public position: number;
-  public value: object;
+  public value: any;
+  [index: string]: string|IOCAPITypes.ILocalizedString|number;
 
   /**
    * A constructor function for initializing new instances of the class.
-   * @param {Object} [args] - The raw JSON document object returned from a call
+   * @param {IValDefinitionArgs} [args] - The raw JSON document object returned from a call
    *    to the Open Commerce API of type object_attribute_value_definition.
    * @constructor
    */
-  constructor(args) {
-    if (args) {
-      this.description = args.description || { default: '' };
-      this.displayValue = args.display_value || { default: '' };
-      this.id = args.id || '';
-      this.position = args.position || -1;
-      if (args.value == false) {
-        this.value = args.value;
-      } else {
-        this.value = args.value || {};
-      }
+  constructor(args: IValDefinitionArgs) {
+    this.description = args && args.description ? args.description : { default: '' };
+    this.displayValue = args.display_value || { default: '' };
+    this.id = args.id || '';
+    this.position = args.position || -1;
+    if (args.value == false) {
+      this.value = args.value;
+    } else {
+      this.value = args.value || {};
     }
   }
 

@@ -19,9 +19,14 @@ import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDef
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import OCAPIHelper from '../helpers/OCAPIHelper';
 import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import { ICallSetup } from '../services/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
 import { MetadataNode } from './MetadataNode';
+
+interface INodeMap {
+  [index: string]: string;
+}
 
 /**
  * @class MetadataViewProvider
@@ -416,32 +421,37 @@ export class MetadataViewProvider
   private async getObjectDefinitionChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    const displayTextMap = {
+    const displayTextMap: {[key: string]: string}= {
       objectAttributeDefinitions: 'Attribute Definitions',
       objectAttributeGroups: 'Attribute Groups'
     };
 
-    // Setup parent nodes for the attribute definition & the attribute
-    // Group nodes to be added to.
-    return Object.keys(displayTextMap).map(ctnrName => {
-      const metaNode = new MetadataNode(
-        displayTextMap[ctnrName],
-        element.parentId.indexOf('customObjectDefinitions') > -1 ?
-          TreeItemCollapsibleState.None :
-          TreeItemCollapsibleState.Collapsed,
-        {
-          displayDescription:
-            ctnrName === 'objectAttributeDefinitions'
-              ? element.objectTypeDefinition.attributeDefinitionCount.toString()
-              : element.objectTypeDefinition.attributeGroupCount.toString(),
-          parentContainer: ctnrName,
-          parentId:
-            element.parentId + '.' + element.objectTypeDefinition.objectType
-        }
-      );
+    if (!element.objectTypeDefinition) {
+      return Promise.reject('Object Type Not Found')
+    } else {
+      const objTD: ObjectTypeDefinition = element.objectTypeDefinition;
+      // Setup parent nodes for the attribute definition & the attribute
+      // Group nodes to be added to.
+      return Object.keys(displayTextMap).map(ctnrName => {
+        const metaNode = new MetadataNode(
+          displayTextMap[ctnrName],
+          element.parentId.indexOf('customObjectDefinitions') > -1 ?
+            TreeItemCollapsibleState.None :
+            TreeItemCollapsibleState.Collapsed,
+            {
+              displayDescription: ctnrName === 'objectAttributeDefinitions'
+                  ? objTD.attributeDefinitionCount.toString()
+                  : objTD.attributeGroupCount.toString(),
+              parentContainer: ctnrName,
+              parentId:
+                element.parentId + '.' + objTD.objectType
+            }
+        );
 
-      return metaNode;
-    });
+        return metaNode;
+      });
+    }
+
   }
 
   /**
@@ -452,33 +462,37 @@ export class MetadataViewProvider
   private async getAttributeValueDefinitionChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    return Object.keys(element.objectAttributeValueDefinition).map(key => {
-      const value = element.objectAttributeValueDefinition[key];
+    if (!element.objectAttributeValueDefinition) {
+      return Promise.reject('ObjectAttributeValueDefinition Not Found');
+    } else {
+      const objValDef = element.objectAttributeValueDefinition;
+      return Object.keys(objValDef).map(key => {
+        const value = objValDef[key];
 
-      if (
-        typeof value === 'string' ||
-        typeof value === 'number' ||
-        typeof value === 'boolean'
-      ) {
-        // == Primitive Types
-        return new MetadataNode(
-          key + ': ' + value,
-          TreeItemCollapsibleState.None,
-          {
-            parentId: element.parentId + 'objectAttributeValueDefinition'
-          }
-        );
-      } else {
-        // == Localized String
-        return new MetadataNode(
-          key + ': ' + value.default,
-          TreeItemCollapsibleState.None,
-          {
-            parentId: element.parentId + 'objectAttributeValueDefinition'
-          }
-        );
-      }
-    });
+        if (typeof value === 'string' ||
+          typeof value === 'number' ||
+          typeof value === 'boolean'
+        ) {
+          // == Primitive Types
+          return new MetadataNode(
+            key + ': ' + value,
+            TreeItemCollapsibleState.None,
+            {
+              parentId: element.parentId + 'objectAttributeValueDefinition'
+            }
+          );
+        } else {
+          // == Localized String
+          return new MetadataNode(
+            key + ': ' + value.default,
+            TreeItemCollapsibleState.None,
+            {
+              parentId: element.parentId + 'objectAttributeValueDefinition'
+            }
+          );
+        }
+      });
+    }
   }
 
   /**
@@ -491,24 +505,28 @@ export class MetadataViewProvider
   ): Promise<MetadataNode[]> {
     const childNodes: MetadataNode[] = [];
     const attrGroup = element.objectAttributeGroup;
-    const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
+    if (!attrGroup) {
+      return Promise.reject('Unable to find Attribute Group Chilren');
+    } else {
+      const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
 
-    // Attribute Definitions
-    if (hasAttributes) {
-      const attrDefTitles = attrGroup.attributeDefinitions.map(
-        attrDef => attrDef.id
-      );
+      // Attribute Definitions
+      if (hasAttributes) {
+        const attrDefTitles = attrGroup.attributeDefinitions.map(
+          attrDef => attrDef.id
+        );
 
-      childNodes.push(
-        new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
-          parentId: element.parentId + '.' + attrGroup.id,
-          stringList: attrDefTitles,
-          displayDescription: attrGroup.attributeDefinitionsCount.toString()
-        })
+        childNodes.push(
+          new MetadataNode('Attributes', TreeItemCollapsibleState.Collapsed, {
+            parentId: element.parentId + '.' + attrGroup.id,
+            stringList: attrDefTitles,
+            displayDescription: attrGroup.attributeDefinitionsCount.toString()
+          })
       );
+      }
     }
 
-    const nodeMap = {
+    const nodeMap: INodeMap = {
       displayName: 'display name'
     };
 
@@ -525,7 +543,7 @@ export class MetadataViewProvider
         TreeItemCollapsibleState.None,
         {
           parentId: element.parentId + '.' + attrGroup.id,
-          displayDescription: attrGroup[property]
+          displayDescription: element[property]
         }
       );
 
@@ -543,82 +561,104 @@ export class MetadataViewProvider
   private async getAttributeDefinitionChildren(
     element: MetadataNode
   ): Promise<MetadataNode[]> {
-    let objAttrDef: ObjectAttributeDefinition = element.objectAttributeDefinition;
+    if (!element.objectAttributeDefinition) {
+      return Promise.reject('Unable to Find ObjectAttributeDefinition');
+    } else {
+      let objAttrDef: ObjectAttributeDefinition = element.objectAttributeDefinition;
 
-    // Check if the attribute is an Enum type.
-    if (objAttrDef.valueType.indexOf('enum') > -1) {
-      // Call OCAPI to get the value definitions of the attribute.
-      const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
+      // Check if the attribute is an Enum type.
+      if (objAttrDef.valueType.indexOf('enum') > -1) {
+        // Call OCAPI to get the value definitions of the attribute.
+        const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
 
-      if (attrAPIObj) {
-        objAttrDef = new ObjectAttributeDefinition(attrAPIObj);
+        if (attrAPIObj) {
+          objAttrDef = new ObjectAttributeDefinition(attrAPIObj);
+        }
       }
+
+      // Loop through the member properties and handle each possible type
+      // for display as a node on the tree.
+      return Object.keys(objAttrDef).filter(key => {
+          return !!objAttrDef[key];
+        }).map(key => {
+        if (!objAttrDef[key]) {
+          return new MetadataNode('ERROR: Error getting attribute group child node.',
+            TreeItemCollapsibleState.None,
+            { parentId: element.parentId + '.error' }
+          );
+        } else {
+          // == Primitive Types
+          if (
+            typeof objAttrDef[key] === 'string' ||
+            typeof objAttrDef[key] === 'number' ||
+            typeof objAttrDef[key] === 'boolean'
+          ) {
+            return new MetadataNode(
+              key + ' : ' + objAttrDef[key],
+              TreeItemCollapsibleState.None,
+              {
+                parentId:
+                  element.parentId + '.' + objAttrDef.id
+              }
+            );
+          } else if (
+            // == Localized Strings
+            typeof objAttrDef[key] === 'object' &&
+            objAttrDef[key] !== null &&
+            Object.keys(objAttrDef[key]).includes('default')
+          ) {
+            const defaultVal: IOCAPITypes.ILocalizedString = {
+              default: objAttrDef[key].default,
+            };
+            return new MetadataNode(
+              key + ' : ' + defaultVal.default,
+              TreeItemCollapsibleState.None,
+              {
+                parentId:
+                  element.parentId + '.' + objAttrDef.id
+              }
+            );
+          } else if (objAttrDef[key] instanceof ObjectAttributeValueDefinition) {
+            // == ObjectAttributeValueDefinition
+            if (typeof objAttrDef[key].id !== 'undefined') {
+              return new MetadataNode(
+                key + ': ' + objAttrDef[key].id,
+                TreeItemCollapsibleState.Collapsed,
+                {
+                  objectAttributeValueDefinition: objAttrDef[key],
+                  parentId:
+                    element.parentId + '.' + objAttrDef.id
+                }
+              );
+            }
+            return new MetadataNode(
+              key + ': (undefined)',
+              TreeItemCollapsibleState.None,
+              {
+                objectAttributeValueDefinition: objAttrDef[key],
+                parentId:
+                  element.parentId + '.' + objAttrDef.id
+              }
+            );
+          } else if (Array.isArray(objAttrDef[key]) && objAttrDef[key].length) {
+              // == ObjectAttributeValueDefinition[]
+              return new MetadataNode('Value Definitions',
+                TreeItemCollapsibleState.Collapsed,
+                {
+                  objectAttributeValueDefinitions: objAttrDef[key],
+                  parentId: element.parentId + '.' + objAttrDef.id
+                }
+              );
+          } else {
+            return new MetadataNode('ERROR: Error getting attribute group child node.',
+            TreeItemCollapsibleState.None,
+              { parentId: element.parentId + '.error' }
+            );
+          }
+        }
+      });
     }
 
-    // Loop through the member properties and handle each possible type
-    // for display as a node on the tree.
-    return Object.keys(objAttrDef).map(key => {
-      // == Primitive Types
-      if (
-        typeof objAttrDef[key] === 'string' ||
-        typeof objAttrDef[key] === 'number' ||
-        typeof objAttrDef[key] === 'boolean'
-      ) {
-        return new MetadataNode(
-          key + ' : ' + objAttrDef[key],
-          TreeItemCollapsibleState.None,
-          {
-            parentId:
-              element.parentId + '.' + element.objectAttributeDefinition.id
-          }
-        );
-      } else if (
-        // == Localized Strings
-        typeof objAttrDef[key] === 'object' &&
-        objAttrDef[key] !== null &&
-        typeof objAttrDef[key].default === 'string'
-      ) {
-        return new MetadataNode(
-          key + ' : ' + objAttrDef[key].default,
-          TreeItemCollapsibleState.None,
-          {
-            parentId:
-              element.parentId + '.' + element.objectAttributeDefinition.id
-          }
-        );
-      } else if (objAttrDef[key] instanceof ObjectAttributeValueDefinition) {
-        // == ObjectAttributeValueDefinition
-        if (typeof objAttrDef[key].id !== 'undefined') {
-          return new MetadataNode(
-            key + ': ' + objAttrDef[key].id,
-            TreeItemCollapsibleState.Collapsed,
-            {
-              objectAttributeValueDefinition: objAttrDef[key],
-              parentId:
-                element.parentId + '.' + element.objectAttributeDefinition.id
-            }
-          );
-        }
-        return new MetadataNode(
-          key + ': (undefined)',
-          TreeItemCollapsibleState.None,
-          {
-            objectAttributeValueDefinition: objAttrDef[key],
-            parentId:
-              element.parentId + '.' + element.objectAttributeDefinition.id
-          }
-        );
-      } else if (Array.isArray(objAttrDef[key]) && objAttrDef[key].length) {
-          // == ObjectAttributeValueDefinition[]
-          return new MetadataNode('Value Definitions',
-            TreeItemCollapsibleState.Collapsed,
-            {
-              objectAttributeValueDefinitions: objAttrDef[key],
-              parentId: element.parentId + '.' + element.objectAttributeDefinition.id
-            }
-          );
-      }
-    });
   }
 
   /**
