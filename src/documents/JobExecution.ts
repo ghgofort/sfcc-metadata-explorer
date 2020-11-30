@@ -11,7 +11,7 @@ export default class JobsExecution implements IAPIDocument {
   public duration: number = 0;
   public endTime: Date;
   public executionScopes: string[] = [];
-  public exitStatus: IOCAPITypes.IStatus;
+  public exitStatus: IOCAPITypes.IStatus = { code: '', message: '', status: 'ok' };
   public id: string = '';
   public isLogFileExisting: boolean = false;
   public isRestart: boolean = false;
@@ -46,7 +46,7 @@ export default class JobsExecution implements IAPIDocument {
    *    the an optional paramter.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args) {
       // Set string & string[] property values.
       this.clientId = args.client_id ? args.client_id : '';

@@ -27,13 +27,13 @@ export default class ObjectAttributeGroups {
    * @param {Object} [args] - Raw JSON response from OCAPI call.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args) {
       if (args.count) {
         this.count = args.count;
       }
       if (args.data) {
-        this.data = args.data.map(group => new ObjectAttributeGroup(group));
+        this.data = args.data.map((group: any) => new ObjectAttributeGroup(group));
       }
       if (args.expand) {
         this.expand = args.expand;

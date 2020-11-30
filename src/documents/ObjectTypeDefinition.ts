@@ -45,7 +45,7 @@ export default class ObjectTypeDefinition {
    * @param {boolean} [args.read_only] - True if the system object is read-only,
    *    false otherwise. This is a computed attribute and cannot be changed.
    */
-  constructor(args) {
+  constructor(args: any) {
     // Get any passed in property values and assign them to the class instance.
     if (args) {
       if (args.attribute_definition_count) {

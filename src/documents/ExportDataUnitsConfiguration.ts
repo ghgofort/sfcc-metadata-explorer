@@ -1,5 +1,6 @@
 import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import ExportGlobalDataConfiguration from './ExportGlobalDataConfiguration';
 import ExportSitesConfiguration from './ExportSitesConfiguration';
 
@@ -10,6 +11,7 @@ import ExportSitesConfiguration from './ExportSitesConfiguration';
  *    include in an archive export global job execution.
  */
 export default class ExportDataUnitsConfiguration implements IAPIDocument {
+  [index: string]: any;
   public catalogStaticResources: object = { all: false };
   public catalogs: object = { all: false };
   public customerLists: object = { all: false };
@@ -18,9 +20,9 @@ export default class ExportDataUnitsConfiguration implements IAPIDocument {
   public libraries: object = { all: false };
   public libraryStaticResources: object = { all: false };
   public priceBooks: object = { all: false };
-  public sites: object = { all: new ExportSitesConfiguration() };
+  public sites: object = { all: new ExportSitesConfiguration({}) };
   public includedFields: string[] = [];
-  public readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP: IOCAPITypes.IDocumentObject = {
     catalogStaticResources: 'catalog_static_resources',
     customerLists: 'customer_lists',
     globalData: 'global_data',
@@ -65,7 +67,7 @@ export default class ExportDataUnitsConfiguration implements IAPIDocument {
 
   public getDocument(includeFields: string[] = []) {
     const instance = this;
-    const documentObj = {};
+    const documentObj: IOCAPITypes.IDocumentObject = {};
     let memberNames = Object.keys(instance).filter(
       key =>
         typeof key !== 'function' &&

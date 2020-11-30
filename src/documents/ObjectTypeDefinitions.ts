@@ -26,7 +26,7 @@ export class ObjectTypeDefinitions {
    * @param {Object} [args] - The raw JSON document returned from an OCAPI call.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     // Get any arguments that were passed into the instance to set the values on
     // Object initialization.
     if (args) {
@@ -34,7 +34,7 @@ export class ObjectTypeDefinitions {
         this.count = args.count;
       }
       if (args.data) {
-        this.data = args.data.map(type => new ObjectTypeDefinition(type));
+        this.data = args.data.map((type: any) => new ObjectTypeDefinition(type));
       }
       if (args.expand) {
         this.expand = args.expand;

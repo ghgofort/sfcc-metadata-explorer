@@ -25,7 +25,7 @@ export default class Sites {
    * @param {Object} args - The raw JSON result for the Sites call.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: { count: number; expand: never[]; next: string; previous: string; select: string; start: number; total: number; data: any[]; }) {
     if (args) {
       this.count = args.count || 0;
       this.expand = args.expand || [];
@@ -36,7 +36,7 @@ export default class Sites {
       this.total = args.total || 0;
 
       if (args.data && args.data.length) {
-        this.data = args.data.map(siteData => new Site(siteData));
+        this.data = args.data.map((siteData: any) => new Site(siteData));
       }
     }
   }

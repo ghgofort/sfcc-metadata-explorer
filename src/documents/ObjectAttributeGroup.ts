@@ -6,6 +6,7 @@
 
 import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import ObjectAttributeDefinition from './ObjectAttributeDefinition';
 
 /**
@@ -25,7 +26,7 @@ export default class ObjectAttributeGroup implements IAPIDocument {
   public position: number = 0;
   public includedFields: string[] = [];
 
-  public readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP: IOCAPITypes.IDocumentObject = {
     attributeDefinitions: 'attribute_definitions',
     attributeDefinitionsCount: 'attribute_definitions_count',
     displayName: 'display_name'
@@ -36,10 +37,10 @@ export default class ObjectAttributeGroup implements IAPIDocument {
    *    SFCC OCAPI.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args) {
       if (args.attribute_definitions) {
-        this.attributeDefinitions = args.attribute_definitions.map(def =>
+        this.attributeDefinitions = args.attribute_definitions.map((def: any) =>
             new ObjectAttributeDefinition(def));
       }
       if (args.attribute_definitions_count) {
@@ -67,7 +68,7 @@ export default class ObjectAttributeGroup implements IAPIDocument {
   }
 
   public getDocument(includeFields: string[] = []): object {
-    const documentObj = {};
+    const documentObj: IOCAPITypes.IDocumentObject = {};
     let memberNames = Object.keys(this).filter(
       key =>
         typeof key !== 'function' &&

@@ -1,5 +1,6 @@
 import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 
 /**
  * @class
@@ -8,6 +9,7 @@ import IAPIDocument from '../interfaces/IAPIDocument';
  *    included in an execution of Global SFCC Job `sfcc-site-archive-export`.
  */
 export default class ExportGlobalDataConfiguration implements IAPIDocument {
+  [index: string]: any;
   public accessRoles: boolean = false;
   public all: boolean = false;
   public cscSettings: boolean = false;
@@ -33,7 +35,7 @@ export default class ExportGlobalDataConfiguration implements IAPIDocument {
   public webdavClientPermissions: boolean = false;
 
   public includedFields: string[] = [];
-  public readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP: IOCAPITypes.IDocumentObject = {
     accessRoles: 'access_roles',
     cscSettings: 'csc_settings',
     csrfWhitelists: 'csrf_whitelists',
@@ -98,7 +100,7 @@ export default class ExportGlobalDataConfiguration implements IAPIDocument {
    * @return {Object} - Returns the OCAPI format object w/snake-case naming.
    */
   public getDocument(includeFields: string[] = []) {
-    const documentObj = {};
+    const documentObj: IOCAPITypes.IDocumentObject = {};
     let memberNames = Object.keys(this).filter(
       key =>
         typeof key !== 'function' &&
