@@ -16,6 +16,7 @@ import {
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import { ICallSetup } from '../services/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
 
@@ -52,7 +53,7 @@ export default class OCAPIHelper {
     'Text'
   ];
 
-  public static readonly ATTRIBUTE_MAP = {
+  public static readonly ATTRIBUTE_MAP: IOCAPITypes.IDocumentObject = {
     'integer': 'int',
     'number': 'double',
     'date + time': 'datetime',
@@ -101,7 +102,6 @@ export default class OCAPIHelper {
     }
 
     const docObj = attributeDefinition.getDocument(includeFields);
-    let _callSetup: ICallSetup = null;
     let _callResult: any;
     const callData: any = {
       body: JSON.stringify(docObj),
@@ -110,7 +110,7 @@ export default class OCAPIHelper {
     };
 
     try {
-      _callSetup = await this.service.getCallSetup(
+      const _callSetup: ICallSetup = await this.service.getCallSetup(
         'systemObjectDefinitions',
         'createAttribute',
         callData
@@ -143,7 +143,6 @@ export default class OCAPIHelper {
     attributeGroup.position = 1.0;
 
     const docObj = attributeGroup.getDocument(includeFields);
-    let _callSetup: ICallSetup = null;
     let _callResult: any;
     const callData: any = {
       body: JSON.stringify(docObj),
@@ -152,7 +151,7 @@ export default class OCAPIHelper {
     };
 
     try {
-      _callSetup = await this.service.getCallSetup(
+      const _callSetup: ICallSetup = await this.service.getCallSetup(
         'systemObjectDefinitions',
         'createAttributeGroup',
         callData
@@ -180,7 +179,7 @@ export default class OCAPIHelper {
     const qpOptions: QuickPickOptions = {
       placeHolder: 'Select the attribute group'
     };
-    let attributeId: string = '';
+    let attributeId: string|undefined = '';
 
     try {
       // Show a select option box to choose the attribute group.
@@ -193,7 +192,7 @@ export default class OCAPIHelper {
       return Promise.reject('User Cancled Action');
     }
 
-    return attributeId;
+    return attributeId || '';
   }
 
   /**
@@ -231,7 +230,7 @@ export default class OCAPIHelper {
 
     return containsSpecialChars
       ? 'Id for attribute contains illegal characters'
-      : null;
+      : '';
   }
 
   /* ========================================================================
@@ -306,16 +305,16 @@ export default class OCAPIHelper {
         OCAPIHelper.ATTRIBUTE_TYPES,
         qpOptions,
         cancelAddAttributeToken
-      );
+      ) || '';
 
       // If the user cancels, then exit the wizard.
-      if (typeof attributeType === 'undefined') {
+      if (!attributeType) {
         return Promise.reject({ error: false, cancelled: true });
-      }
-
-      if (OCAPIHelper.ATTRIBUTE_MAP[attributeType.toLowerCase()]) {
-        attributeType = OCAPIHelper.ATTRIBUTE_MAP[
-          attributeType.toLowerCase()];
+      } else {
+        if (OCAPIHelper.ATTRIBUTE_MAP[attributeType.toLowerCase()]) {
+          attributeType = OCAPIHelper.ATTRIBUTE_MAP[
+            attributeType.toLowerCase()];
+        }
       }
 
       const displayName = await window.showInputBox(
@@ -338,10 +337,10 @@ export default class OCAPIHelper {
         // Assign attribute values to the request document object.
         objAttributeDefinition.description.default = description;
         includeDescription = true;
+      } else {
+        objAttributeDefinition.displayName.default = displayName;
+        objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
       }
-
-      objAttributeDefinition.displayName.default = displayName;
-      objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
       objAttributeDefinition.id = attributeId;
 
       // Get the currently selected SystemObjects
@@ -376,7 +375,12 @@ export default class OCAPIHelper {
     const tokenSource: CancellationTokenSource = new CancellationTokenSource();
     const cancelAddGroupToken: CancellationToken = tokenSource.token;
     const attributeGroup: ObjectAttributeGroup = new ObjectAttributeGroup({});
-    const objectType = node.objectTypeDefinition.objectType;
+    const objectType = node.objectTypeDefinition ? node.objectTypeDefinition.objectType :
+      '';
+
+    if (!objectType) {
+      return Promise.reject('Unable to find system object type');
+    }
 
     const getIdOptions: InputBoxOptions = {
       prompt: 'Group Id: ',
@@ -397,10 +401,10 @@ export default class OCAPIHelper {
       const attrGroupId: string = await window.showInputBox(
         getIdOptions,
         cancelAddGroupToken
-      );
+      ) || '';
 
       // Handle user cancellation
-      if (typeof attrGroupId === 'undefined') {
+      if (!attrGroupId) {
         return Promise.reject({ error: false, cancelled: true });
       }
 
@@ -458,55 +462,61 @@ export default class OCAPIHelper {
     let availableGroups: string[] = [];
     let _callSetup: ICallSetup;
     let _callResult: any;
+    let attributeId = '';
 
-    // First, get the attribute groups to display as choices.
-    try {
-      _callSetup = await this.service.getCallSetup(
-        'systemObjectDefinitions',
-        'getAttributeGroups',
-        {
-          count: 150,
-          select: '(**)',
-          objectType
-        }
-      );
+    if (node.objectAttributeDefinition) {
+      attributeId = node.objectAttributeDefinition.id;
+    }
 
-      _callResult = await this.service.makeCall(_callSetup);
-
-      // If the API call returns data create the first level of a tree.
-      if (
-        !_callResult.error &&
-        typeof _callResult.data !== 'undefined' &&
-        Array.isArray(_callResult.data)
-      ) {
-        availableGroups = _callResult.data.map(group => group.id);
-        const assignGroupId = await this.getGroupIdFromUser(availableGroups);
-
+    if (attributeId) {
+      // First, get the attribute groups to display as choices.
+      try {
         _callSetup = await this.service.getCallSetup(
           'systemObjectDefinitions',
-          'assignAttributeToGroup',
+          'getAttributeGroups',
           {
-            objectType,
-            groupId: assignGroupId,
-            attributeId: node.objectAttributeDefinition.id
+            count: 150,
+            select: '(**)',
+            objectType
           }
         );
 
-        return await this.service.makeCall(_callSetup);
-      } else if (
-        !_callResult.error &&
-        typeof _callResult.count !== 'undefined' &&
-        _callResult.count === 0
-      ) {
-        const errMsg = 'There are no attribute groups.';
-        window.showErrorMessage(errMsg);
-        Promise.reject(errMsg);
+        _callResult = await this.service.makeCall(_callSetup);
+
+        // If the API call returns data create the first level of a tree.
+        if (
+          !_callResult.error &&
+          typeof _callResult.data !== 'undefined' &&
+          Array.isArray(_callResult.data)
+        ) {
+          availableGroups = _callResult.data.map((group: { id: any; }) => group.id);
+          const assignGroupId = await this.getGroupIdFromUser(availableGroups);
+
+          _callSetup = await this.service.getCallSetup(
+            'systemObjectDefinitions',
+            'assignAttributeToGroup',
+            {
+              objectType,
+              groupId: assignGroupId,
+              attributeId: attributeId
+            }
+          );
+
+          return await this.service.makeCall(_callSetup);
+        } else if (
+          !_callResult.error &&
+          typeof _callResult.count !== 'undefined' &&
+          _callResult.count === 0
+        ) {
+          const errMsg = 'There are no attribute groups.';
+          window.showErrorMessage(errMsg);
+          Promise.reject(errMsg);
+        }
+      } catch (e) {
+        const errMsg = 'Unable to assign attribute to group: ';
+        console.log(errMsg + e.message);
+        window.showErrorMessage('Unable to assign attribute to group.');
       }
-    } catch (e) {
-      const errMsg = 'Unable to assign attribute to group: ';
-      console.log(errMsg + e.message);
-      window.showErrorMessage('Unable to assign attribute to group.');
-      return Promise.reject();
     }
 
     return Promise.reject('ERROR: Unable to assign attribute to group.');
@@ -522,25 +532,31 @@ export default class OCAPIHelper {
   public async deleteAttributeDefinition(node: MetadataNode): Promise<any> {
     const path = node.parentId.split('.');
     const objectType = path[path.length - 2];
-    const attributeId = node.objectAttributeDefinition.id;
+    let attributeId = '';
     let _callSetup: ICallSetup;
 
-    try {
-      _callSetup = await this.service.getCallSetup(
-        'systemObjectDefinitions',
-        'deleteAttribute',
-        {
-          objectType,
-          id: attributeId
-        }
-      );
-
-      return await this.service.makeCall(_callSetup);
-    } catch (e) {
-      console.log(e);
-      // If there was an error, return the error message for display.
-      return Promise.reject('ERROR occured while deleting the attribute.');
+    if (node.objectAttributeDefinition) {
+      attributeId = node.objectAttributeDefinition.id;
     }
+
+    if (attributeId) {
+      try {
+        _callSetup = await this.service.getCallSetup(
+          'systemObjectDefinitions',
+          'deleteAttribute',
+          {
+            objectType,
+            id: attributeId
+          }
+        );
+
+        return await this.service.makeCall(_callSetup);
+      } catch (e) {
+        console.log(e);
+        // If there was an error, return the error message for display.
+      }
+    }
+    return Promise.reject('ERROR occured while deleting the attribute.');
   }
 
   /**
@@ -553,25 +569,31 @@ export default class OCAPIHelper {
   public async deleteAttributeGroup(node: MetadataNode): Promise<any> {
     const path = node.parentId.split('.');
     const objectType = path[path.length - 2];
-    const groupId = node.objectAttributeGroup.id;
+    let groupId = '';
     let _callSetup: ICallSetup;
 
-    try {
-      _callSetup = await this.service.getCallSetup(
-        'systemObjectDefinitions',
-        'deleteAttributeGroup',
-        {
-          objectType,
-          id: groupId
-        }
-      );
-
-      return await this.service.makeCall(_callSetup);
-    } catch (e) {
-      console.log(e);
-      // If there was an error, return the error message for display.
-      return Promise.reject('ERROR occured while deleting the attribute.');
+    if (node.objectAttributeGroup) {
+      groupId = node.objectAttributeGroup.id;
     }
+
+    if (groupId) {
+      try {
+        _callSetup = await this.service.getCallSetup(
+          'systemObjectDefinitions',
+          'deleteAttributeGroup',
+          {
+            objectType,
+            id: groupId
+          }
+        );
+
+        return await this.service.makeCall(_callSetup);
+      } catch (e) {
+        console.log(e);
+        // If there was an error, return the error message for display.
+      }
+    }
+    return Promise.reject('ERROR occured while deleting the attribute.');
   }
 
   /**
@@ -586,28 +608,34 @@ export default class OCAPIHelper {
       'SitePreferences';
     // Capitalize 1st letter of type for OCAPI.
     objectType = objectType.replace(/^\w/, c => c.toUpperCase());
-    const attributeId = node.objectAttributeDefinition ?
-      node.objectAttributeDefinition.id :
-      node.preferenceValue.id;
-    let _callSetup: ICallSetup;
+    let attributeId = '';
+    if (node.objectAttributeDefinition) {
+      attributeId = node.objectAttributeDefinition.id;
 
-    try {
-      _callSetup = await this.service.getCallSetup(
-        'systemObjectDefinitions',
-        'getAttribute',
-        {
-          objectType,
-          id: attributeId,
-          expand: 'value'
-        }
-      );
-
-      return await this.service.makeCall(_callSetup);
-    } catch (e) {
-      console.log(e);
-      // If there was an error, return the error message for display.
-      return Promise.reject('ERROR occured while deleting the attribute.');
+    } else if (node.preferenceValue) {
+      attributeId = node.preferenceValue.id;
     }
+      let _callSetup: ICallSetup;
+
+    if (attributeId) {
+      try {
+        _callSetup = await this.service.getCallSetup(
+          'systemObjectDefinitions',
+          'getAttribute',
+          {
+            objectType,
+            id: attributeId,
+            expand: 'value'
+          }
+        );
+
+        return await this.service.makeCall(_callSetup);
+      } catch (e) {
+        console.log(e);
+        // If there was an error, return the error message for display.
+      }
+    }
+    return Promise.reject('ERROR occured while deleting the attribute.');
   }
 
   /**
@@ -690,19 +718,21 @@ export default class OCAPIHelper {
       'OrganizationPreferences'
     ];
     const ALLOWED_ATTRIBUTE_TYPES = ['string', 'number', 'boolean'];
-    const attributeDefinition: ObjectAttributeDefinition =
-      node.objectAttributeDefinition;
-    const isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
-      type => 'root.systemObjectDefinitions.' + type === node.parentId
-    );
+    if (node.objectAttributeDefinition) {
+      const attributeDefinition: ObjectAttributeDefinition =
+        node.objectAttributeDefinition;
+      const isCallAllowed = ALLOWED_SYSTEM_OBJECTS.some(
+        type => 'root.systemObjectDefinitions.' + type === node.parentId
+      );
 
-    // Check if this is a system object that allows for default attribute values,
-    // and that the data type allows for default values.
-    if (
-      isCallAllowed &&
-      ALLOWED_ATTRIBUTE_TYPES.indexOf(attributeDefinition.valueType) > -1
-    ) {
-      /** @todo make call to the OCAPI api to set the default value */
+      // Check if this is a system object that allows for default attribute values,
+      // and that the data type allows for default values.
+      if (
+        isCallAllowed &&
+        ALLOWED_ATTRIBUTE_TYPES.indexOf(attributeDefinition.valueType) > -1
+      ) {
+        /** @todo make call to the OCAPI api to set the default value */
+      }
     }
 
     return Promise.reject('METHOD NOT IMPLEMENTED');
