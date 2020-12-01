@@ -15,6 +15,7 @@ import ObjectAttributeValueDefinition from './ObjectAttributeValueDefinition';
  *      SFCC OCAPI.
  */
 export default class ObjectAttributeDefinition implements IAPIDocument {
+  [index: string]: any;
   // Declare public class members.
   public defaultValue: ObjectAttributeValueDefinition;
   public description: IOCAPITypes.ILocalizedString;
@@ -27,9 +28,9 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public link: string;
   public localizable: boolean;
   public mandatory: boolean;
-  public maxValue?: number;
+  public maxValue: number;
   public minLength: number;
-  public minValue?: number;
+  public minValue: number;
   public multiValueType: boolean;
   public orderRequired: boolean;
   public queryable: boolean;
@@ -42,7 +43,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public siteSpecific: boolean;
   public system: boolean;
   public unit: IOCAPITypes.ILocalizedString;
-  public valueDefinitions: ObjectAttributeValueDefinition[];
+  public valueDefinitions: ObjectAttributeValueDefinition[] = [];
   public valueType: string;
   public visible: boolean;
 
@@ -51,7 +52,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
   public includedFields: string[];
 
   // members that need to be renamed when sending the doc.
-  public readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP: IOCAPITypes.IMemberMap = {
     defaultValue: 'default_value',
     displayName: 'display_name',
     effectiveId: 'effective_id',
@@ -84,10 +85,16 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    *  - The values for field_height and field_width are ignored only kept for
    *    use in the import and export files.
    */
-  constructor(args) {
+  constructor(args: any = {}) {
     this.defaultValue =
       new ObjectAttributeValueDefinition(args.default_value) ||
-      new ObjectAttributeValueDefinition({});
+      new ObjectAttributeValueDefinition({
+      description: { default: '' },
+      display_value: { default: '' },
+      id: '',
+      position: 0,
+      value: {}
+    });
     this.description = args.description || { default: '' };
     this.displayName = args.display_name || { default: '' };
     this.effectiveId = args.effective_id || '';
@@ -118,7 +125,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
     this.includedFields = args.includeFields || [];
 
     if (args.value_definitions && args.value_definitions.length) {
-      this.valueDefinitions = args.value_definitions.map(valueDef => {
+      this.valueDefinitions = args.value_definitions.map((valueDef: any) => {
         return new ObjectAttributeValueDefinition(valueDef);
       });
     }
@@ -137,7 +144,7 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    *    OCAPI document class that can be submitted to the API methods.
    */
   public getDocument(includeFields: string[] = []): object {
-    const documentObj = {};
+    const documentObj: IOCAPITypes.IDocumentObject = {};
     let memberNames = Object.keys(this).filter(
       key =>
         typeof key !== 'function' &&

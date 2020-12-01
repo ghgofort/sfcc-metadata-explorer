@@ -16,7 +16,8 @@ import { MetadataNode } from './MetadataNode';
  *    node.
  */
 export class SitePreferencesNode extends MetadataNode {
-  private _type: string;
+  private _type: string = '';
+  public tooltip: string = '';
 
   /**
    * @param {Object} args -
@@ -32,10 +33,12 @@ export class SitePreferencesNode extends MetadataNode {
     const instance = this;
 
     // Set the instance member properties for the child Class.
-    instance._type = instance.objectAttributeDefinition.valueType;
-    instance.displayDescription =
-      instance.objectAttributeDefinition.displayName.default;
-    instance.rootTree = MetadataNode.ROOT_NODES.sitePrefs;
+    if (instance.objectAttributeDefinition) {
+      instance._type = instance.objectAttributeDefinition.valueType;
+      instance.displayDescription =
+        instance.objectAttributeDefinition.displayName.default;
+      instance.rootTree = MetadataNode.ROOT_NODES.sitePrefs;
+    }
   }
 
   /* Member Mutators & Accessors
@@ -47,9 +50,5 @@ export class SitePreferencesNode extends MetadataNode {
   /** @member {string} type - Readonly string for getting the attribute type. */
   get type(): string {
     return this._type;
-  }
-  /** @member {string} tooltip - Readonly string for rendering a tooltip. */
-  get tooltip(): string {
-    return this.objectAttributeDefinition.description.default;
   }
 }

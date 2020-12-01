@@ -14,17 +14,22 @@ import { IOCAPITypes } from '../interfaces/IOCAPITypes';
  *    sending API calls that require the Site document.
  */
 export default class Site implements IAPIDocument {
+  [index: string]: any;
   public cartridges: string;
-  public customerListLink: IOCAPITypes.ICustomerListLink;
-  public description: IOCAPITypes.ILocalizedString;
-  public displayName: IOCAPITypes.ILocalizedString;
+  public customerListLink: IOCAPITypes.ICustomerListLink = {
+    customer_list_id: '',
+    link: '',
+    title: {default: ''}
+  };
+  public description: IOCAPITypes.ILocalizedString = {default: ''};
+  public displayName: IOCAPITypes.ILocalizedString = {default: ''};
   public id: string;
   public inDeletion: boolean;
   public link: string;
   public storefrontStatus: string;
   public includedFields: string[] = [];
 
-  public readonly MEMBER_MAP = {
+  public readonly MEMBER_MAP: IOCAPITypes.IDocumentObject = {
     customerListLink: 'customer_list_link',
     inDeletion: 'in_deletion',
     storefrontStatus: 'storefront_status'
@@ -34,7 +39,7 @@ export default class Site implements IAPIDocument {
    * @param {Object} args - The raw JSON result for the Sites call.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     this.cartridges = args && args.cartridges ? args.cartridges : '';
     this.id = args && args.id ? args.id : '';
     this.inDeletion = args && args.in_deletion;
@@ -70,7 +75,7 @@ export default class Site implements IAPIDocument {
    * @return {IGetDocument}
    */
   public getDocument(includeFields: string[] = []): object {
-    const documentObj = {};
+    const documentObj: IOCAPITypes.IDocumentObject = {};
     let memberNames = Object.keys(this).filter(
       key =>
         typeof key !== 'function' &&

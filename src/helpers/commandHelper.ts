@@ -7,6 +7,7 @@ import {
 } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 import { OCAPIService } from '../services/OCAPIService';
 import OCAPIHelper from './OCAPIHelper';
 import SitePreferencesHelper from './SitePreferencesHelper';
@@ -37,7 +38,7 @@ export default class CommandHelper {
    * @returns {string|null} - Returns an error message if the reuslt was not
    *    valid, OR returns null if the result was valid.
    */
-  private validateString(input: string): string {
+  private validateString(input: string): string|null {
     /** @todo: Lookup type requirements for 'string' type attributes. */
     return null;
   }
@@ -91,11 +92,11 @@ export default class CommandHelper {
     };
 
     try {
-      const displayValues = [];
-      const valueOptions = {};
+      const displayValues: string[] = [];
+      const valueOptions: IOCAPITypes.IDocumentObject = {};
 
       // Get the expanded attribute with the values.
-      let attrDef = element.preferenceValue.objectAttributeDefinition;
+      let attrDef = element.preferenceValue ? element.preferenceValue.objectAttributeDefinition : null;
       // Call OCAPI to get the value definitions of the attribute.
       const attrAPIObj = await this.ocapiHelper.getExpandedAttribute(element);
 
@@ -127,9 +128,10 @@ export default class CommandHelper {
         displayValues,
         intSelectOptions,
         cancelBoolToken
-      );
+      ) || '';
 
-      return Promise.resolve(valueOptions[selectedValue]);
+      return valueOptions[selectedValue] ? Promise.resolve(valueOptions[selectedValue]) :
+        Promise.reject('Unable to set attribute value.');
     } catch (e) {
       window.showErrorMessage('There was an error setting attribute value.');
       console.log(e);
@@ -161,7 +163,7 @@ export default class CommandHelper {
         ['true', 'false'],
         intInputOptions,
         cancelIntToken
-      );
+      ) || '';
 
       value = parseInt(selectedValue, 10);
     } catch (e) {
@@ -169,7 +171,7 @@ export default class CommandHelper {
       console.log(e);
     }
 
-    return Promise.resolve(value);
+    return value ? Promise.resolve(value) : Promise.reject('Unable to get boolean value');
   }
 
   /**
@@ -191,7 +193,7 @@ export default class CommandHelper {
       const userInput = await window.showInputBox(
         stringInputOptions,
         cancelStringToken
-      );
+      ) || '';
 
       value = userInput;
     } catch (e) {
@@ -210,7 +212,7 @@ export default class CommandHelper {
    *    user has selcted to set the attribute to.
    */
   private async getValueToSet(element: MetadataNode): Promise<any> {
-    const dataType = element.preferenceValue.type;
+    const dataType =  element.preferenceValue ? element.preferenceValue.type : '';
     let prefValue;
     let success = true;
 
@@ -268,13 +270,15 @@ export default class CommandHelper {
         error = true;
     }
 
+    const prefId = element.preferenceValue ? element.preferenceValue.id : '';
+
     // Do not continue if there was an error.
-    if (error) {
+    if (error || !prefId) {
       return Promise.resolve(false);
     }
 
-    const body = {};
-    body['c_' + element.preferenceValue.id] = prefValue;
+    const body: IOCAPITypes.IDocumentObject = {};
+    body['c_' + prefId] = prefValue;
 
     const callData = {
       group_id: groupId,

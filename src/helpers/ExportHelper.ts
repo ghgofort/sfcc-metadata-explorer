@@ -19,7 +19,6 @@ export default class ExportHelper {
    *    JSON result from the server.
    */
   public async getJobExecution(jobId: string, executionId: string): Promise<any> {
-    let callSetup: ICallSetup = null;
     let callResult: any;
 
     // Guard against missing data.
@@ -33,7 +32,7 @@ export default class ExportHelper {
     };
 
     try {
-      callSetup = await this.ocapiService.getCallSetup(
+      const callSetup: ICallSetup = await this.ocapiService.getCallSetup(
         'jobs', 'getExecution', callData);
       if (!callSetup.setupError) {
         callResult = await this.ocapiService.makeCall(callSetup);
@@ -55,7 +54,6 @@ export default class ExportHelper {
    *    use as the body of the request.
    */
   public async runSystemExport(SAEConfig: SiteArchiveExportConfiguration): Promise<any> {
-    let callSetup: ICallSetup = null;
     let callResult: any;
     const callData = {
       job_id: 'sfcc-site-archive-export',
@@ -63,7 +61,7 @@ export default class ExportHelper {
     };
 
     try {
-      callSetup = await this.ocapiService.getCallSetup(
+      const callSetup: ICallSetup = await this.ocapiService.getCallSetup(
         'jobs',
         'executeJob',
         callData

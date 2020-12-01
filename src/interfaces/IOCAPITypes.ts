@@ -28,10 +28,33 @@ export namespace IOCAPITypes {
     value: string;
   }
 
+  export interface IOCAPIData {
+    id: string
+  }
+
   /** @interface IStatus */
   export interface IStatus {
     code: string;
     message: string;
-    status: 'ok'|'error';
+    status: 'ok' | 'error';
+  }
+
+  /** @interface IValDefinitionArgs */
+  export interface IValDefinitionArgs {
+    description: IOCAPITypes.ILocalizedString;
+    display_value: IOCAPITypes.ILocalizedString;
+    id: string;
+    position: number;
+    value: Object;
+  }
+
+  /** @interface IMemberMap */
+  export interface IMemberMap {
+    [index: string]: string;
+  }
+
+  /** @interface IDocumentObject */
+  export interface IDocumentObject {
+    [index: string]: any;
   }
 }

@@ -15,7 +15,7 @@ export default class JobExecutionRequest implements IAPIDocument {
    *    optional parameter.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args && args.parameters) {
       this.parameters = args.parameters;
     }

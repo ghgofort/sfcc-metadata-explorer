@@ -13,18 +13,19 @@ import ObjectAttributeDefinition from './ObjectAttributeDefinition';
  *    sending API calls that require the Sites document.
  */
 export default class PreferenceValue {
+  [index: string]: any;
   public id: string = '';
   public description: IOCAPITypes.ILocalizedString = { default: '' };
   public displayName: IOCAPITypes.ILocalizedString = { default: '' };
-  public attributeDefinition: ObjectAttributeDefinition;
-  public siteValues: object = {};
+  public attributeDefinition: ObjectAttributeDefinition = new ObjectAttributeDefinition();
+  public siteValues: {[index: string]: any} = {};
   public valueType: string = '';
 
   /**
    * @param {object} args - The raw JSON result for the Sites call.
    * @constructor
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args) {
       if (args.site_values) {
         this.siteValues = args.site_values;

@@ -1,5 +1,6 @@
 import { getAPIVersion } from '../apiConfig';
 import IAPIDocument from '../interfaces/IAPIDocument';
+import { IOCAPITypes } from '../interfaces/IOCAPITypes';
 
 /**
  * @class
@@ -9,6 +10,7 @@ import IAPIDocument from '../interfaces/IAPIDocument';
  *    job.
  */
 export default class ExportSitesConfiguration implements IAPIDocument {
+  [index: string]: any;
   public abTests: boolean = true;
   public activeDataFeeds: boolean = true;
   public all: boolean = true;
@@ -39,7 +41,7 @@ export default class ExportSitesConfiguration implements IAPIDocument {
   public tax: boolean = true;
   public urlRules: boolean = true;
 
-  public MEMBER_MAP = {
+  public MEMBER_MAP: IOCAPITypes.IDocumentObject = {
     abTests: 'ab_tests',
     activeDataFeeds: 'active_data_feeds',
     all: 'all',
@@ -77,7 +79,7 @@ export default class ExportSitesConfiguration implements IAPIDocument {
    * @param {Object} args - constructor param doc
    * @constructor
    */
-  constructor(args = {}) {
+  constructor(args: any) {
     const instance = this;
     if (args) {
       Object.keys(instance.MEMBER_MAP).forEach(key => {
@@ -102,7 +104,7 @@ export default class ExportSitesConfiguration implements IAPIDocument {
    */
   public getDocument(): object {
     const instance = this;
-    const docObj = {};
+    const docObj: IOCAPITypes.IDocumentObject = {};
     Object.keys(instance.MEMBER_MAP).forEach(key => {
       docObj[instance.MEMBER_MAP[key]] = instance[key];
     });

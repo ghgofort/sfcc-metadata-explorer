@@ -76,7 +76,7 @@ export default class ConfigHelper {
         const dwConfig = await window.showQuickPick(
           configFiles.map(config => config.fsPath),
           { placeHolder: 'Select configuration' }
-        );
+        ) || '';
         result = await this.readConfigFromFile(dwConfig);
       }
 
@@ -99,11 +99,11 @@ export default class ConfigHelper {
       const chunks: Buffer[] = [];
       const readStream = createReadStream(filePath);
 
-      readStream.on('data', chunk => {
+      readStream.on('data', (chunk: Buffer) => {
         chunks.push(chunk);
       });
 
-      readStream.on('error', e => {
+      readStream.on('error', (e: any) => {
         reject(e);
       });
 

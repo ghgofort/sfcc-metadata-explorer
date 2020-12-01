@@ -15,15 +15,15 @@ export default class JobStepExecution implements IAPIDocument {
   public isChunkOriented: boolean = false;
   public itemFilterCount: number = 0;
   public itemWriteCount: number = 0;
-  public modificationTime: Date;
-  public startTime: Date;
+  public modificationTime: Date = new Date();
+  public startTime: Date = new Date();
   public status: string = '';
   public stepDescription: string = '';
   public stepId: string = '';
   public stepTypeId: string = '';
   public stepTypeInfo: string = '';
   public totalItemCount: number = 0;
-  public includedFields: string[];
+  public includedFields: string[] = [];
 
   // Maps snake_case naming to camelCase naming.
   public readonly MEMBER_MAP = {
@@ -48,7 +48,7 @@ export default class JobStepExecution implements IAPIDocument {
    * @constructor
    * @param {Object} args - Raw JSON response from OCAPI.
    */
-  constructor(args) {
+  constructor(args: any) {
     if (args) {
       // Number type fields
       this.chunkSize = args.chunk_size || 0;

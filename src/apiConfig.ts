@@ -85,6 +85,18 @@ export const getClientPass = () => {
   return !configPass ? defaultPass : configPass;
 };
 
+export interface IResources {
+  [index: string]: any;
+}
+
+export interface IAPIConfig {
+  [index: string]: string|Object;
+  clientId: string;
+  clientPassword: string;
+  resources: IResources;
+  version: string;
+}
+
 /* ========================================================================
  * Exported API Configuration Object
  * ======================================================================== */
@@ -92,7 +104,7 @@ export const getClientPass = () => {
 /**
  * @description - API configuration object for confguration of the OCAPI routes.
  */
-export const apiConfig = {
+export const apiConfig: IAPIConfig = {
   clientId: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   clientPassword: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
   resources: {

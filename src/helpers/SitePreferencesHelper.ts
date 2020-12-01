@@ -7,6 +7,7 @@
 import { TreeItemCollapsibleState, window } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import { SitePreferencesNode } from '../components/SitePreferencesNode';
+import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import PreferenceValue from '../documents/PreferenceValue';
 import { OCAPIService } from '../services/OCAPIService';
@@ -53,7 +54,7 @@ export default class SitePreferencesHelper {
       typeof _callResult.data !== 'undefined' &&
       Array.isArray(_callResult.data)
     ) {
-      return _callResult.data.map(resultObj => {
+      return _callResult.data.map((resultObj: { id: string; display_name: { default: string | undefined; }; }) => {
         return new MetadataNode(
           resultObj.id,
           TreeItemCollapsibleState.Collapsed,
@@ -82,6 +83,16 @@ export default class SitePreferencesHelper {
           }
         )
       ];
+    } else {
+      // If there are no attribute groups defined then create a single node
+      // with a message for the user.
+      return [new MetadataNode(
+        'Error Getting Attribute Groups',
+        TreeItemCollapsibleState.None,
+        {
+          parentId: 'sitePreferences'
+        }
+      )];
     }
   }
 
@@ -90,10 +101,10 @@ export default class SitePreferencesHelper {
   ): Promise<SitePreferencesNode[]> {
     const childNodes: SitePreferencesNode[] = [];
     const attrGroup = element.objectAttributeGroup;
-    const hasAttributes = attrGroup.attributeDefinitionsCount > 0;
+    const hasAttributes = attrGroup && attrGroup.attributeDefinitionsCount > 0;
 
     // Attribute Definitions
-    if (hasAttributes) {
+    if (attrGroup && hasAttributes) {
       attrGroup.attributeDefinitions.forEach(attrDef => {
         const name = attrDef.id;
         const pref = new SitePreferencesNode(
@@ -101,7 +112,7 @@ export default class SitePreferencesHelper {
           TreeItemCollapsibleState.Collapsed,
           {
             objectAttributeDefinition: attrDef,
-            parentId: element.parentId + '.' + element.objectAttributeGroup.id
+            parentId: element.parentId + '.' + attrGroup.id
           }
         );
         childNodes.push(pref);
@@ -116,8 +127,8 @@ export default class SitePreferencesHelper {
   ): Promise<MetadataNode[]> {
     const childNodes: MetadataNode[] = [];
     const groupId = element.parentId.split('.').pop();
-    const prefId = element.objectAttributeDefinition.id;
-    const prefType = element.objectAttributeDefinition.valueType;
+    const prefId = element.objectAttributeDefinition ? element.objectAttributeDefinition.id : '';
+    const prefType = element.objectAttributeDefinition ? element.objectAttributeDefinition.valueType : '';
 
     try {
       // Get the sites for the current SFCC server.
@@ -164,7 +175,6 @@ export default class SitePreferencesHelper {
         }
 
         if (sites && sites.count && sites.data && sites.data.length) {
-
           sites.data.forEach(site => {
             const siteVal = prefValue.siteValues &&
               typeof prefValue.siteValues[site.id] !== 'undefined' ?
@@ -177,7 +187,8 @@ export default class SitePreferencesHelper {
                 preferenceValue: {
                   id: prefId,
                   type: prefType,
-                  objectAttributeDefinition: element.objectAttributeDefinition
+                  objectAttributeDefinition: element.objectAttributeDefinition ?
+                    element.objectAttributeDefinition : new ObjectAttributeDefinition()
                 }
               }
             ));

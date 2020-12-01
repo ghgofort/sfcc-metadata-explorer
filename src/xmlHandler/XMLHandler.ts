@@ -24,7 +24,7 @@ export default class XMLHandler {
     'http://www.demandware.com/xml/impex/metadata/2006-10-31';
 
   /** A list of System Objects that support the site-specific flag on attributes. */
-  public static FIELD_ATTRIBUTE_MAP: object = {
+  public static FIELD_ATTRIBUTE_MAP = {
     'order-required-flag': ['Product'],
     'site-specific-flag': [
       'Product', 'Catalog', 'SitePreferences'
@@ -72,7 +72,7 @@ export default class XMLHandler {
     }
 
     /** @function sleep - Promisify the setTimeout method. */
-    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
     // Retry API call until job complete, max calls, or an error.
     let i = 2;
@@ -145,8 +145,12 @@ export default class XMLHandler {
   private async getObjectAttributeXML(rootNode: any,
     systemObjectType: string,
     element: MetadataNode
-  ) {
+  ): Promise<void> {
     let attribute = element.objectAttributeDefinition;
+    if (!attribute) {
+      return;
+    }
+
     const valType = attribute.valueType.toLocaleLowerCase();
 
     // Check if the attribute is an Enum type.
@@ -257,7 +261,7 @@ export default class XMLHandler {
    *    TextDocument instance.
    */
   public async getXMLFromNode(metaNode: MetadataNode) {
-    const systemObjectType = metaNode.parentId.split('.').pop();
+    const systemObjectType = metaNode.parentId.split('.').pop() || '';
 
     // Create the XML document in memory for modification.
     const rootNode = new this.xmlLib.create('metadata', {
@@ -266,7 +270,7 @@ export default class XMLHandler {
 
     if (metaNode.nodeType === 'objectAttributeDefinition') {
       await this.getObjectAttributeXML(rootNode, systemObjectType, metaNode);
-    } else if (metaNode.nodeType === 'objectAttributeGroup') {
+    } else if (metaNode.nodeType === 'objectAttributeGroup' && metaNode.objectAttributeGroup) {
       this.getObjectGroupXML(rootNode, systemObjectType,
         metaNode.objectAttributeGroup);
     }
@@ -325,18 +329,18 @@ export default class XMLHandler {
         const zip = new AdmZip(filePath);
         const zipEntries = zip.getEntries();
         if (zipEntries && zipEntries.length) {
-          zipEntries.forEach(function(zipEntry) {
-            if (zipEntry.name === 'system-objecttype-extensions.xml') {
-              // Create the text document and show in the editor.
-              workspace.openTextDocument({
+          zipEntries.forEach((zipEntry: { name: string; getData: () => { (): any; new(): any; toString: { (arg0: string): any; new(): any; }; }; }) => {
+              if (zipEntry.name === 'system-objecttype-extensions.xml') {
+                // Create the text document and show in the editor.
+                workspace.openTextDocument({
                   language: 'xml',
                   content: zipEntry.getData().toString('utf8')
-              })
-              .then(doc => {
-                window.showTextDocument(doc);
-              });
-            }
-          });
+                })
+                  .then(doc => {
+                    window.showTextDocument(doc);
+                  });
+              }
+            });
         } else {
           window.showErrorMessage('There was an error unzipping the archive');
         }

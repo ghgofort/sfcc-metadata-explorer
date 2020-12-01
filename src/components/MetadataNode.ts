@@ -10,7 +10,7 @@ import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
 import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import Sites from '../documents/Sites';
-import { INodeData, IPreferenceValue, IPreferenceValueDefinition } from '../interfaces/INodeData';
+import { INodeData, INodeTypes, IPreferenceValue, IPreferenceValueDefinition } from '../interfaces/INodeData';
 
 /**
  * @class MetadataNode
@@ -20,33 +20,31 @@ import { INodeData, IPreferenceValue, IPreferenceValueDefinition } from '../inte
  * property, or value.
  */
 export class MetadataNode extends TreeItem {
-  public baseNodeName: string;
-  public objectAttributeDefinition: ObjectAttributeDefinition;
-  public objectAttributeGroup: ObjectAttributeGroup;
-  public objectAttributeValueDefinition: ObjectAttributeValueDefinition;
-  public objectAttributeValueDefinitions: ObjectAttributeValueDefinition[];
-  public objectTypeDefinition: ObjectTypeDefinition;
-  public parentContainer: string;
+  [key: string]: any;
+  public baseNodeName: string = '';
+  public objectAttributeDefinition: ObjectAttributeDefinition|null = null;
+  public objectAttributeGroup: ObjectAttributeGroup|null = null;
+  public objectAttributeValueDefinition: ObjectAttributeValueDefinition|null = null;
+  public objectAttributeValueDefinitions: ObjectAttributeValueDefinition[] = [];
+  public objectTypeDefinition: ObjectTypeDefinition|null = null;
+  public parentContainer: string = '';
   public parentId: string;
-  public preferenceValueDefinitions: IPreferenceValueDefinition[];
-  public sites: Sites[];
-  public stringList: string[];
-  public value: string | number;
+  public preferenceValueDefinitions: IPreferenceValueDefinition[] = [];
+  public sites: Sites[] = [];
+  public stringList: string[] = [];
+  public value: string | number = '';
   public displayDescription: string;
-  public preferenceValue: IPreferenceValue;
+  public preferenceValue: IPreferenceValue|null = null;
 
   // Define member properties.
   private _expandable: boolean;
-  private _nodeType: string;
-  private _rootTree: string;
+  private _nodeType: string = '';
+  private _rootTree: string = '';
 
   /**
    * @static
-   * @member {{definition: string, attribute: string, group: string}} nodeTypes -
-   *    An object literal mapping short names for node types to their SFCC
-   *    document types.
    */
-  public static nodeTypes = {
+  public static nodeTypes: INodeTypes = {
     attribute: 'objectAttributeDefinition',
     attributeValue: 'objectAttributeValueDefinition',
     attributeValues: 'objectAttributeValueDefinitions',
@@ -115,6 +113,7 @@ export class MetadataNode extends TreeItem {
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
     this.parentId = nodeData.parentId;
     this.displayDescription = nodeData.displayDescription || '';
+    this.tooltip = name;
   }
 
   /* Member Mutators & Accessors
@@ -131,6 +130,5 @@ export class MetadataNode extends TreeItem {
   set rootTree(value) { this._rootTree = value; }
 
   /** @member {string} tooltip - Readonly string for rendering a tooltip. */
-  get tooltip(): string { return this.name; }
   get description(): string { return this.displayDescription || ''; }
 }

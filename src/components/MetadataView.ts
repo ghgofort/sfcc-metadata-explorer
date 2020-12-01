@@ -14,9 +14,9 @@ import { MetadataNode } from './MetadataNode';
  *    displayed to the user when viewing the metadata explorer's view container.
  */
 export class MetadataView {
-  private _context: ExtensionContext = null;
+  private _context: ExtensionContext;
   private _providers: Array<MetadataViewProvider> = [];
-  public currentProvider: MetadataViewProvider = null;
+  public currentProvider: MetadataViewProvider;
   public _onMetaDataChange: EventEmitter<
     MetadataNode | undefined
   > = new EventEmitter<MetadataNode | undefined>();
@@ -27,6 +27,7 @@ export class MetadataView {
    *    used for subscribing to, and triggering VSCode events.
    */
   constructor(context: ExtensionContext) {
+    this.currentProvider = new MetadataViewProvider(new EventEmitter());
     this._context = context;
     this._onMetaDataChange = new EventEmitter<MetadataNode | undefined>();
   }
@@ -46,7 +47,7 @@ export class MetadataView {
    *    rendering.
    */
   public getDataFromProvider(providerType: string = 'systemObjectDefinitions') {
-    this.currentProvider = this._getDataProvider(providerType);
+    this.currentProvider = this._getDataProvider();
 
     this._context.subscriptions.push(
       window.registerTreeDataProvider(
@@ -68,24 +69,13 @@ export class MetadataView {
    *    data provider should retrieve via an OCAPI call. The name should be in
    *    cammel case (i.e. System Object Definitions = systemObjectDefinitions).
    */
-  private _getDataProvider(providerType: string): MetadataViewProvider {
+  private _getDataProvider(): MetadataViewProvider {
     // Check if there is already a MetadataViewProvider for the correct type.
-    let dataProvider: MetadataViewProvider;
-    if (this._providers.length) {
-      dataProvider = this._providers.find(
-        (pr: MetadataViewProvider) => pr.providerType === providerType
-      );
+    if (!this._providers.length) {
+      // If no existing provider for the specified type, then create it.
+      this._providers.push(new MetadataViewProvider(this._onMetaDataChange));
     }
 
-    // If no existing provider for the specified type, then create it.
-    if (!dataProvider) {
-      dataProvider = new MetadataViewProvider(
-        providerType,
-        this._onMetaDataChange
-      );
-      this._providers.push(dataProvider);
-    }
-
-    return dataProvider;
+    return this._providers[0];
   }
 }

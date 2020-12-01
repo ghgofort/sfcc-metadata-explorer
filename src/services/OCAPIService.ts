@@ -18,7 +18,7 @@ import ConfigHelper from '../helpers/ConfigHelper';
  * Proivdes REST request methods for making calls to the SFCC Open Commerce API.
  */
 export class OCAPIService {
-  public authToken: OAuth2Token = null;
+  public authToken: OAuth2Token = new OAuth2Token();
   private ConfigHelper = new ConfigHelper();
   private isGettingToken: boolean = false;
   private dwConfig: IDWConfig = {
@@ -86,8 +86,7 @@ export class OCAPIService {
     setupResult.endpoint += getAPIVersionForPath() + '/';
 
     // Check if the call name is configured for the specified resource.
-    if (
-      resConfig &&
+    if (resConfig &&
       resConfig.availableCalls &&
       resConfig.availableCalls.hasOwnProperty(callName)
     ) {
@@ -123,7 +122,7 @@ export class OCAPIService {
 
     // Check that any required parameters are included in the callData.
     if (callConfig && callConfig.params && callConfig.params.length) {
-      const usedParams = [];
+      const usedParams: string[] = [];
 
       // If an explicit body was included, then append it to the seutp object.
       if ('body' in callData) {
@@ -134,7 +133,7 @@ export class OCAPIService {
         usedParams.push('body');
       }
 
-      callConfig.params.forEach(param => {
+      callConfig.params.forEach((param: any) => {
         const replaceMe = '{' + param.id + '}';
         if (
           callData[param.id] &&
@@ -307,7 +306,9 @@ export class OCAPIService {
       return result;
     } else if (tokenType === 'CLIENT_CREDENTIALS') {
       /** @todo: implement getOAuth2Token for auth server authentication */
+      return Promise.reject('Operation Not Yet Implemented.');
     }
+    return Promise.reject('There Was a Service Error.');
   }
 
   /**
