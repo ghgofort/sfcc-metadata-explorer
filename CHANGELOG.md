@@ -2,6 +2,10 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## 1.2.1 (6/28/20)
+### Minor Release
+* Fix security vunerabilities, and adapt code for newer version of VSCode lib.
+
 ## 1.2.0 (11/25/20)
 ### Minor Release
 * Fix for OCAPI password & client Id settings not allowing real configurable values due to 30char hard limit imposed on field.
