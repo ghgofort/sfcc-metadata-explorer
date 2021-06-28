@@ -204,8 +204,11 @@ export class OCAPIService {
 
     // If the call setup was complete, then get the sandbox configuration.
     if (!setupResult.setupError) {
-      // Get the sandbox configuration.
-      this.dwConfig = await this.ConfigHelper.getDWConfig();
+      if (!this.dwConfig.ok) {
+        // Get the sandbox configuration.
+        this.dwConfig = await this.ConfigHelper.getDWConfig();
+      }
+      
       if (!this.dwConfig.ok) {
         setupResult.setupError = true;
       } else {
