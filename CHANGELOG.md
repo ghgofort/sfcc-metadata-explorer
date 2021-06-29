@@ -2,7 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
-## 1.2.1 (6/28/20)
+## 1.2.3 (6/28/20)
+### Patch Release
+* Fix bug causing the extension to request a configuration file choice multiple times; one for the auth, and again for the actual call.'
+
+## 1.2.1 & 1.2.2 (6/28/20)
 ### Minor Release
 * Fix security vunerabilities, and adapt code for newer version of VSCode lib.
 
