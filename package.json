@@ -44,6 +44,12 @@
           "description": "Enable the display of Site Preferences in the meta-explorer tree view",
           "scope": "window"
         },
+        "extension.sfccmetadata.explorer.jobs": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable display of SFCC Job configurations in the meta-explorer tree view",
+          "scope": "window"
+        },
         "extension.sfccmetadata.ocapi.version": {
           "type": "string",
           "default": "20.4",

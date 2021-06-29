@@ -63,7 +63,8 @@ export class MetadataNode extends TreeItem {
   public static ROOT_NODES = {
     custObjDefs: 'customObjectDefinitions',
     default: 'systemObjectDefinitions',
-    sitePrefs: 'sitePreferences'
+    sitePrefs: 'sitePreferences',
+    jobs: 'jobs'
   };
 
   /**

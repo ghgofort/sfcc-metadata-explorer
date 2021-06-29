@@ -13,6 +13,7 @@ import {
   workspace,
   WorkspaceConfiguration
 } from 'vscode';
+import IRootNodeConfiguration from '../interfaces/IRootNodeConfiguration';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import ObjectAttributeValueDefinition from '../documents/ObjectAttributeValueDefinition';
@@ -41,6 +42,14 @@ export class MetadataViewProvider
   private eventEmitter: EventEmitter<MetadataNode | undefined>;
   private ocapiHelper = new OCAPIHelper();
   private service: OCAPIService = new OCAPIService();
+
+  // Defines the types of available root nodes.
+  public static ROOT_NODE_TYPES: IRootNodeConfiguration[] = [
+    { type: 'systemobjects', displayValue: 'System Objects', baseNodeName: 'systemObjectDefinitions' }, 
+    { type: 'customobjects', displayValue: 'Custom Object Definitions', baseNodeName: 'customObjectDefinitions' }, 
+    { type: 'sitepreferences', displayValue: 'Site Preferences', baseNodeName: 'sitePreferences' }, 
+    { type: 'jobs', displayValue: 'SFCC Jobs', baseNodeName: 'jobs' }
+  ];
 
   /**
    *
@@ -349,63 +358,24 @@ export class MetadataViewProvider
       'extension.sfccmetadata'
     );
 
-    // Get the VSCode settings for display of each base tree node.
-    // - Show System Object Definitions
-    const showSystemObjects: boolean = Boolean(
-      workspaceConfig.get('explorer.systemobjects')
+    // Add enabled root nodes to tree. 
+    MetadataViewProvider.ROOT_NODE_TYPES.forEach(
+      obj => {
+        // If VSCode config enabled, add root node to tree.
+        if (workspaceConfig.get('explorer.' + obj.type)) {
+          metaNodes.push(
+            new MetadataNode(
+              obj.displayValue,
+              TreeItemCollapsibleState.Collapsed,
+              {
+                parentId: 'root',
+                baseNodeName: obj.baseNodeName
+              }
+            )
+          );
+        }
+      }
     );
-
-    // - Show Custom Object Definitions
-    const showCustomObjects: boolean = Boolean(
-      workspaceConfig.get('explorer.customobjects')
-    );
-
-    // - Show Custom Object Definitions
-    const showPreferences: boolean = Boolean(
-      workspaceConfig.get('explorer.sitepreferences')
-    );
-
-    // If the user config is enabled, then show the option.
-    if (showSystemObjects) {
-      metaNodes.push(
-        new MetadataNode(
-          'System Object Definitions',
-          TreeItemCollapsibleState.Collapsed,
-          {
-            parentId: 'root',
-            baseNodeName: 'systemObjectDefinitions'
-          }
-        )
-      );
-    }
-
-    // If display of Custom Object Definitions is enabled, add node to tree.
-    if (showCustomObjects) {
-      metaNodes.push(
-        new MetadataNode(
-          'Custom Object Definitions',
-          TreeItemCollapsibleState.Collapsed,
-          {
-            parentId: 'root',
-            baseNodeName: 'customObjectDefinitions'
-          }
-        )
-      );
-    }
-
-    // If display of Site Preferences is enabled, add node to tree.
-    if (showPreferences) {
-      metaNodes.push(
-        new MetadataNode(
-          'Site Preferences',
-          TreeItemCollapsibleState.Collapsed,
-          {
-            parentId: 'root',
-            baseNodeName: 'sitePreferences'
-          }
-        )
-      );
-    }
 
     return Promise.resolve(metaNodes);
   }

@@ -86,8 +86,8 @@ export default class ObjectAttributeDefinition implements IAPIDocument {
    *    use in the import and export files.
    */
   constructor(args: any = {}) {
-    this.defaultValue =
-      new ObjectAttributeValueDefinition(args.default_value) ||
+    this.defaultValue = args.default_value ?
+      new ObjectAttributeValueDefinition(args.default_value) :
       new ObjectAttributeValueDefinition({
       description: { default: '' },
       display_value: { default: '' },
