@@ -46,7 +46,7 @@
         },
         "extension.sfccmetadata.explorer.jobs": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Enable display of SFCC Job configurations in the meta-explorer tree view",
           "scope": "window"
         },

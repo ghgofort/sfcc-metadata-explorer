@@ -2,6 +2,11 @@
 
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
+## Unreleased Changes
+* Added configuration to show SFCC jobs as root node of explorer: `extension.sfccmetadata.explorer.jobs`.
+* Fixed bug keeping site preferences from displaying if a default value wasn't set for 1 or more string site prefs.
+* Internal refactor of looping through root level node types to improve reliability & readability of code.
+
 ## 1.2.3 (6/28/20)
 ### Patch Release
 * Fix bug causing the extension to request a configuration file choice multiple times; one for the auth, and again for the actual call.'
