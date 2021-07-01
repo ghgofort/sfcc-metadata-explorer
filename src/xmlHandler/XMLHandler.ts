@@ -2,6 +2,7 @@ import { window, workspace } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
+import Site from '../documents/Site';
 import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
 import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
@@ -45,6 +46,8 @@ export default class XMLHandler {
   /* ========================================================================
    * Private Helper Functions
    * ======================================================================== */
+
+  
 
   /**
    * Gets the results of a job execution by making calls on a regular interval
@@ -252,15 +255,38 @@ export default class XMLHandler {
    * ======================================================================== */
 
   /**
+   * Gets the complete XML for system object definitions and any other types that are added later.
+   * @param metaNode - The selected node from the tree.
+   */
+   public async getCompleteXML(metaNode: MetadataNode) {
+    const saeConfig = new SiteArchiveExportConfiguration();
+
+    // Setup the call POST data.
+    if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
+      saeConfig.dataUnits.globalData.systemTypeDefinitions = true;
+      saeConfig.dataUnits.catalogStaticResources = { all: false };
+      saeConfig.dataUnits.catalogs = { all: false };
+      saeConfig.dataUnits.customerLists = { all: false };
+      saeConfig.dataUnits.inventoryLists = { all: false };
+      saeConfig.dataUnits.libraries = { all: false };
+      saeConfig.dataUnits.libraryStaticResources = { all: false };
+      saeConfig.dataUnits.priceBooks = { all: false };
+      saeConfig.dataUnits.sites = { all: false };
+    }
+
+    this.getFullXML(saeConfig);
+  }
+
+
+  /**
    * Gets the XML representation of the Metanode, creates a blank file, and
    * populates the file with the generated XML.
    *
    * @param {MetadataNode} metaNode - The metadata node that represents the SFCC
    *    meta object to get the XML representation of.
-   * @returns {Promise<TextEditor>} - Returns a promise that resolves to the
-   *    TextDocument instance.
+   * @returns {Promise<void>} - No return.
    */
-  public async getXMLFromNode(metaNode: MetadataNode) {
+  public async getXMLFromNode(metaNode: MetadataNode): Promise<void> {
     const systemObjectType = metaNode.parentId.split('.').pop() || '';
 
     // Create the XML document in memory for modification.
@@ -290,25 +316,12 @@ export default class XMLHandler {
    * Creates a new file in the editor and populates it with the full xml export
    * of the system object definitions from the configured SFCC isntance.
    *
-   * @param {MetadataNode} metaNode - The tree node instance.
+   * @param {SiteArchiveExportConfiguration} saeConfig - The site archive export config document
+   * for the OCAPI call.
    */
-  public async getFullXML(metaNode: MetadataNode) {
+  public async getFullXML(saeConfig: SiteArchiveExportConfiguration) {
     const path = require('path');
     const AdmZip = require('adm-zip');
-    const saeConfig = new SiteArchiveExportConfiguration();
-
-    // Setup the call POST data.
-    if (metaNode.baseNodeName && metaNode.baseNodeName === 'systemObjectDefinitions') {
-      saeConfig.dataUnits.globalData.systemTypeDefinitions = true;
-      saeConfig.dataUnits.catalogStaticResources = { all: false };
-      saeConfig.dataUnits.catalogs = { all: false };
-      saeConfig.dataUnits.customerLists = { all: false };
-      saeConfig.dataUnits.inventoryLists = { all: false };
-      saeConfig.dataUnits.libraries = { all: false };
-      saeConfig.dataUnits.libraryStaticResources = { all: false };
-      saeConfig.dataUnits.priceBooks = { all: false };
-      saeConfig.dataUnits.sites = { all: false };
-    }
 
     const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
 

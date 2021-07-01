@@ -267,7 +267,7 @@ export function activate(context: ExtensionContext) {
   const getFullXMLDisposable: Disposable = commands.registerCommand(
     'extension.sfccexplorer.systemobjects.getxml',
     (metaNode: MetadataNode) => {
-      xmlHandler.getFullXML(metaNode);
+      xmlHandler.getCompleteXML(metaNode);
     }
   );
 
