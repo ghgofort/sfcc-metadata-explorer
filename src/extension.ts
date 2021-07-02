@@ -271,6 +271,18 @@ export function activate(context: ExtensionContext) {
     }
   );
 
+  /**
+   * Binds handler function for export command w/VSCode registered command.
+   *
+   * @listens extension.sfccexplorer.systemobjects.getxml
+   */
+   const getExportDisposable: Disposable = commands.registerCommand(
+    'extension.sfccexplorer.export',
+    (metaNode: MetadataNode) => {
+      xmlHandler.getCompleteXML(metaNode);
+    }
+  );
+
   context.subscriptions.push(getFullXMLDisposable);
   context.subscriptions.push(deleteGroupDisposable);
   context.subscriptions.push(setSitePreferenceValue);
@@ -283,6 +295,7 @@ export function activate(context: ExtensionContext) {
   context.subscriptions.push(refreshTreeDisposable);
   context.subscriptions.push(deleteAttributeDisposable);
   context.subscriptions.push(removeFromGroupDisposable);
+  context.subscriptions.push(getExportDisposable);
 }
 
 // this method is called when your extension is deactivated

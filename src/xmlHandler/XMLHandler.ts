@@ -47,7 +47,56 @@ export default class XMLHandler {
    * Private Helper Functions
    * ======================================================================== */
 
-  
+  /**
+   * Creates a new file in the editor and populates it with the full xml export
+   * of the system object definitions from the configured SFCC isntance.
+   *
+   * @param {SiteArchiveExportConfiguration} saeConfig - The site archive export config document
+   * for the OCAPI call.
+   */
+  private async getFullXML(saeConfig: SiteArchiveExportConfiguration) {
+    const path = require('path');
+    const AdmZip = require('adm-zip');
+
+    const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
+
+    if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
+      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id);
+
+      if (!exportSuccess) {
+        window.showErrorMessage('There was an error running the system export job');
+      } else {
+        window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
+        const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
+        const rawFile = await this.webDAVService.getFileFromServer(exportPath);
+        window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
+
+        // Un-zip the archive.
+        const currentPath = !workspace.workspaceFolders ? workspace.rootPath : workspace.workspaceFolders[0].uri.fsPath;
+        const filePath = currentPath + path.sep + 'sfccExport.zip';
+        const zip = new AdmZip(filePath);
+        const zipEntries = zip.getEntries();
+        if (zipEntries && zipEntries.length) {
+          zipEntries.forEach((zipEntry: { name: string; getData: () => { (): any; new(): any; toString: { (arg0: string): any; new(): any; }; }; }) => {
+            if (zipEntry.name === 'system-objecttype-extensions.xml') {
+              // Create the text document and show in the editor.
+              workspace.openTextDocument({
+                language: 'xml',
+                content: zipEntry.getData().toString('utf8')
+              })
+                .then(doc => {
+                  window.showTextDocument(doc);
+                });
+            }
+          });
+        } else {
+          window.showErrorMessage('There was an error unzipping the archive');
+        }
+      }
+    } else {
+      window.showErrorMessage('There was an error triggering the system export job');
+    }
+  }
 
   /**
    * Gets the results of a job execution by making calls on a regular interval
@@ -246,7 +295,7 @@ export default class XMLHandler {
     if (typeof attribute.defaultValue !== undefined &&
       attribute.defaultValue.value != null
     ) {
-        attrDefNode.ele('default-value', attribute.defaultValue.value);
+      attrDefNode.ele('default-value', attribute.defaultValue.value);
     }
   }
 
@@ -258,7 +307,7 @@ export default class XMLHandler {
    * Gets the complete XML for system object definitions and any other types that are added later.
    * @param metaNode - The selected node from the tree.
    */
-   public async getCompleteXML(metaNode: MetadataNode) {
+  public async getCompleteXML(metaNode: MetadataNode) {
     const saeConfig = new SiteArchiveExportConfiguration();
 
     // Setup the call POST data.
@@ -275,6 +324,15 @@ export default class XMLHandler {
     }
 
     this.getFullXML(saeConfig);
+  }
+
+  /**
+   * Provides options windows for the user to select which XML export they want,
+   * then calls the helper to get the correct export.
+   */ 
+  public async getSFCCExport() {
+    // window.showQuickPick()
+    
   }
 
 
@@ -310,56 +368,5 @@ export default class XMLHandler {
       .then(doc => {
         window.showTextDocument(doc);
       });
-  }
-
-  /**
-   * Creates a new file in the editor and populates it with the full xml export
-   * of the system object definitions from the configured SFCC isntance.
-   *
-   * @param {SiteArchiveExportConfiguration} saeConfig - The site archive export config document
-   * for the OCAPI call.
-   */
-  public async getFullXML(saeConfig: SiteArchiveExportConfiguration) {
-    const path = require('path');
-    const AdmZip = require('adm-zip');
-
-    const executionResult = await this.ExportHelper.runSystemExport(saeConfig);
-
-    if (executionResult.id && executionResult._type === 'job_execution' && executionResult.job_id) {
-      const exportSuccess = await this.getJobExecutionResult(executionResult.job_id, executionResult.id);
-
-      if (!exportSuccess) {
-        window.showErrorMessage('There was an error running the system export job');
-      } else {
-        window.showInformationMessage('Export completed successfully, retrieving file from webdav...');
-        const exportPath = 'https://{0}/on/demandware.servlet/webdav/Sites/Impex/src/instance/sfccMetaExplorerExport.zip';
-        const rawFile = await this.webDAVService.getFileFromServer(exportPath);
-        window.showInformationMessage('sfccExport.zip succussfully downloaded to project root folder');
-
-        // Un-zip the archive.
-        const currentPath = !workspace.workspaceFolders ? workspace.rootPath : workspace.workspaceFolders[0].uri.fsPath;
-        const filePath = currentPath + path.sep + 'sfccExport.zip';
-        const zip = new AdmZip(filePath);
-        const zipEntries = zip.getEntries();
-        if (zipEntries && zipEntries.length) {
-          zipEntries.forEach((zipEntry: { name: string; getData: () => { (): any; new(): any; toString: { (arg0: string): any; new(): any; }; }; }) => {
-              if (zipEntry.name === 'system-objecttype-extensions.xml') {
-                // Create the text document and show in the editor.
-                workspace.openTextDocument({
-                  language: 'xml',
-                  content: zipEntry.getData().toString('utf8')
-                })
-                  .then(doc => {
-                    window.showTextDocument(doc);
-                  });
-              }
-            });
-        } else {
-          window.showErrorMessage('There was an error unzipping the archive');
-        }
-      }
-    } else {
-      window.showErrorMessage('There was an error triggering the system export job');
-    }
   }
 }
