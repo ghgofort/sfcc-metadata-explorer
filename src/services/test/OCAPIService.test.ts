@@ -17,21 +17,24 @@ suite('OCAPIService Tests', () => {
 
   test('Setup GET call for all SystemObjectDefinitions', () => {
     const callSetup: Promise<ICallSetup> = ocapiService.getCallSetup(
-      'system_object_definitions',
-      'get',
-      {}
+      'systemObjectDefinitions',
+      'getAll',
+      {
+        count: 500,
+        select: '(**)'
+      }
     );
-    const expectedSetup: ICallSetup = {
+    const expectedSetup: Promise<ICallSetup> = Promise.resolve({
       body: {},
       callName: '',
-      endpoint: '',
+      endpoint: 'v20_4/',
       headers: {
         'Content-Type': 'application/json'
       },
       method: HTTP_VERB.get,
       setupErrMsg: '',
       setupError: false
-    };
+    });
 
     assert.deepEqual(callSetup, expectedSetup);
   });

@@ -33,7 +33,6 @@ export class MetadataNode extends TreeItem {
   public sites: Sites[] = [];
   public stringList: string[] = [];
   public value: string | number = '';
-  public displayDescription: string;
   public preferenceValue: IPreferenceValue|null = null;
 
   // Define member properties.
@@ -114,6 +113,7 @@ export class MetadataNode extends TreeItem {
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
     this.parentId = nodeData.parentId;
     this.displayDescription = nodeData.displayDescription || '';
+    this.description = this.displayDescription;
     this.tooltip = name;
   }
 
@@ -130,6 +130,10 @@ export class MetadataNode extends TreeItem {
   get rootTree() { return this._rootTree; }
   set rootTree(value) { this._rootTree = value; }
 
-  /** @member {string} tooltip - Readonly string for rendering a tooltip. */
-  get description(): string { return this.displayDescription || ''; }
+  /** @member {string} displayDescription - Used to set the description dynamically. */
+  get displayDescription(): string { return this.displayDescription || ''; }
+  set displayDescription(value) { 
+    this.displayDescription = value;
+    this.description = value;
+  }
 }

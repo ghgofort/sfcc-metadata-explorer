@@ -36,10 +36,10 @@ interface INodeMap {
  *    TreeView instance.
  */
 export class MetadataViewProvider
-  implements TreeDataProvider<MetadataNode | undefined> {
+  implements TreeDataProvider<MetadataNode | undefined | null | void> {
   // Declare memeber variables.
-  public readonly onDidChangeTreeData?: Event<MetadataNode | undefined>;
-  private eventEmitter: EventEmitter<MetadataNode | undefined>;
+  public readonly onDidChangeTreeData?: Event<MetadataNode | undefined | null | void>;
+  private eventEmitter: EventEmitter<MetadataNode | undefined | null | void>;
   private ocapiHelper = new OCAPIHelper();
   private service: OCAPIService = new OCAPIService();
 
@@ -57,8 +57,8 @@ export class MetadataViewProvider
    * @param {EventEmitter<MetadataNode | undefined>} eventEmitter
    */
   constructor(
-    eventEmitter: EventEmitter<MetadataNode | undefined>
-  ) {
+    eventEmitter: EventEmitter<MetadataNode | undefined | null | void >
+    ) {
     this.eventEmitter = eventEmitter;
     this.onDidChangeTreeData = this.eventEmitter.event;
   }
@@ -71,7 +71,7 @@ export class MetadataViewProvider
    * Refreshes the TreeView.
    */
   public refresh(): void {
-    this.eventEmitter.fire();
+    this.eventEmitter.fire(null);
   }
 
   /**

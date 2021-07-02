@@ -1,4 +1,4 @@
-import { window, workspace } from 'vscode';
+import { CancellationToken, CancellationTokenSource, QuickPickOptions, window, workspace } from 'vscode';
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
@@ -331,7 +331,14 @@ export default class XMLHandler {
    * then calls the helper to get the correct export.
    */ 
   public async getSFCCExport() {
-    // window.showQuickPick()
+    // Create a cancelation token instance to cancel the request when needed.
+    const tokenSource: CancellationTokenSource = new CancellationTokenSource();
+    const cancelBoolToken: CancellationToken = tokenSource.token;
+    const intSelectOptions: QuickPickOptions = {
+      placeHolder: 'Select value'
+    };
+    const displayValues: string[] = [];
+    window.showQuickPick(displayValues,  )
     
   }
 
