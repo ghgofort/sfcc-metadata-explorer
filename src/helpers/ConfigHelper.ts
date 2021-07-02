@@ -1,5 +1,5 @@
 import { IDWConfig } from '../services/IDWConfig';
-import { WorkspaceFolder, RelativePattern, workspace, window, Uri } from 'vscode';
+import { RelativePattern, workspace, window, Uri } from 'vscode';
 import { createReadStream } from 'fs';
 
 /**
@@ -43,12 +43,17 @@ export default class ConfigHelper {
         username: ''
       };
 
+      // If there is no workspace, then exit w/message.
+      if (!workspace.workspaceFolders) {
+        window.showInformationMessage(
+          'You must have a workspace configured to use dw.json configuration.');
+        return result;
+      }
+      
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
-      const workspaceFolders: WorkspaceFolder[] =
-        workspace.workspaceFolders || [];
       const dwConfigFiles = await Promise.all(
-        workspaceFolders.map(wf =>
+        workspace.workspaceFolders.map(wf =>
           workspace.findFiles(
             new RelativePattern(wf, '**/dw.json'),
             new RelativePattern(

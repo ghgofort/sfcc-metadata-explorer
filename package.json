@@ -11,7 +11,7 @@
   "license": "MIT",
   "icon": "resources/meta_explorer_logo.png",
   "engines": {
-    "vscode": "^1.21.0",
+    "vscode": "^1.57.0",
     "node": "^8.12.0"
   },
   "categories": [
@@ -218,18 +218,21 @@
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "test-compile": "tsc -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+    "pretest": "npm run compile",
+    "test": "node ./dist/test/runTest.js"
   },
   "devDependencies": {
+    "@types/glob": "^7.1.3",
     "@types/mocha": "5.2.7",
     "@types/node": "^7.10.14",
     "@types/node-fetch": "^2.5.7",
+    "@types/vscode": "^1.57.0",
     "ajv": "6.9.1",
+    "glob": "^7.1.4",
     "mocha": "^7.1.2",
     "ts-loader": "^5.4.3",
     "typescript": "^4.0.2",
-    "vscode": "^1.1.37"
+    "vscode-test": "^1.3.0"
   },
   "dependencies": {
     "adm-zip": "^0.4.14",
