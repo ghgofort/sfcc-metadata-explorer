@@ -24,16 +24,18 @@ suite('OCAPIService Tests', () => {
         select: '(**)'
       }
     );
-    const expectedSetup: Promise<ICallSetup> = Promise.resolve({
-      body: {},
-      callName: '',
-      endpoint: 'v20_4/',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: HTTP_VERB.get,
-      setupErrMsg: '',
-      setupError: false
+    const expectedSetup: Promise<ICallSetup> = new Promise((resolve, reject) => {
+      resolve({
+        body: {},
+        callName: '',
+        endpoint: 'v20_4/',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: HTTP_VERB.get,
+        setupErrMsg: '',
+        setupError: false
+      });
     });
 
     assert.deepEqual(callSetup, expectedSetup);
