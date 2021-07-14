@@ -1,6 +1,7 @@
 import { IDWConfig } from '../services/IDWConfig';
 import { RelativePattern, workspace, window, Uri } from 'vscode';
 import { createReadStream } from 'fs';
+import { exportsConfig } from '../apiConfig';
 
 /**
  * @class
@@ -49,7 +50,7 @@ export default class ConfigHelper {
           'You must have a workspace configured to use dw.json configuration.');
         return result;
       }
-      
+
       // Check all of the folders in the current workspace for the existance of
       // one or more dw.json files.
       const dwConfigFiles = await Promise.all(
@@ -87,6 +88,20 @@ export default class ConfigHelper {
 
       return result;
     }
+  }
+
+  /**
+   * Gets the available export options and the SiteArchiveExportConfiguration (SAEC) attribute names 
+   * used for configuration of the SAEC object instance.
+   */
+  public getExportOptions(): { name: string, attribute: string }[] {
+    return exportsConfig.map(name => {
+      let camelName = name.substring(0, 1).toLowerCase() + name.substring(1).replace(/ /g, '');
+      return {
+        name: name,
+        attribute: camelName
+      };
+    });
   }
 
   /**
