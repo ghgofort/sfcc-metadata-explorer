@@ -2,7 +2,6 @@ import { CancellationToken, CancellationTokenSource, QuickPickOptions, window, w
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
-import Site from '../documents/Site';
 import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
 import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
@@ -48,8 +47,8 @@ export default class XMLHandler {
    * ======================================================================== */
 
   /**
-   * Creates a new file in the editor and populates it with the full xml export
-   * of the system object definitions from the configured SFCC isntance.
+   * Gets the full XML export from the server for the configured export options in the 
+   * SiteArchiveExportConfiguration from the configured SFCC isntance.
    *
    * @param {SiteArchiveExportConfiguration} saeConfig - The site archive export config document
    * for the OCAPI call.

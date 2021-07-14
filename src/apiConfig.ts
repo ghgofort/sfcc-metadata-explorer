@@ -98,7 +98,7 @@ export interface IAPIConfig {
 }
 
 /* ========================================================================
- * Exported API Configuration Object
+ * Exported Configuration Object Literals
  * ======================================================================== */
 
 /**
@@ -610,3 +610,5 @@ export const apiConfig: IAPIConfig = {
    */
   version: getAPIVersionForPath()
 };
+
+export const exportsConfig: String[] = [];
