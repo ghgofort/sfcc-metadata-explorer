@@ -17,7 +17,7 @@ import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
-import { ICallSetup } from '../services/ICallSetup';
+import { ICallSetup } from '../interfaces/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
 
 /**

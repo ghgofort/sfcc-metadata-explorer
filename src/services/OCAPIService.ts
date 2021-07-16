@@ -9,8 +9,8 @@ import { URLSearchParams } from 'url';
 import { window } from 'vscode';
 import { apiConfig, getAPIVersionForPath, getClientId, getClientPass } from '../apiConfig';
 import { OAuth2Token } from '../authorization/OAuth2Token';
-import { HTTP_VERB, ICallSetup } from './ICallSetup';
-import { IDWConfig } from './IDWConfig';
+import { HTTP_VERB, ICallSetup } from '../interfaces/ICallSetup';
+import { IDWConfig } from '../interfaces/IDWConfig';
 import ConfigHelper from '../helpers/ConfigHelper';
 
 /**
@@ -20,7 +20,6 @@ import ConfigHelper from '../helpers/ConfigHelper';
 export class OCAPIService {
   public authToken: OAuth2Token = new OAuth2Token();
   private ConfigHelper = new ConfigHelper();
-  private isGettingToken: boolean = false;
   private dwConfig: IDWConfig = {
     hostname: '',
     ok: false,
@@ -180,7 +179,7 @@ export class OCAPIService {
 
       // Remove any already added data properties.
       const dataKeys = Object.keys(callData).filter(k =>
-          usedParams.indexOf(k) === -1);
+        usedParams.indexOf(k) === -1);
 
       if (dataKeys.length) {
         // Loop through any keys that are not in the API config and add them to
@@ -190,7 +189,7 @@ export class OCAPIService {
           // Add any remaining parameters to the request.
           if (setupResult.method === HTTP_VERB.get) {
             setupResult.endpoint +=
-            setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
+              setupResult.endpoint.indexOf('?') > -1 ? '&' : '?';
             setupResult.endpoint +=
               encodeURIComponent(optionalParam) +
               '=' +
@@ -208,20 +207,18 @@ export class OCAPIService {
         // Get the sandbox configuration.
         this.dwConfig = await this.ConfigHelper.getDWConfig();
       }
-      
+
       if (!this.dwConfig.ok) {
         setupResult.setupError = true;
       } else {
         // Concatenate the sandbox URL with the call endpoint to get the
         // complete endpoint URI.
-        setupResult.endpoint =
-          'https://' + this.dwConfig.hostname + setupResult.endpoint;
+        setupResult.endpoint = 'https://' + this.dwConfig.hostname + setupResult.endpoint;
 
         // Check if there needs to be an OAuth2 token included with the request.
         if (callConfig && typeof callConfig.authorization === 'string') {
           const token = await this.getOAuth2Token(callConfig.authorization);
-          setupResult.headers.Authorization =
-            token.tokenType + ' ' + token.accessToken;
+          setupResult.headers.Authorization = token.tokenType + ' ' + token.accessToken;
         }
       }
     } else {
@@ -244,8 +241,12 @@ export class OCAPIService {
    *    token types.
    */
   public async getOAuth2Token(tokenType: string): Promise<OAuth2Token> {
-    // Get the sandbox configuration.
-    this.dwConfig = await this.ConfigHelper.getDWConfig();
+    // Get the sandbox configuration if not already set.
+    if (!this.dwConfig.ok) {
+      this.dwConfig = await this.ConfigHelper.getDWConfig();
+    }
+
+    // If configurtion settings still are incomplete return & reject promise.
     if (!this.dwConfig.ok) {
       console.error('DW config is no bueno...');
       return Promise.reject(
@@ -255,8 +256,6 @@ export class OCAPIService {
       tokenType === 'BM_USER' &&
       apiConfig.hasOwnProperty('clientId')
     ) {
-      this.isGettingToken = true;
-
       // Concatenate the pieces of the URL.
       const url =
         'https://' +
@@ -267,10 +266,10 @@ export class OCAPIService {
       // Encode credentials to base64
       const encodedString = Buffer.from(
         this.dwConfig.username +
-          ':' +
-          this.dwConfig.password +
-          ':' +
-          getClientPass()
+        ':' +
+        this.dwConfig.password +
+        ':' +
+        getClientPass()
       ).toString('base64');
       const authString = 'Basic ' + encodedString;
       const bodyParams = new URLSearchParams();
@@ -351,7 +350,7 @@ export class OCAPIService {
       })
       .catch(err => {
         const errMsg = 'There was an error making the Open Commerce' +
-        ' API call: ' + err.name + '\n' + 'Message: ' + err.message;
+          ' API call: ' + err.name + '\n' + 'Message: ' + err.message;
         window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
         return { error: true, errorMessage: errMsg };
       });

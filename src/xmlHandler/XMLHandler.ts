@@ -2,8 +2,8 @@ import { CancellationToken, CancellationTokenSource, QuickPickOptions, window, w
 import { MetadataNode } from '../components/MetadataNode';
 import ObjectAttributeDefinition from '../documents/ObjectAttributeDefinition';
 import ObjectAttributeGroup from '../documents/ObjectAttributeGroup';
-import Site from '../documents/Site';
 import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
+import ConfigHelper from '../helpers/ConfigHelper';
 import ExportHelper from '../helpers/ExportHelper';
 import OCAPIHelper from '../helpers/OCAPIHelper';
 import WebDAVService from '../services/WebDAVService';
@@ -48,8 +48,8 @@ export default class XMLHandler {
    * ======================================================================== */
 
   /**
-   * Creates a new file in the editor and populates it with the full xml export
-   * of the system object definitions from the configured SFCC isntance.
+   * Gets the full XML export from the server for the configured export options in the 
+   * SiteArchiveExportConfiguration from the configured SFCC isntance.
    *
    * @param {SiteArchiveExportConfiguration} saeConfig - The site archive export config document
    * for the OCAPI call.
@@ -331,15 +331,31 @@ export default class XMLHandler {
    * then calls the helper to get the correct export.
    */ 
   public async getSFCCExport() {
+    const configHelper = new ConfigHelper();
     // Create a cancelation token instance to cancel the request when needed.
     const tokenSource: CancellationTokenSource = new CancellationTokenSource();
-    const cancelBoolToken: CancellationToken = tokenSource.token;
-    const intSelectOptions: QuickPickOptions = {
-      placeHolder: 'Select value'
-    };
-    const displayValues: string[] = [];
-    window.showQuickPick(displayValues,  )
+    const cancelToken: CancellationToken = tokenSource.token;
+    const exportOptions = configHelper.getExportOptions();
+    const displayValues: string[] = exportOptions.map(option => option.name);
+    const exVals: string[] = exportOptions.map(option => option.attribute);
+    const qpOptions: QuickPickOptions = { placeHolder: 'Select value' };
     
+    
+    // Get the type to export from the user.
+    const exName = await window.showQuickPick(displayValues, qpOptions, cancelToken);
+    const saeConfig = new SiteArchiveExportConfiguration();
+    saeConfig.dataUnits.globalData.systemTypeDefinitions = false;
+
+    // If the user selected an export, set the configuration in the OCAPI document class & set all
+    // other document flags to false.
+    if (exName) {
+      exportOptions.forEach(option => {
+        saeConfig.dataUnits[exName] = { all: option.name === exName };
+      });
+    } else {
+      window.showInformationMessage('Export canceled, no item selected');
+      return Promise.resolve();
+    }
   }
 
 

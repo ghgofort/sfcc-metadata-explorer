@@ -98,7 +98,7 @@ export interface IAPIConfig {
 }
 
 /* ========================================================================
- * Exported API Configuration Object
+ * Exported Configuration Object Literals
  * ======================================================================== */
 
 /**
@@ -610,3 +610,18 @@ export const apiConfig: IAPIConfig = {
    */
   version: getAPIVersionForPath()
 };
+
+/**
+ * @description - Defines the types of XML exports that are currently supported from a context menu
+ *    command of the root exports.
+ */
+export const exportsConfig: string[] = [
+  'Catalog Static Resources',
+  'Catalogs',
+  'Customer Lists',
+  'Inventory Lists',
+  'Libraries',
+  'Library Static Resources',
+  'Price Books',
+  'Sites'
+];

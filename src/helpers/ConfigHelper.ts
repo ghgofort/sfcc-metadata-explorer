@@ -1,6 +1,7 @@
-import { IDWConfig } from '../services/IDWConfig';
+import { IDWConfig } from '../interfaces/IDWConfig';
 import { RelativePattern, workspace, window, Uri } from 'vscode';
 import { createReadStream } from 'fs';
+import { exportsConfig } from '../apiConfig';
 
 /**
  * @class
@@ -43,50 +44,94 @@ export default class ConfigHelper {
         username: ''
       };
 
-      // If there is no workspace, then exit w/message.
+      // If there is no workspace folders or settings, then exit w/message.
       if (!workspace.workspaceFolders) {
-        window.showInformationMessage(
-          'You must have a workspace configured to use dw.json configuration.');
+        window.showInformationMessage('Workspace must be configured for sfcc-metadata-explorer.');
         return result;
       }
-      
-      // Check all of the folders in the current workspace for the existance of
-      // one or more dw.json files.
-      const dwConfigFiles = await Promise.all(
-        workspace.workspaceFolders.map(wf =>
-          workspace.findFiles(
-            new RelativePattern(wf, '**/dw.json'),
-            new RelativePattern(
-              wf,
-              '{node_modules,.git,RemoteSystemsTempFiles}'
+
+      // Get configuration settings from VSCode.
+      const wsConfig = workspace.getConfiguration('extension.sfccmetadata.sfcc');
+      const user = String(wsConfig.get('username'));
+      const host = String(wsConfig.get('hostname'));
+      const pass = String(wsConfig.get('userpass'));
+
+      // Set the configs from workspace settings as 1st priority.
+      if (user) {
+        this.dwConfig.username = user;
+      }
+      if (host) {
+        this.dwConfig.hostname = host;
+      }
+      if (pass) {
+        this.dwConfig.password = pass;
+      }
+  
+      if (!user || !host || !pass) {
+        // Check all of the folders in the current workspace for the existance of
+        // one or more dw.json files.
+        const dwConfigFiles = await Promise.all(
+          workspace.workspaceFolders.map(wf =>
+            workspace.findFiles(
+              new RelativePattern(wf, '**/dw.json'),
+              new RelativePattern(
+                wf,
+                '{node_modules,.git,RemoteSystemsTempFiles}'
+              )
             )
           )
-        )
-      );
+        );
+  
+        let configFiles: Uri[] = [];
+        dwConfigFiles.forEach(uriSubArray => {
+          configFiles = configFiles.concat(uriSubArray);
+        });
+  
+        // Get rid of any paths that return undefined or null when evaluated.
+        configFiles = configFiles.filter(Boolean);
+        if (configFiles.length === 1 && configFiles[0].fsPath) {
+          // 1 dw.json file found
+          result = await this.readConfigFromFile(configFiles[0].fsPath);
+        } else if (configFiles.length > 1) {
+          // > 1 dw.json file found
+          const dwConfig = await window.showQuickPick(
+            configFiles.map(config => config.fsPath),
+            { placeHolder: 'Select configuration' }
+          ) || '';
+          result = await this.readConfigFromFile(dwConfig);
+        }
 
-      let configFiles: Uri[] = [];
-      dwConfigFiles.forEach(uriSubArray => {
-        configFiles = configFiles.concat(uriSubArray);
-      });
-
-      // Get rid of any paths that return undefined or null when evaluated.
-      configFiles = configFiles.filter(Boolean);
-
-      // 1 dw.json file found
-      if (configFiles.length === 1 && configFiles[0].fsPath) {
-        result = await this.readConfigFromFile(configFiles[0].fsPath);
-
-        // > 1 dw.json file found
-      } else if (configFiles.length > 1) {
-        const dwConfig = await window.showQuickPick(
-          configFiles.map(config => config.fsPath),
-          { placeHolder: 'Select configuration' }
-        ) || '';
-        result = await this.readConfigFromFile(dwConfig);
+        // Override any configs w/workspace settings.
+        if (user) {
+          result.username = user;
+        }
+        if (host) {
+          result.hostname = host;
+        }
+        if (pass) {
+          result.password = pass;
+        }
+      } else {
+        this.dwConfig.ok = true;
+        result = this.dwConfig;
       }
-
-      return result;
+      
+      return Promise.resolve(result);
     }
+  }
+
+  /**
+   * Gets the available export options and the SiteArchiveExportConfiguration (SAEC) attribute names 
+   * used for configuration of the SAEC object instance.
+   */
+  public getExportOptions(): { name: string, attribute: string }[] {
+    return exportsConfig.map(name => {
+      let camelName = name.substring(0, 1).toLowerCase() + name.substring(1).replace(/ /g, '');
+      return {
+        name: name,
+        attribute: camelName
+      };
+    });
   }
 
   /**

@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
-import { IDWConfig } from './IDWConfig';
+import { IDWConfig } from '../interfaces/IDWConfig';
 import ConfigHelper from '../helpers/ConfigHelper';
-import { workspace, WorkspaceFolder } from 'vscode';
+import { env, workspace } from 'vscode';
 
 /**
  * WebDAVService.ts
@@ -26,12 +26,11 @@ export default class WebDAVService {
     const fs = require('fs');
     const path = require('path');
     const util = require('util');
-    const zlib = require('zlib')
-    const chunks: Buffer[] = [];
+
     // Get the config from the dw.json file for auth.
     this.dwConfig = await this.ConfigHelper.getDWConfig();
     if (!this.dwConfig.ok || !workspace.workspaceFolders) {
-      return Promise.reject('Config is invalid');
+      return Promise.reject('You must have a workspace open for sfcc-metadata-explorer to work');
     }
 
     // Set the hostname from dw.json to URL.
@@ -42,14 +41,9 @@ export default class WebDAVService {
     authCreds = Buffer.from(authCreds).toString('base64');
 
     // Setup the call.
-    const options = {
-      headers: {
-        'Authorization': 'Basic ' + authCreds
-      }
-    };
-
+    const options = { headers: { 'Authorization': 'Basic ' + authCreds } };
     const streamPipe = util.promisify(require('stream').pipeline);
-    const currentPath = !workspace.workspaceFolders ? workspace.rootPath :
+    const currentPath = !workspace.workspaceFolders ? env.appRoot :
       workspace.workspaceFolders[0].uri.fsPath;
 
     const filePath = currentPath + path.sep + 'sfccExport.zip';
@@ -58,7 +52,7 @@ export default class WebDAVService {
       .then((res) => {
         return streamPipe(res.body, fs.createWriteStream(filePath));
       })
-      .catch((err: any) =>{
+      .catch((err: any) => {
         console.error(err);
       });
   }

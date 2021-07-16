@@ -3,15 +3,23 @@
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
 ## Unreleased Changes
+
+
+## 1.4.0 (6/28/21)
+### Minor Release
+* Added new configurations for hostname, username, & pass from SFCC for auth token call instead of depending on dw.json.
 * Added configuration to show SFCC jobs as root node of explorer: `extension.sfccmetadata.explorer.jobs`.
+
+## 1.3.0 (6/28/21)
+### Minor Release
 * Fixed bug keeping site preferences from displaying if a default value wasn't set for 1 or more string site prefs.
 * Internal refactor of looping through root level node types to improve reliability & readability of code.
 
-## 1.2.3 (6/28/20)
+## 1.2.3 (6/28/21)
 ### Patch Release
 * Fix bug causing the extension to request a configuration file choice multiple times; one for the auth, and again for the actual call.'
 
-## 1.2.1 & 1.2.2 (6/28/20)
+## 1.2.1 & 1.2.2 (6/28/21)
 ### Minor Release
 * Fix security vunerabilities, and adapt code for newer version of VSCode lib.
 
@@ -152,7 +160,7 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## 0.4.1 (4/28/19)
 ### Patch Release
-- Added command `extension.sfccexplorer.groupattributedefinition.removefromgroup` to remove an attribute from an attribute group to the package.json.
+- Added command `extension.sfccexplorer.systemobjectattribute.removefromgroup` to remove an attribute from an attribute group to the package.json.
 - Added new context type `groupAttribute` for MetadataNode to identify when an attribute child of an attribute group is in scope in the explorer for sub-menu commands.
 - Added listener for new command to the extension.ts file which calls the helper in the  OCAPIHelper class to make an API call.
 - Added new helper method to the `OCAPIHelper` class to make the call to the OCAPI service to remove the attribute from the group.

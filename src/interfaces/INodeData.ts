@@ -2,8 +2,7 @@
 
 /**
  * @file INodeData.ts
- * @file - Exports an interface that defines the possible types passed as
- *    the third 'associatedData' parameter when creating new MetadataNode
+ * @file - Exports an interface that defines the possible types passed
  *    instances. This data object is used to determine if the node is expandable
  *    and what (if any) child nodes need to be fetched.
  */
