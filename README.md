@@ -31,6 +31,12 @@ If you find bugs, please log them to the github repository and I will do my best
 * `extension.sfccmetadata.ocapi.clientpassword`
   - Configure the client password used for calling the OCAPI API.
   - __default: `aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa`__
+* `extension.sfccmetadata.sfcc.username`
+  - Configure the SFCC username used for OCAPI auth token.
+* `extension.sfccmetadata.sfcc.userpass`
+  - Configure the SFCC user's password used for OCAPI auth token.
+* `extension.sfccmetadata.sfcc.hostname`
+  - Configure the SFCC instance to use.
 
 ### Open Commerce API Access Setup
 In order to make OCAPI calls to a SFCC instance you need to setup access to the desired API calls in Business Manager > Application > Site Development > Open Commerce API Settings. Currently this extension only uses the Data API, and access does not need to be setup for the Meta, or Shop APIs. The included example allows access to all resources, but could be modified only allow the calls that are needed.
