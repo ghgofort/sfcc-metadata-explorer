@@ -24,7 +24,7 @@
   "main": "./dist/extension",
   "contributes": {
     "configuration": {
-      "title": "SFCC Metadata Explorer Configuration",
+      "title": "sfcc-metadata-explorer",
       "properties": {
         "extension.sfccmetadata.explorer.systemobjects": {
           "type": "boolean",
@@ -65,6 +65,24 @@
         "extension.sfccmetadata.ocapi.clientpassword": {
           "type": "string",
           "default": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "description": "Configure the OCAPI client password used for API calls - default: 30 letter 'a' characters",
+          "scope": "window"
+        },
+        "extension.sfccmetadata.sfcc.username": {
+          "type": "string",
+          "default": "",
+          "description": "SFCC username for auth token. (Business Manager username)",
+          "scope": "window"
+        },
+        "extension.sfccmetadata.sfcc.userpass": {
+          "type": "string",
+          "default": "",
+          "description": "SFCC user password for auth token (Business Manager password).",
+          "scope": "window"
+        },
+        "extension.sfccmetadata.sfcc.hostname": {
+          "type": "string",
+          "default": "",
           "description": "Configure the OCAPI client password used for API calls - default: 30 letter 'a' characters",
           "scope": "window"
         }

@@ -3,11 +3,12 @@
  * @fileoverview - Provides unit testing of the ConfigHelper.ts class.
  */
 import * as assert from 'assert';
+import { IDWConfig } from '../../interfaces/IDWConfig';
 import ConfigHelper from '../ConfigHelper';
 
 // ConfigHelpers Test Suite
 suite('ConfigHelpers Tests:', () => {
-  test('Get available export options configured in apiConfig.ts: ', () => {
+  test('Test of method to get available export options from apiConfig.ts: ', () => {
     var helper = new ConfigHelper();
     const expectedOptions = [
       {

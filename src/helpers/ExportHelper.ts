@@ -1,6 +1,6 @@
 import { window } from 'vscode';
 import SiteArchiveExportConfiguration from '../documents/SiteArchiveExportConfiguration';
-import { ICallSetup } from '../services/ICallSetup';
+import { ICallSetup } from '../interfaces/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
 
 /**

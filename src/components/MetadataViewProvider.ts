@@ -21,7 +21,7 @@ import ObjectTypeDefinition from '../documents/ObjectTypeDefinition';
 import OCAPIHelper from '../helpers/OCAPIHelper';
 import SitePreferencesHelper from '../helpers/SitePreferencesHelper';
 import { IOCAPITypes } from '../interfaces/IOCAPITypes';
-import { ICallSetup } from '../services/ICallSetup';
+import { ICallSetup } from '../interfaces/ICallSetup';
 import { OCAPIService } from '../services/OCAPIService';
 import { MetadataNode } from './MetadataNode';
 

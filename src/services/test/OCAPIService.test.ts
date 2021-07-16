@@ -4,18 +4,15 @@
  */
 import * as assert from 'assert';
 
-import { HTTP_VERB, ICallSetup } from '../ICallSetup';
+import { HTTP_VERB, ICallSetup } from '../../interfaces/ICallSetup';
+import { IDWConfig } from '../../interfaces/IDWConfig';
 import { OCAPIService } from '../OCAPIService';
 
 // OCAPIService Test Suite
 suite('OCAPIService Tests', () => {
   const ocapiService: OCAPIService = new OCAPIService();
 
-  suiteSetup(() => {
-    /** @todo: Setup any suite wide setup that is necessary; */
-  });
-
-  test('Setup GET call for all SystemObjectDefinitions', () => {
+  test('Test method for setup of the API Call:', () => {
     const callSetup: Promise<ICallSetup> = ocapiService.getCallSetup(
       'systemObjectDefinitions',
       'getAll',

@@ -3,6 +3,8 @@
 All notable changes to the "sfcc-metadata-explorer" extension are documented in this file.
 
 ## Unreleased Changes
+
+* Added new configurations for hostname, username, & pass from SFCC for auth token call instead of depending on dw.json.
 * Added configuration to show SFCC jobs as root node of explorer: `extension.sfccmetadata.explorer.jobs`.
 * Fixed bug keeping site preferences from displaying if a default value wasn't set for 1 or more string site prefs.
 * Internal refactor of looping through root level node types to improve reliability & readability of code.
