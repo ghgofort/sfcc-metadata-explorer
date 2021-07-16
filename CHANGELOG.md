@@ -5,7 +5,7 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 ## Unreleased Changes
 
 
-## 1.4.0 (6/28/21)
+## 1.4.0 (7/16/21)
 ### Minor Release
 * Added new configurations for hostname, username, & pass from SFCC for auth token call instead of depending on dw.json.
 * Added configuration to show SFCC jobs as root node of explorer: `extension.sfccmetadata.explorer.jobs`.
