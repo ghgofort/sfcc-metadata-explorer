@@ -346,17 +346,15 @@ export default class XMLHandler {
     const saeConfig = new SiteArchiveExportConfiguration();
     saeConfig.dataUnits.globalData.systemTypeDefinitions = false;
 
-    
-    
+    // If the user selected an export, set the configuration in the OCAPI document class & set all
+    // other document flags to false.
     if (exName) {
       exportOptions.forEach(option => {
-        if (option.name === exName) {
-
-        } else {
-          
-        }
-      })
-      saeConfig.dataUnits[]
+        saeConfig.dataUnits[exName] = { all: option.name === exName };
+      });
+    } else {
+      window.showInformationMessage('Export canceled, no item selected');
+      return Promise.resolve();
     }
   }
 

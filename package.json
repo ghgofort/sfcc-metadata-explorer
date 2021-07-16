@@ -129,7 +129,7 @@
         "description": "Gets XML for the attribute group to use in a import / export file for SFCC."
       },
       {
-        "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
+        "command": "extension.sfccexplorer.systemobjectattribute.removefromgroup",
         "title": "Remove attribute from attribute group",
         "description": "Removes the selected attribute from the attribute group."
       },
@@ -182,7 +182,7 @@
           "when": "view == systemObjectDefinitionsView && viewItem == group"
         },
         {
-          "command": "extension.sfccexplorer.groupattributedefinition.removefromgroup",
+          "command": "extension.sfccexplorer.systemobjectattribute.removefromgroup",
           "when": "view == systemObjectDefinitionsView && viewItem == groupAttribute"
         },
         {

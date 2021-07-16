@@ -152,7 +152,7 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## 0.4.1 (4/28/19)
 ### Patch Release
-- Added command `extension.sfccexplorer.groupattributedefinition.removefromgroup` to remove an attribute from an attribute group to the package.json.
+- Added command `extension.sfccexplorer.systemobjectattribute.removefromgroup` to remove an attribute from an attribute group to the package.json.
 - Added new context type `groupAttribute` for MetadataNode to identify when an attribute child of an attribute group is in scope in the explorer for sub-menu commands.
 - Added listener for new command to the extension.ts file which calls the helper in the  OCAPIHelper class to make an API call.
 - Added new helper method to the `OCAPIHelper` class to make the call to the OCAPI service to remove the attribute from the group.

@@ -36,6 +36,7 @@ export class MetadataNode extends TreeItem {
   public preferenceValue: IPreferenceValue|null = null;
 
   // Define member properties.
+  private _displayDescription: string = '';
   private _expandable: boolean;
   private _nodeType: string = '';
   private _rootTree: string = '';
@@ -73,7 +74,7 @@ export class MetadataNode extends TreeItem {
    * @param {string} name - The name of the node to be used as a label.
    * @param {TreeItemCollapsibleState} collapsibleState - The collapsible state
    *    constant: 'Collapsed', 'Expanded', & 'None'.
-   * @param {ObjectTypeDefinition | ObjectAttributeDefinition | ObjectAttributeGroup | string} value - The object type
+   * @param {INodeData} nodeData - The object type
    *    definition instance, or an empty instance if this is only a parent
    *    container.
    * @constructor
@@ -85,9 +86,7 @@ export class MetadataNode extends TreeItem {
   ) {
     // Call the TreeNode constructor.
     super(name, collapsibleState);
-    const instance = this;
-
-    instance._rootTree = MetadataNode.ROOT_NODES.default;
+    this._rootTree = MetadataNode.ROOT_NODES.default;
 
     // The types of tree nodes that have child nodes.
     const expandableTypes = Object.keys(MetadataNode.nodeTypes)
@@ -100,21 +99,23 @@ export class MetadataNode extends TreeItem {
       .filter(attrName => attrName !== 'parentId' &&
         attrName !== 'displayDescription')
       .forEach(_dataType => {
-        instance[_dataType] = nodeData[_dataType];
+        this[_dataType] = nodeData[_dataType];
         const nodeTypeIndex = expandableTypes.findIndex(type => {
           return MetadataNode.nodeTypes[type] === _dataType;
         });
-        instance._nodeType = expandableTypes[nodeTypeIndex];
-        instance.contextValue = expandableTypes[nodeTypeIndex];
-      }
-    );
+        this._nodeType = expandableTypes[nodeTypeIndex];
+        this.contextValue = expandableTypes[nodeTypeIndex];
+      }, this);
 
     // Set the instance member properties for the child Class.
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
     this.parentId = nodeData.parentId;
-    this.displayDescription = nodeData.displayDescription || '';
-    this.description = this.displayDescription;
+    this._displayDescription = nodeData.displayDescription || '';
+    this.description = this._displayDescription;
     this.tooltip = name;
+    if (nodeData.baseNodeName) {
+      this.baseNodeName = nodeData.baseNodeName;
+    }
   }
 
   /* Member Mutators & Accessors
