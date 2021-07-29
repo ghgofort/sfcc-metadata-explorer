@@ -1,4 +1,4 @@
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
 import { IDWConfig } from '../interfaces/IDWConfig';
 import ConfigHelper from '../helpers/ConfigHelper';
 import { env, workspace } from 'vscode';
@@ -49,7 +49,7 @@ export default class WebDAVService {
     const filePath = currentPath + path.sep + 'sfccExport.zip';
 
     return fetch(url, options)
-      .then((res) => {
+      .then((res: { body: any; }) => {
         return streamPipe(res.body, fs.createWriteStream(filePath));
       })
       .catch((err: any) => {
