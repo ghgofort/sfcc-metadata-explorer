@@ -4,7 +4,8 @@
  *    when exposed on a Sales Force Commerce Cloud sandbox instance.
  */
 
-import fetch from 'node-fetch';
+const fetch = require('node-fetch');
+
 import { URLSearchParams } from 'url';
 import { window } from 'vscode';
 import { apiConfig, getAPIVersionForPath, getClientId, getClientPass } from '../apiConfig';
@@ -287,7 +288,7 @@ export class OCAPIService {
           },
           method: 'POST'
         })
-          .then(resp => {
+          .then((resp: { ok: any; json: () => any; }) => {
             if (resp.ok) {
               return resp.json();
             } else {
@@ -296,11 +297,11 @@ export class OCAPIService {
               );
             }
           })
-          .then(resp => {
+          .then((resp: any): void => {
             this.authToken = new OAuth2Token(resp);
             resolve(this.authToken);
           })
-          .catch(e => {
+          .catch((e: any) => {
             reject(e);
           });
       });
@@ -337,7 +338,7 @@ export class OCAPIService {
     }
 
     return await fetch(callSetup.endpoint, params)
-      .then(resp => {
+      .then((resp: { ok: any; statusText: string; json: () => any; status: string; }) => {
         if (resp.ok && resp.statusText.toLowerCase() === 'no content') {
           return {};
         } else if (resp.ok) {
@@ -348,7 +349,7 @@ export class OCAPIService {
           return { error: true, errorMessage: errMsg };
         }
       })
-      .catch(err => {
+      .catch((err: { name: string; message: string; }) => {
         const errMsg = 'There was an error making the Open Commerce' +
           ' API call: ' + err.name + '\n' + 'Message: ' + err.message;
         window.showErrorMessage('ERROR in OCAPI call: ' + errMsg);
