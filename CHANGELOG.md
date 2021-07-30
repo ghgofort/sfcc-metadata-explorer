@@ -4,6 +4,11 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
+## 2.1.2 (7/30/21)
+### Patch Release
+* Change node-fetch dependency to require per recommendation of the package.
+* Add the @types/node-fetch package to the dependencies of the project instead of the dev dependencies to fix issue with build of extension.
+* Refactor of extension to use newer VScode library and build process, updates to backend in preperation for upcoming new features.
 
 ## 1.4.0 (7/16/21)
 ### Minor Release
