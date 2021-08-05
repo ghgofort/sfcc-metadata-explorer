@@ -111,7 +111,6 @@ export class MetadataNode extends TreeItem {
     this._expandable = expandableTypes.indexOf(this._nodeType) > -1;
     this.parentId = nodeData.parentId;
     this._displayDescription = nodeData.displayDescription || '';
-    this.description = this._displayDescription;
     this.tooltip = name;
     if (nodeData.baseNodeName) {
       this.baseNodeName = nodeData.baseNodeName;
@@ -132,9 +131,9 @@ export class MetadataNode extends TreeItem {
   set rootTree(value) { this._rootTree = value; }
 
   /** @member {string} displayDescription - Used to set the description dynamically. */
-  get displayDescription(): string { return this.displayDescription || ''; }
+  get displayDescription(): string { return this._displayDescription || ''; }
   set displayDescription(value) { 
-    this.displayDescription = value;
+    this._displayDescription = value;
     this.description = value;
   }
 }
