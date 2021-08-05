@@ -4,7 +4,7 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
-## 2.1.2 (8/5/21)
+## 2.1.3 (8/5/21)
 ### Patch Release
 * Fix bugs caused by adding get/set methods for property, but forgetting to rename the private var.
 * Fix issue caused by no dw.json file.
