@@ -4,6 +4,10 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
+## 2.1.4 (8/6/21)
+### Patch Release
+* Fixes issue with node_modules excluded from package output by removing from .vscodeignore file.
+
 ## 2.1.3 (8/5/21)
 ### Patch Release
 * Fix bugs caused by adding get/set methods for property, but forgetting to rename the private var.
