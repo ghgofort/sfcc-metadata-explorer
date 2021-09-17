@@ -4,6 +4,10 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
+## 2.1.5 (9/18/21)
+### Patch Release
+* Fix issue with POST calls not getting params in Body correctly and wrong param in add attribute call.
+
 ## 2.1.4 (8/6/21)
 ### Patch Release
 * Fixes issue with node_modules excluded from package output by removing from .vscodeignore file.
