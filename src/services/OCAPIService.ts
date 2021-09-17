@@ -127,7 +127,7 @@ export class OCAPIService {
       // If an explicit body was included, then append it to the seutp object.
       if ('body' in callData) {
         if (typeof callData.body === 'string') {
-          setupResult.body = encodeURIComponent(setupResult.body);
+          setupResult.body = encodeURIComponent(callData.body);
         }
         setupResult.body = callData.body;
         usedParams.push('body');

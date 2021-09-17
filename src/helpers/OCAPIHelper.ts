@@ -321,30 +321,27 @@ export default class OCAPIHelper {
         displayNameInputOptions,
         cancelAddAttributeToken
       );
-
+      
       // If the user cancels, then exit the wizard.
       if (typeof displayName === 'undefined') {
         return Promise.reject({ error: false, cancelled: true });
       }
-
+      
       const description = await window.showInputBox(
         descriptionInputOptions,
         cancelAddAttributeToken
       );
-
+        
       // If the user doesn't cancel the Description input then add.
-      if (typeof description !== 'undefined') {
-        // Assign attribute values to the request document object.
+      if (typeof description === 'string' && description.length) {
         objAttributeDefinition.description.default = description;
         includeDescription = true;
-      } else {
-        objAttributeDefinition.displayName.default = displayName;
-        objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
       }
-      objAttributeDefinition.id = attributeId;
 
-      // Get the currently selected SystemObjects
-      // const selected = metadataView.currentProvider.;
+      // Assign attribute values to the request document object.
+      objAttributeDefinition.valueType = attributeType.toLocaleLowerCase();
+      objAttributeDefinition.displayName.default = displayName;
+      objAttributeDefinition.id = attributeId;
 
       // Return the reuslt of the API call.
       return this.addAttributeDefiniton(systemObjectId, objAttributeDefinition, includeDescription);
