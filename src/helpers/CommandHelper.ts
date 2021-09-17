@@ -302,7 +302,7 @@ export default class CommandHelper {
       }
     } catch (e) {
       window.showErrorMessage('Unable to set preference value.');
-      console.error(e.message);
+      console.error(e);
     }
     return Promise.resolve(false);
   }

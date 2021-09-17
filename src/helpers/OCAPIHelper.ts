@@ -117,8 +117,12 @@ export default class OCAPIHelper {
       );
 
       _callResult = await this.service.makeCall(_callSetup);
-    } catch (e) {
-      window.showErrorMessage('ERROR making call to OCAPI: ' + e.message);
+    } catch (e: any) {
+      var msg = 'ERROR making call to OCAPI: ';
+      if (typeof e.msg !== 'undefined') {
+        msg += e.msg;
+      }
+      window.showErrorMessage(msg);
     }
 
     return Promise.resolve(_callResult);
@@ -158,8 +162,8 @@ export default class OCAPIHelper {
       );
 
       _callResult = await this.service.makeCall(_callSetup);
-    } catch (e) {
-      window.showErrorMessage('ERROR: Unable to add new attribute group', e.message);
+    } catch (e: any) {
+      window.showErrorMessage('ERROR: Unable to add new attribute group');
     }
 
     return Promise.resolve(_callResult);
@@ -511,7 +515,7 @@ export default class OCAPIHelper {
         }
       } catch (e) {
         const errMsg = 'Unable to assign attribute to group: ';
-        console.log(errMsg + e.message);
+        console.error(e);
         window.showErrorMessage('Unable to assign attribute to group.');
       }
     }

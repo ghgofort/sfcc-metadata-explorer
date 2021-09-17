@@ -209,7 +209,8 @@ export default class SitePreferencesHelper {
         console.error('ERROR -- OCAPI call result: ', callResult);
       }
     } catch (e) {
-      window.showErrorMessage('ERROR calling OCAPI: ' + e.message);
+      window.showErrorMessage('There was an ERROR calling OCAPI. ' +
+        'See developer console for more details');
     }
 
     return Promise.resolve(childNodes);

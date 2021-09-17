@@ -42,7 +42,8 @@ export default class SitesHelper {
         return new Sites(_callResult);
       }
     } catch (e) {
-      window.showErrorMessage('ERROR making call to OCAPI: ' + e.message);
+      window.showErrorMessage('ERROR making call to OCAPI');
+      console.error(e);
     }
     return Promise.reject('Error making call to OCAPI');
 

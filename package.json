@@ -2,7 +2,7 @@
   "name": "sfcc-metadata-explorer",
   "displayName": "SFCC Metadata Explorer",
   "description": "View, add, delete, and update SFCC sandbox metadata right from your vscode editor!",
-  "version": "2.2.1",
+  "version": "2.1.4",
   "publisher": "ghgofort",
   "repository": {
     "type": "git",
@@ -233,8 +233,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "test-compile": "tsc -p ./",
+    "watch": "tsc -watch -p",
+    "test-compile": "tsc -p",
     "pretest": "npm run compile",
     "test": "node ./dist/test/runTest.js"
   },
@@ -255,7 +255,7 @@
     "minimist": "^1.2.2",
     "node-fetch": "^2.6.1",
     "original-fs": "^1.1.0",
-    "vsce": "^1.99.0",
+    "vsce": "^1.96.1",
     "vscode-uri": "^1.0.6",
     "xmlbuilder": "^11.0.0"
   }

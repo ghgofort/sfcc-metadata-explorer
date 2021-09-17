@@ -136,7 +136,7 @@ export class MetadataViewProvider
           return [];
         }
       }
-    } catch (e) {
+    } catch (e: any) {
       return Promise.reject(e.message);
     }
     return Promise.reject('An Unexpected Error Occurred!');
@@ -176,8 +176,8 @@ export class MetadataViewProvider
         );
 
         _callResult = await this.service.makeCall(_callSetup);
-      } catch (e) {
-        throw new Error(e.toString());
+      } catch (e: any) {
+        throw new Error('Error Calling OCAPI to add definition');
       }
 
       // If the API call returns data create the first level of a tree.
