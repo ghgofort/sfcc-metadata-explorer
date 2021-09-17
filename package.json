@@ -233,8 +233,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p",
-    "test-compile": "tsc -p",
+    "watch": "tsc -watch -p ./",
+    "test-compile": "tsc -p ./",
     "pretest": "npm run compile",
     "test": "node ./dist/test/runTest.js"
   },
