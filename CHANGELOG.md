@@ -4,6 +4,10 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
+## 2.1.6 (12/11/21)
+### Patch Release
+* Fixes for display of error messages in the properties of a system object attribute.
+
 ## 2.1.5 (9/18/21)
 ### Patch Release
 * Fix issue with POST calls not getting params in Body correctly and wrong param in add attribute call.
