@@ -546,7 +546,7 @@ export class MetadataViewProvider
       // Loop through the member properties and handle each possible type
       // for display as a node on the tree.
       return Object.keys(objAttrDef).filter(key => {
-          return !!objAttrDef[key];
+          return key !== 'MEMBER_MAP' && !!objAttrDef[key];
         }).map(key => {
         if (!objAttrDef[key]) {
           return new MetadataNode('ERROR: Error getting attribute group child node.',
@@ -607,7 +607,7 @@ export class MetadataViewProvider
                   element.parentId + '.' + objAttrDef.id
               }
             );
-          } else if (Array.isArray(objAttrDef[key]) && objAttrDef[key].length) {
+          } else if (Array.isArray(objAttrDef[key])) {
               // == ObjectAttributeValueDefinition[]
               return new MetadataNode('Value Definitions',
                 TreeItemCollapsibleState.Collapsed,
