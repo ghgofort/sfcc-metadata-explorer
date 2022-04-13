@@ -11,7 +11,7 @@ If you find bugs, please log them to the github repository and I will do my best
 - A Sales Force Commerce Cloud (SFCC) sandbox instance is required. Obvious, I know!
 - A __dw.json__ configuration file is required to setup the connection to your SFCC sandbox isntance(s). This is in a format also used by the Prophet Debugger VSCode extension [1], and dwupload [2]
 - You must configure your Open Commerce API settings to allow access for the API calls that are needed.
-
+- You must configure webDAV access for your client ID to use the "Get full XML" command for the Systems Objects.
 ### VSCode Settings
 * `extension.sfccmetadata.explorer.systemobjects`
   - Enable/disable the view of system object definitions in the explorer view.
