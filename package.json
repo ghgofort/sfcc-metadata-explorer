@@ -253,7 +253,7 @@
   },
   "dependencies": {
     "adm-zip": "^0.4.14",
-    "minimist": "^1.2.2",
+    "minimist": "^1.2.6",
     "node-fetch": "^2.6.1",
     "original-fs": "^1.1.0",
     "vsce": "^1.96.1",
