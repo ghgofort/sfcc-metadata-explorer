@@ -243,7 +243,7 @@
     "@types/mocha": "5.2.7",
     "@types/node": "^7.10.14",
     "@types/vscode": "^1.57.0",
-    "ajv": "6.9.1",
+    "ajv": "6.12.3",
     "ansi-regex": ">=5.0.1",
     "glob": "^7.1.4",
     "mocha": "^9.1.3",
