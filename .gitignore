@@ -4,3 +4,4 @@ node_modules
 *.vsix
 dist/
 *.code-workspace
+.vscode/settings.json
