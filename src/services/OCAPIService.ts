@@ -292,9 +292,9 @@ export class OCAPIService {
             if (resp.ok) {
               return resp.json();
             } else {
-              reject(
+              reject(new Error(
                 'Could not retrieve Auth Token from Digital Application Server'
-              );
+              ));
             }
           })
           .then((resp: any): void => {
@@ -302,16 +302,16 @@ export class OCAPIService {
             resolve(this.authToken);
           })
           .catch((e: any) => {
-            reject(e);
+            reject(new Error(e));
           });
       });
 
       return result;
     } else if (tokenType === 'CLIENT_CREDENTIALS') {
       /** @todo: implement getOAuth2Token for auth server authentication */
-      return Promise.reject('Operation Not Yet Implemented.');
+      return Promise.reject(new Error('Operation Not Yet Implemented.'));
     }
-    return Promise.reject('There Was a Service Error.');
+    return Promise.reject(new Error('There Was a Service Error.'));
   }
 
   /**
