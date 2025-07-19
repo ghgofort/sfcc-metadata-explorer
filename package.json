@@ -82,7 +82,7 @@
         "extension.sfccmetadata.sfcc.hostname": {
           "type": "string",
           "default": "",
-          "description": "Configure the OCAPI client password used for API calls - default: 30 letter 'a' characters",
+          "description": "Configure the hostname of the SFCC sandbox to connect to. (e.g. my-sandbox.demandware.net)",
           "scope": "window"
         }
       }

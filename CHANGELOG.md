@@ -6,12 +6,15 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 
 ### Current Release
-## 2.6.0
+## 2.6.1 (7/19/25)
+* Fix for description of setting for hostname.
+
+## 2.6.0 (7/19/25)
 * Updates for dependabot fixes, and updates to fix error type in promise.rejects
 
 ## 2.4.2
 * Bugfixes & updates to dependencies for security bot.
-
+e
 ## 2.1.6 (12/11/21)
 ### Patch Release
 * Fixes for display of error messages in the properties of a system object attribute.
