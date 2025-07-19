@@ -4,8 +4,12 @@ All notable changes to the "sfcc-metadata-explorer" extension are documented in 
 
 ## Unreleased Changes
 
-## 2.4.2
+
 ### Current Release
+## 2.6.0
+* Updates for dependabot fixes, and updates to fix error type in promise.rejects
+
+## 2.4.2
 * Bugfixes & updates to dependencies for security bot.
 
 ## 2.1.6 (12/11/21)
